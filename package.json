@@ -10,8 +10,10 @@
 	},
 	"dependencies": {
 		"@ai-sdk/openai": "^0.0.34",
+		"@nextui-org/react": "^2.4.2",
 		"ai": "^3.2.15",
 		"clsx": "^2.1.1",
+		"framer-motion": "^11.2.12",
 		"next": "14.2.4",
 		"next-themes": "^0.3.0",
 		"react": "^18",
@@ -24,6 +26,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.8.3",
+		"@iconify/react": "^5.0.1",
 		"@types/node": "^20",
 		"@types/react": "^18",
 		"@types/react-dom": "^18",
