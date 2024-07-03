@@ -3,7 +3,7 @@
 import { TaskCardSettings } from "@/components/tasks/task-card-settings";
 import { TaskItem } from "@/components/tasks/task-item";
 import { Icon } from "@iconify/react";
-import { Button } from "@nextui-org/react";
+import { Button, Card, CardBody, CardHeader } from "@nextui-org/react";
 import React, { useState } from "react";
 
 // const TaskItemModal = ({ task, visible, onClose }) => (
@@ -80,8 +80,8 @@ const TasksCard = () => {
 	};
 
 	return (
-		<div className="p-6 border border-gray-300 rounded-lg w-full flex flex-col overflow-y-scroll">
-			<div className="flex justify-between mb-4">
+		<Card className="px-4 rounded-lg w-full flex flex-col overflow-y-scroll">
+			<CardHeader className="flex justify-between">
 				<h1 className="text-xl bold">Tasks</h1>
 				{/* TODO: Add row of selectable chips for All, Morning, Afternoon, Evening, Today, Week, Month, Year */}
 				<div className="flex">
@@ -94,8 +94,8 @@ const TasksCard = () => {
 					<TaskCardSettings />
 					<NewTaskButton onClick={handleNewTask} />
 				</div>
-			</div>
-			<div className="flex flex-col gap-2">
+			</CardHeader>
+			<CardBody className="flex flex-col gap-2">
 				{tasks.map((task) => (
 					<TaskItem
 						key={task.id}
@@ -105,7 +105,7 @@ const TasksCard = () => {
 						onClick={handleTaskClick}
 					/>
 				))}
-			</div>
+			</CardBody>
 			{/*{selectedTask && (*/}
 			{/*	<TaskItemModal*/}
 			{/*		task={selectedTask}*/}
@@ -113,7 +113,7 @@ const TasksCard = () => {
 			{/*		onClose={handleCloseModal}*/}
 			{/*	/>*/}
 			{/*)}*/}
-		</div>
+		</Card>
 	);
 };
 

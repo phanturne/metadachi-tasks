@@ -1,16 +1,17 @@
 import { Chat } from "@/components/chat";
+import StatsCard from "@/components/stats-card";
 import TasksCard from "@/components/tasks/task-card";
 import { AI } from "@/lib/chat/actions";
 
 export default function HomePage() {
 	return (
-		<div className="flex flex-grow gap-4 mx-auto max-w-7xl w-full overflow-hidden">
+		<div className="flex flex-grow gap-4 mx-auto max-w-7xl w-full overflow-hidden pb-4">
 			{/* Left Panel */}
 			<div className="flex flex-grow gap-4 flex-col" style={{ flex: 3 }}>
 				{/* Upper Left Panel*/}
 				<div className="flex flex-grow h-full gap-4" style={{ flex: 1 }}>
-					<div className="flex flex-grow bg-red-500">
-						<p>Stats</p>
+					<div className="flex flex-grow">
+						<StatsCard />
 					</div>
 					<div className="flex flex-grow bg-red-800">
 						<p>Leaderboard</p>
