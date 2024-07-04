@@ -1,5 +1,6 @@
 "use client";
 
+import { StatsChart } from "@/components/stats-chart";
 import { Icon } from "@iconify/react";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import React from "react";
@@ -37,6 +38,7 @@ export default function StatsCard() {
 				</p>
 
 				{/*	TODO: Include chart here */}
+				<StatsChart />
 			</CardBody>
 		</Card>
 	);

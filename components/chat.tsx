@@ -3,9 +3,10 @@
 "use client";
 
 import type { ClientMessage } from "@/lib/types";
+import { Card, CardBody, CardFooter, CardHeader } from "@nextui-org/react";
 import { generateId } from "ai";
 import { useActions, useUIState } from "ai/rsc";
-import { useState } from "react";
+import React, { useState } from "react";
 
 export function Chat() {
 	const [input, setInput] = useState<string>("");
@@ -13,16 +14,20 @@ export function Chat() {
 	const { submitUserMessage } = useActions();
 
 	return (
-		<>
-			<div>
-				{conversation.map((message: ClientMessage) => (
-					<div key={message.id}>
-						{message.role}: {message.display}
-					</div>
-				))}
-			</div>
-
-			<div>
+		<Card className="px-4 rounded-lg w-full flex flex-col overflow-y-scroll">
+			<CardHeader className="flex justify-between">
+				<h1 className="text-xl bold">AI Chat</h1>
+			</CardHeader>
+			<CardBody className="overflow-visible">
+				<div>
+					{conversation.map((message: ClientMessage) => (
+						<div key={message.id}>
+							{message.role}: {message.display}
+						</div>
+					))}
+				</div>
+			</CardBody>
+			<CardFooter>
 				<input
 					type="text"
 					value={input}
@@ -48,7 +53,7 @@ export function Chat() {
 				>
 					Send Message
 				</button>
-			</div>
-		</>
+			</CardFooter>
+		</Card>
 	);
 }
