@@ -6,11 +6,13 @@
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
-		"lint": "next lint"
+		"lint": "next lint",
+		"db-types": "eval $(grep '^SUPABASE_PROJECT_ID' .env.local) && supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > supabase/types.ts"
 	},
 	"dependencies": {
 		"@ai-sdk/openai": "^0.0.34",
 		"@nextui-org/react": "^2.4.2",
+		"@supabase/ssr": "^0.4.0",
 		"ai": "^3.2.15",
 		"chart.js": "^4.4.3",
 		"clsx": "^2.1.1",
@@ -23,6 +25,8 @@
 		"react-markdown": "^8.0.7",
 		"react-syntax-highlighter": "^15.5.0",
 		"remark-math": "^6.0.0",
+		"sonner": "^1.5.0",
+		"supabase": "^1.178.2",
 		"tailwind-merge": "^2.3.0",
 		"zod": "^3.23.8"
 	},
