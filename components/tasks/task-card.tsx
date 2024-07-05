@@ -4,7 +4,15 @@ import { TaskCardSettings } from "@/components/tasks/task-card-settings";
 import { TaskItem } from "@/components/tasks/task-item";
 import { Icon } from "@iconify/react";
 import { Button, Card, CardBody, CardHeader } from "@nextui-org/react";
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
+
+export interface Task {
+	id: number;
+	name: string;
+	finishedToday: number;
+	totalTimes: number;
+}
 
 // const TaskItemModal = ({ task, visible, onClose }) => (
 // 	<Modal closeButton blur open={visible} onClose={onClose}>
@@ -28,7 +36,7 @@ const TasksCard = () => {
 		{ id: 1, name: "Task 1", finishedToday: 0, totalTimes: 0 },
 		{ id: 2, name: "Task 2", finishedToday: 0, totalTimes: 0 },
 	]);
-	const [selectedTask, setSelectedTask] = useState(null);
+	const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 	const [modalVisible, setModalVisible] = useState(false);
 
 	const handleNewTask = () => {
@@ -41,7 +49,7 @@ const TasksCard = () => {
 		setTasks([...tasks, newTask]);
 	};
 
-	const handleIncrement = (taskId) => {
+	const handleIncrement = (taskId: number) => {
 		setTasks(
 			tasks.map((task) =>
 				task.id === taskId
@@ -55,7 +63,7 @@ const TasksCard = () => {
 		);
 	};
 
-	const handleDecrement = (taskId) => {
+	const handleDecrement = (taskId: number) => {
 		setTasks(
 			tasks.map((task) =>
 				task.id === taskId && task.finishedToday > 0
@@ -69,7 +77,7 @@ const TasksCard = () => {
 		);
 	};
 
-	const handleTaskClick = (task) => {
+	const handleTaskClick = (task: Task) => {
 		setSelectedTask(task);
 		setModalVisible(true);
 	};
@@ -117,8 +125,10 @@ const TasksCard = () => {
 	);
 };
 
-const NewTaskButton = ({ onClick }) => (
-	<Button auto shadow color="default" onClick={onClick}>
+const NewTaskButton = ({
+	onClick,
+}: { onClick: (event: React.MouseEvent<HTMLButtonElement>) => void }) => (
+	<Button color="default" onClick={onClick}>
 		New Task
 	</Button>
 );
