@@ -12,7 +12,10 @@
 	"dependencies": {
 		"@ai-sdk/openai": "^0.0.34",
 		"@nextui-org/react": "^2.4.2",
+		"@supabase/auth-js": "^2.64.3",
 		"@supabase/ssr": "^0.4.0",
+		"@supabase/supabase-js": "^2.44.2",
+		"@vercel/edge-config": "^1.2.0",
 		"ai": "^3.2.15",
 		"chart.js": "^4.4.3",
 		"clsx": "^2.1.1",

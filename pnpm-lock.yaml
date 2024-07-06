@@ -11,9 +11,18 @@ dependencies:
   '@nextui-org/react':
     specifier: ^2.4.2
     version: 2.4.2(@types/react@18.3.3)(framer-motion@11.2.12)(react-dom@18.3.1)(react@18.3.1)(tailwindcss@3.4.4)
+  '@supabase/auth-js':
+    specifier: ^2.64.3
+    version: 2.64.3
   '@supabase/ssr':
     specifier: ^0.4.0
     version: 0.4.0(@supabase/supabase-js@2.44.2)
+  '@supabase/supabase-js':
+    specifier: ^2.44.2
+    version: 2.44.2
+  '@vercel/edge-config':
+    specifier: ^1.2.0
+    version: 1.2.0
   ai:
     specifier: ^3.2.15
     version: 3.2.15(react@18.3.1)(svelte@4.2.18)(vue@3.4.31)(zod@3.23.8)
@@ -2975,6 +2984,12 @@ packages:
       '@supabase/node-fetch': 2.6.15
     dev: false
 
+  /@supabase/auth-js@2.64.3:
+    resolution: {integrity: sha512-XP2He3rmfYXbgiHjuukvFnlTViIbIRq9sjnZx86vOL1jOi6/Aul77fqxthZ1NyLV7GIaxLfbpuP+/+KpDjKeKA==}
+    dependencies:
+      '@supabase/node-fetch': 2.6.15
+    dev: false
+
   /@supabase/functions-js@2.4.1:
     resolution: {integrity: sha512-8sZ2ibwHlf+WkHDUZJUXqqmPvWQ3UHN0W30behOJngVh/qHHekhJLCFbh0AjkE9/FqqXtf9eoVvmYgfCLk5tNA==}
     dependencies:
@@ -3146,6 +3161,22 @@ packages:
     resolution: {integrity: sha512-vmQSUcfalpIq0R9q7uTo2lXs6eGIpt9wtnLdMv9LVpIjCA/+ufZRozlVoVelIYixx1ugCBKDhn89vnsEGOCx9A==}
     dependencies:
       '@types/node': 20.14.9
+    dev: false
+
+  /@vercel/edge-config-fs@0.1.0:
+    resolution: {integrity: sha512-NRIBwfcS0bUoUbRWlNGetqjvLSwgYH/BqKqDN7vK1g32p7dN96k0712COgaz6VFizAm9b0g6IG6hR6+hc0KCPg==}
+    dev: false
+
+  /@vercel/edge-config@1.2.0:
+    resolution: {integrity: sha512-ouX+hJK4KzXE31Wi2Xs7IEXb+6gImcOXgeOT9P48YKsZb7oNG2uyhvKDDkAyOJ739AnCJ5tKxavXjIoit6dWtw==}
+    engines: {node: '>=14.6'}
+    peerDependencies:
+      '@opentelemetry/api': ^1.7.0
+    peerDependenciesMeta:
+      '@opentelemetry/api':
+        optional: true
+    dependencies:
+      '@vercel/edge-config-fs': 0.1.0
     dev: false
 
   /@vue/compiler-core@3.4.31:
