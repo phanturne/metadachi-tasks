@@ -15,6 +15,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
 	onDecrement,
 	onClick,
 }) => (
+	// TODO: [Fix] `isPressable` + buttons inside the card causes the nested buttons issue
 	<Card
 		isPressable
 		className="flex flex-row justify-between items-center p-4 cursor-pointer w-full"

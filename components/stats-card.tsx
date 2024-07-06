@@ -15,7 +15,7 @@ export default function StatsCard() {
 			</CardHeader>
 			<CardBody className="overflow-visible">
 				{/* Points */}
-				<p className="flex items-center">
+				<div className="flex items-center">
 					<span className="font-semibold">Points:</span>
 					<span className="ml-2">120</span>
 					{pointChange > 0 ? (
@@ -29,7 +29,7 @@ export default function StatsCard() {
 							<span className="ml-1">{pointChange}</span>
 						</div>
 					)}
-				</p>
+				</div>
 
 				{/* Tasks Completed Today */}
 				<p className="flex items-center">
