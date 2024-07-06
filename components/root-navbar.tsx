@@ -13,7 +13,7 @@ import {
 import React from "react";
 
 import { NotificationsMenu } from "@/components/notifications/notifications-menu";
-import { ProfileMenu } from "@/components/profile-menu";
+import ProfileMenu from "@/components/profile-menu";
 import { Routes } from "@/lib/constants";
 import Image from "next/image";
 import Link from "next/link";
@@ -63,7 +63,7 @@ export default function RootNavbar() {
 				</NavbarItem>
 
 				{/* User Menu */}
-				<NavbarItem className="px-2">
+				<NavbarItem className="pl-2">
 					<ProfileMenu />
 				</NavbarItem>
 			</NavbarContent>
