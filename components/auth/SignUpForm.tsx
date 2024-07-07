@@ -10,11 +10,15 @@ import { EMAIL_VERIFICATION, ROOT_URL } from "@/lib/config";
 import { Routes } from "@/lib/constants";
 import { supabase } from "@/lib/supabase/browser-client";
 import { Button, Divider, Link } from "@nextui-org/react";
-import { get } from "@vercel/edge-config";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { type FormEvent, useState } from "react";
 import { toast } from "sonner";
+
+type SignUpFormValues = {
+	email: string;
+	password: string;
+};
 
 export function SignUpForm({
 	setAuthFormType,
@@ -26,43 +30,11 @@ export function SignUpForm({
 	const { closeAuthModal } = useAuthModal();
 	const router = useRouter();
 
-	const getEnvVarOrEdgeConfigValue = async (name: string) => {
-		// "use server"
-		if (process.env.EDGE_CONFIG) {
-			return await get<string>(name);
-		}
-
-		return process.env[name];
-	};
-
 	async function handleSignup(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 		const formData = new FormData(event.currentTarget);
 		const formJson = Object.fromEntries(formData.entries());
-
-		const email = formJson["email"] as string;
-		const password = formJson["password"] as string;
-
-		const emailDomainWhitelistPatternsString = await getEnvVarOrEdgeConfigValue(
-			"EMAIL_DOMAIN_WHITELIST",
-		);
-		const emailDomainWhitelist = emailDomainWhitelistPatternsString?.trim()
-			? emailDomainWhitelistPatternsString?.split(",")
-			: [];
-		const emailWhitelistPatternsString =
-			await getEnvVarOrEdgeConfigValue("EMAIL_WHITELIST");
-		const emailWhitelist = emailWhitelistPatternsString?.trim()
-			? emailWhitelistPatternsString?.split(",")
-			: [];
-
-		// If there are whitelist patterns, check if the email is allowed to sign up
-		if (emailDomainWhitelist.length > 0 || emailWhitelist.length > 0) {
-			const domainMatch = emailDomainWhitelist?.includes(email.split("@")[1]);
-			const emailMatch = emailWhitelist?.includes(email);
-			if (!domainMatch && !emailMatch) {
-				return setError(`Email is not from a whitelisted domain.`);
-			}
-		}
+		const { email, password } = formJson as SignUpFormValues;
 
 		const { error } = await supabase.auth.signUp({
 			email: email,
@@ -83,7 +55,6 @@ export function SignUpForm({
 		setAuthFormType(AuthFormType.Login);
 
 		if (!EMAIL_VERIFICATION) {
-			// Temporary workaround: Reload to set the access/refresh token properly
 			window.location.reload();
 			router.push(Routes.Setup);
 		} else {

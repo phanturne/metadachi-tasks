@@ -28,6 +28,7 @@ export function ForgotPasswordForm({
 		const formData = new FormData(event.currentTarget);
 		const email = formData.get("email") as string;
 
+		// TODO: Add to docs
 		/* In order for redirect to work, make sure ROOT_URL is set correctly. This absolute URL must be saved in your Supabase's allowed Redirect URLs list found at Authentication > Redirect Configuration. */
 		const { error } = await supabase.auth.resetPasswordForEmail(email, {
 			redirectTo: `${ROOT_URL}${Routes.ResetPassword}`,
@@ -43,7 +44,7 @@ export function ForgotPasswordForm({
 		closeAuthModal();
 		setAuthFormType(AuthFormType.Login);
 		toast.success("Password reset email sent.");
-		return router.push(Routes.Login);
+		return router.push(Routes.Home);
 	}
 
 	return (
@@ -66,16 +67,16 @@ export function ForgotPasswordForm({
 				</Button>
 				<p className="text-center text-small">
 					<Link
-						href=""
 						size="sm"
+						className="cursor-pointer"
 						onClick={() => setAuthFormType(AuthFormType.Login)}
 					>
 						Login
 					</Link>
 					{" · "}
 					<Link
-						href=""
 						size="sm"
+						className="cursor-pointer"
 						onClick={() => setAuthFormType(AuthFormType.SignUp)}
 					>
 						Sign Up

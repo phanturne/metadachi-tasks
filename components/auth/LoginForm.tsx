@@ -69,8 +69,7 @@ export function LoginForm({
 						Remember me
 					</Checkbox>
 					<Link
-						className="text-default-500"
-						href=""
+						className="text-default-500 cursor-pointer"
 						size="sm"
 						onClick={() => setAuthFormType(AuthFormType.ForgotPassword)}
 					>
