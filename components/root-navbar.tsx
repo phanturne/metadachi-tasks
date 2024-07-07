@@ -14,11 +14,16 @@ import React from "react";
 
 import { NotificationsMenu } from "@/components/notifications/notifications-menu";
 import ProfileMenu from "@/components/profile-menu";
+import { useAuthModal } from "@/components/providers/auth-context-provider";
 import { Routes } from "@/lib/constants";
+import { useSession } from "@/lib/hooks/use-session";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function RootNavbar() {
+	const { openAuthModal } = useAuthModal();
+	const { session, isAnonymous } = useSession();
+
 	return (
 		<Navbar maxWidth="full" height="60px">
 			<NavbarBrand>
@@ -43,11 +48,22 @@ export default function RootNavbar() {
 				className="ml-auto h-12 max-w-fit items-center gap-0"
 				justify="end"
 			>
-				{/* Leaderboard */}
-				<NavbarItem className="hidden sm:flex">
-					<Button isIconOnly radius="full" variant="light">
-						<Icon icon="solar:crown-star-bold-duotone" width={24} />
-					</Button>
+				{/* Auth Button */}
+				<NavbarItem>
+					{(!session || isAnonymous) && (
+						<Button
+							className="border-small border-secondary-500/30 bg-secondary-500/20 text-secondary-900 hover:bg-secondary-500/30"
+							color="secondary"
+							radius="full"
+							style={{
+								boxShadow: "inset 0 0 4px #bf97ffA0",
+							}}
+							onClick={() => openAuthModal()}
+							variant="flat"
+						>
+							Get Started
+						</Button>
+					)}
 				</NavbarItem>
 
 				{/* Quests */}
