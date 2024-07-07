@@ -6,7 +6,7 @@ import { AI } from "@/lib/chat/actions";
 
 export default function HomePage() {
 	return (
-		<div className="flex flex-grow gap-4 mx-auto max-w-7xl w-full overflow-hidden pb-4">
+		<div className="flex flex-grow gap-4 px-6 w-full overflow-hidden pb-4 shrink">
 			{/* Left Panel */}
 			<div className="flex flex-grow gap-4 flex-col" style={{ flex: 3 }}>
 				{/* Upper Left Panel*/}
@@ -26,11 +26,11 @@ export default function HomePage() {
 			</div>
 
 			{/* Right Panel */}
-			<AI>
-				<div className="flex flex-grow" style={{ flex: 2 }}>
+			<div className="flex flex-grow" style={{ flex: 2 }}>
+				<AI>
 					<Chat />
-				</div>
-			</AI>
+				</AI>
+			</div>
 		</div>
 	);
 }

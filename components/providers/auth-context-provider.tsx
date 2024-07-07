@@ -22,8 +22,6 @@ export const AuthContextProvider = ({
 }: {
 	children: React.ReactNode;
 }) => {
-	// If user is not authenticated for the desktop app, show the _old_auth page
-	// const isApp = process.env.NEXT_PUBLIC_BUILD_MODE === "export"
 	const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
 	const openAuthModal = () => {
