@@ -11,7 +11,6 @@ export default function ThemeSwitcher() {
 			size="sm"
 			radius="full"
 			selectedKey={theme}
-			p
 			onSelectionChange={(key) => setTheme(key as string)}
 			classNames={{
 				tabList: "p-0.5 gap-1",

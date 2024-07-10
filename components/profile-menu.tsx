@@ -1,51 +1,148 @@
-// Source: https://www.nextui.pro/components/application/navigation-headers#component-navigation-header-with-tabs
-
+import { useAuthModal } from "@/components/providers/auth-context-provider";
+import ThemeSwitcher from "@/components/utility/theme-switcher";
+import { Routes } from "@/lib/constants";
+import { useProfile } from "@/lib/hooks/use-profile";
+import { useSession } from "@/lib/hooks/use-session";
+import { useSignOut } from "@/lib/hooks/use-sign-out";
+import { getImageUrl } from "@/lib/supabase/utils";
 import {
 	Avatar,
-	Badge,
 	Dropdown,
 	DropdownItem,
 	DropdownMenu,
+	DropdownSection,
 	DropdownTrigger,
 } from "@nextui-org/react";
-import React from "react";
+import { User } from "@nextui-org/user";
+import { useRouter } from "next/navigation";
+import * as React from "react";
+import { toast } from "sonner";
 
-export function ProfileMenu() {
+// TODO: Add icons to the dropdown items
+export default function ProfileMenu({
+	placement = "bottom-end",
+}: {
+	placement?: "left" | "right" | "top" | "bottom" | "bottom-end";
+}) {
+	const router = useRouter();
+	const { openAuthModal } = useAuthModal();
+	const { session, isAnonymous } = useSession();
+	const { profile } = useProfile(session?.user.id);
+	const { handleSignOut } = useSignOut();
+
+	const name = profile?.display_name?.trim() ?? profile?.username ?? "";
+	const finalName = `${name}${isAnonymous ? " (Guest)" : ""}`;
+	const profileImageUrl =
+		profile?.image_path && getImageUrl(profile.id, profile.image_path);
+
 	return (
-		<Dropdown placement="bottom-end">
-			<DropdownTrigger>
-				<button
-					type="button"
-					className="mt-1 h-8 w-8 outline-none transition-transform"
+		<>
+			<Dropdown
+				placement={placement}
+				classNames={{
+					content: "p-0 border-small border-divider bg-background",
+				}}
+			>
+				<DropdownTrigger>
+					<Avatar
+						as="button"
+						size="sm"
+						showFallback
+						name={finalName}
+						src={profileImageUrl}
+					/>
+				</DropdownTrigger>
+				<DropdownMenu
+					aria-label="Profile Menu"
+					disabledKeys={["profile"]}
+					className="w-60 p-3"
+					itemClasses={{
+						base: [
+							"rounded-md",
+							"text-default-500",
+							"transition-opacity",
+							"data-[hover=true]:text-foreground",
+							"data-[hover=true]:bg-default-100",
+							"dark:data-[hover=true]:bg-default-50",
+							"data-[selectable=true]:focus:bg-default-50",
+							"data-[pressed=true]:opacity-70",
+							"data-[focus-visible=true]:ring-default-500",
+						],
+					}}
 				>
-					<Badge
-						color="success"
-						content=""
-						placement="bottom-right"
-						shape="circle"
-					>
-						<Avatar
-							size="sm"
-							src="https://i.pravatar.cc/150?u=a04258114e29526708c"
-						/>
-					</Badge>
-				</button>
-			</DropdownTrigger>
-			<DropdownMenu aria-label="Profile Actions" variant="flat">
-				<DropdownItem key="profile" className="h-14 gap-2">
-					<p className="font-semibold">Signed in as</p>
-					<p className="font-semibold">johndoe@example.com</p>
-				</DropdownItem>
-				<DropdownItem key="settings">My Settings</DropdownItem>
-				<DropdownItem key="team_settings">Team Settings</DropdownItem>
-				<DropdownItem key="analytics">Analytics</DropdownItem>
-				<DropdownItem key="system">System</DropdownItem>
-				<DropdownItem key="configurations">Configurations</DropdownItem>
-				<DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
-				<DropdownItem key="logout" color="danger">
-					Log Out
-				</DropdownItem>
-			</DropdownMenu>
-		</Dropdown>
+					<DropdownSection aria-label="Profile & Actions" showDivider>
+						<DropdownItem
+							isReadOnly
+							key="profile"
+							className="h-14 gap-2 opacity-100"
+						>
+							<User
+								name={finalName}
+								description={
+									profile?.username ? `@${profile.username}` : "Guest"
+								}
+								classNames={{
+									name: "text-default-600",
+									description: "text-default-500",
+								}}
+								avatarProps={{
+									size: "sm",
+									src: profileImageUrl,
+									showFallback: true,
+									name: profile?.display_name ?? profile?.username,
+								}}
+							/>
+						</DropdownItem>
+						<DropdownItem
+							key="assistants"
+							onClick={() => router.push(Routes.Assistants)}
+						>
+							Assistants
+						</DropdownItem>
+					</DropdownSection>
+
+					<DropdownSection aria-label="Preferences" showDivider>
+						<DropdownItem
+							key="settings"
+							onClick={() => router.push(Routes.Settings)}
+						>
+							Settings
+						</DropdownItem>
+						<DropdownItem
+							isReadOnly
+							key="theme"
+							className="cursor-default"
+							endContent={<ThemeSwitcher />}
+						>
+							Theme
+						</DropdownItem>
+					</DropdownSection>
+
+					<DropdownSection aria-label="Help & FAQ">
+						<DropdownItem
+							key="help_and_faq"
+							onClick={() => router.push(Routes.Help)}
+						>
+							Help & FAQ
+						</DropdownItem>
+						<DropdownItem
+							key="feedback"
+							onClick={() => toast.info("The Feedback feature is coming soon!")}
+						>
+							Feedback
+						</DropdownItem>
+						{!session || isAnonymous ? (
+							<DropdownItem key="login" onClick={openAuthModal}>
+								{"Sign Up / Log In"}
+							</DropdownItem>
+						) : (
+							<DropdownItem key="logout" onClick={handleSignOut}>
+								Log Out
+							</DropdownItem>
+						)}
+					</DropdownSection>
+				</DropdownMenu>
+			</Dropdown>
+		</>
 	);
 }
