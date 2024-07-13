@@ -1,13 +1,15 @@
 {
 	"name": "metadachi-tasks",
 	"version": "0.1.0",
+	"packageManager": "pnpm@8.12.1",
 	"private": true,
 	"scripts": {
-		"dev": "next dev",
-		"build": "next build",
-		"start": "next start",
-		"lint": "next lint",
-		"db-types": "eval $(grep '^SUPABASE_PROJECT_ID' .env.local) && supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > supabase/types.ts"
+		"dev": "turbo run dev",
+		"build": "turbo run build",
+		"start": "turbo run start",
+		"check-types": "tsc --noEmit",
+		"db-types": "eval $(grep '^SUPABASE_PROJECT_ID' .env.local) && supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > supabase/types.ts",
+		"db-push": "supabase db push"
 	},
 	"dependencies": {
 		"@ai-sdk/openai": "^0.0.34",
@@ -42,6 +44,7 @@
 		"@types/react-syntax-highlighter": "^15.5.13",
 		"postcss": "^8",
 		"tailwindcss": "^3.4.1",
+		"turbo": "^2.0.6",
 		"typescript": "^5"
 	}
 }
