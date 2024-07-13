@@ -16,8 +16,8 @@ CREATE TABLE groups (
   name VARCHAR(100),
 
   -- OPTIONAL
-  description TEXT NOT NULL CHECK (char_length(description) <= 1500),
-  image_path TEXT NOT NULL CHECK (char_length(image_path) <= 1000),
+  description TEXT CHECK (char_length(description) <= 1500),
+  image_path TEXT CHECK (char_length(image_path) <= 1000),
   location VARCHAR(100),
   city VARCHAR(100)
 );

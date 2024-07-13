@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 
   -- RELATIONSHIPS
-  user_id UUID NOT NULL UNIQUE REFERENCES auth.users(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   group_id UUID REFERENCES groups(id) ON DELETE CASCADE,
 
   -- METADATA
@@ -24,8 +24,8 @@ CREATE TABLE IF NOT EXISTS tasks (
   image TEXT,
   recurrence_pattern VARCHAR(25) CHECK (recurrence_pattern IN ('DAILY', 'WEEKLY', 'MONTHLY')),
   time_duration INTERVAL,
-  start_date DATE,
-  end_date DATE,
+  start_time TIMESTAMPTZ,
+  end_time TIMESTAMPTZ,
   category VARCHAR(50),
   parts_per_instance INT,
   increment_value INT
