@@ -9,6 +9,86 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      group_members: {
+        Row: {
+          group_id: string
+          joined_at: string | null
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          group_id: string
+          joined_at?: string | null
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          group_id?: string
+          joined_at?: string | null
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "group_members_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "group_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      groups: {
+        Row: {
+          city: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          image_path: string | null
+          location: string | null
+          name: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          image_path?: string | null
+          location?: string | null
+          name?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          image_path?: string | null
+          location?: string | null
+          name?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "groups_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           anthropic_api_key: string | null
@@ -92,6 +172,137 @@ export type Database = {
           },
         ]
       }
+      task_instances: {
+        Row: {
+          completed_parts: number | null
+          created_at: string
+          end_time: string | null
+          id: string
+          increment_value: number | null
+          is_completed: boolean | null
+          is_skipped: boolean | null
+          notes: string | null
+          start_time: string | null
+          task_id: string | null
+          total_parts: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          completed_parts?: number | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          increment_value?: number | null
+          is_completed?: boolean | null
+          is_skipped?: boolean | null
+          notes?: string | null
+          start_time?: string | null
+          task_id?: string | null
+          total_parts?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          completed_parts?: number | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          increment_value?: number | null
+          is_completed?: boolean | null
+          is_skipped?: boolean | null
+          notes?: string | null
+          start_time?: string | null
+          task_id?: string | null
+          total_parts?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_instances_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          end_time: string | null
+          group_id: string | null
+          icon: string | null
+          id: string
+          image: string | null
+          increment_value: number | null
+          instances: number | null
+          is_recurring: boolean | null
+          name: string
+          parts_per_instance: number | null
+          recurrence_pattern: string | null
+          start_time: string | null
+          time_duration: unknown | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          end_time?: string | null
+          group_id?: string | null
+          icon?: string | null
+          id?: string
+          image?: string | null
+          increment_value?: number | null
+          instances?: number | null
+          is_recurring?: boolean | null
+          name: string
+          parts_per_instance?: number | null
+          recurrence_pattern?: string | null
+          start_time?: string | null
+          time_duration?: unknown | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          end_time?: string | null
+          group_id?: string | null
+          icon?: string | null
+          id?: string
+          image?: string | null
+          increment_value?: number | null
+          instances?: number | null
+          is_recurring?: boolean | null
+          name?: string
+          parts_per_instance?: number | null
+          recurrence_pattern?: string | null
+          start_time?: string | null
+          time_duration?: unknown | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tasks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -110,6 +321,19 @@ export type Database = {
           object_path: string
         }
         Returns: Record<string, unknown>
+      }
+      get_tasks_with_instances: {
+        Args: {
+          p_user_id: string
+        }
+        Returns: {
+          task_id: string
+          task_name: string
+          is_recurring: boolean
+          instance_id: string
+          start_time: string
+          is_completed: boolean
+        }[]
       }
     }
     Enums: {

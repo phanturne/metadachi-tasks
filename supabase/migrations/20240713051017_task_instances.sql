@@ -34,6 +34,35 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION get_tasks_with_instances(p_user_id UUID)
+RETURNS TABLE (
+  task_id UUID,
+  task_name TEXT,
+  is_recurring BOOLEAN,
+  instance_id UUID,
+  start_time TIMESTAMPTZ,
+  is_completed BOOLEAN
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    t.id AS task_id,
+    t.name AS task_name,
+    t.is_recurring,
+    ti.id AS instance_id,
+    ti.start_time,
+    ti.is_completed
+  FROM
+    tasks t
+  LEFT JOIN
+    task_instances ti ON t.id = ti.task_id
+  WHERE
+    t.user_id = p_user_id
+  ORDER BY
+    t.created_at DESC, ti.start_time ASC;
+END;
+$$ LANGUAGE plpgsql;
+
 -- TRIGGERS --
 CREATE TRIGGER insert_task_instance_on_insert
 AFTER INSERT ON tasks
