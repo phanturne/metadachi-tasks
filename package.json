@@ -4,9 +4,12 @@
 	"packageManager": "pnpm@8.12.1",
 	"private": true,
 	"scripts": {
-		"dev": "turbo run dev",
-		"build": "turbo run build",
-		"start": "turbo run start",
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"turbo-dev": "turbo run dev",
+		"turbo-build": "turbo run build",
+		"turbo-start": "turbo run start",
 		"check-types": "tsc --noEmit",
 		"db-types": "eval $(grep '^SUPABASE_PROJECT_ID' .env.local) && supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > supabase/types.ts",
 		"db-push": "supabase db push"
