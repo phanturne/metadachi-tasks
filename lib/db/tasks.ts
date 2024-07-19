@@ -30,6 +30,8 @@ export const getTaskById = async (taskId: string) => {
 
 // Create a new task
 export const createTask = async (taskData: TablesInsert<"tasks">) => {
+	console.log("taskData", taskData);
+
 	const { data, error } = await supabase
 		.from("tasks")
 		.insert(taskData)
