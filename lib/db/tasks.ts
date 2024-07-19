@@ -91,6 +91,16 @@ export const updateTaskInstance = async (
 	return data;
 };
 
+// Function to delete a task instance by its ID
+export const deleteTaskInstance = async (instanceId: string) => {
+	const { error } = await supabase
+		.from("task_instances")
+		.delete()
+		.eq("id", instanceId);
+
+	if (error) throw new Error(error.message);
+};
+
 export const getTasksWithInstances = async (
 	userId: string,
 ): Promise<TaskWithInstances[]> => {

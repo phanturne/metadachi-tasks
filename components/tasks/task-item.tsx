@@ -1,10 +1,11 @@
 import { TaskModal } from "@/components/tasks/task-item-modal";
 import type { TaskWithInstances } from "@/lib/db/tasks";
-import { updateTaskInstance } from "@/lib/db/tasks";
+import { deleteTaskInstance, updateTaskInstance } from "@/lib/db/tasks";
 import type { Tables } from "@/supabase/types";
 import { Button, Card, Checkbox, useDisclosure } from "@nextui-org/react";
 import type React from "react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export function TaskItem({
 	task,
@@ -69,6 +70,24 @@ export function TaskItem({
 			setLocalInstance(updatedInstance);
 			updateTaskInstance(localInstance.id, updatedInstance);
 		}
+	};
+
+	const onDelete = () => {
+		if (!localInstance) return;
+		try {
+			deleteTaskInstance(localInstance.id);
+			setLocalInstance(undefined);
+			toast.success("Task deleted successfully");
+		} catch (error) {
+			toast.error("Failed to delete task");
+		}
+	};
+
+	const onUpdate = (updates: Partial<Tables<"task_instances">>) => {
+		if (!localInstance) return;
+		const updatedInstance = { ...localInstance, ...updates };
+		setLocalInstance(updatedInstance);
+		updateTaskInstance(localInstance.id, updatedInstance);
 	};
 
 	if (!localInstance) {
@@ -144,6 +163,10 @@ export function TaskItem({
 				onOpenChange={onOpenChange}
 				task={task}
 				instance={localInstance}
+				onIncrement={onIncrement}
+				onDecrement={onDecrement}
+				onDelete={onDelete}
+				onUpdateInstance={onUpdate}
 			/>
 		</>
 	);

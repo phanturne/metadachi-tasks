@@ -15,6 +15,10 @@ interface TaskModalProps {
 	onOpenChange: () => void;
 	task: TaskWithInstances;
 	instance: Tables<"task_instances">;
+	onIncrement: () => void;
+	onDecrement: () => void;
+	onDelete: () => void;
+	onUpdateInstance: (updates: Partial<Tables<"task_instances">>) => void;
 }
 
 export function TaskModal({
@@ -22,9 +26,19 @@ export function TaskModal({
 	onOpenChange,
 	task,
 	instance,
+	onIncrement,
+	onDecrement,
+	onDelete,
+	onUpdateInstance,
 }: TaskModalProps) {
+	const canIncrement =
+		(instance.completed_parts ?? 0) < (instance.total_parts ?? 0) &&
+		!instance.is_completed;
+	const canDecrement =
+		(instance.completed_parts ?? 0) > 0 && !instance.is_completed;
+
 	return (
-		<Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+		<Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
 			<ModalContent>
 				{(onClose) => (
 					<>
@@ -32,17 +46,60 @@ export function TaskModal({
 							{task.name}
 						</ModalHeader>
 						<ModalBody>
-							<p>Due: {task.end_time}</p>
-							<p>Completed: {instance.is_completed ? "Yes" : "No"}</p>
-							<p>
-								Progress: {instance.completed_parts ?? 0} /{" "}
-								{instance.total_parts ?? 0}
-							</p>
-							{/* Add more task details here */}
+							{/*<Input*/}
+							{/*	label="Name"*/}
+							{/*	value={task.name}*/}
+							{/*	onChange={(e) => onUpdateInstance({ name: e.target.value })}*/}
+							{/*/>*/}
+							{/*<Textarea*/}
+							{/*	label="Description"*/}
+							{/*	value={task.description || ""}*/}
+							{/*	onChange={(e) => onUpdateInstance({ description: e.target.value })}*/}
+							{/*/>*/}
+							{/*<Textarea*/}
+							{/*	label="Notes"*/}
+							{/*	value={instance.notes || ""}*/}
+							{/*	onChange={(e) => onUpdateInstance({ notes: e.target.value })}*/}
+							{/*/>*/}
+							<div className="flex items-center gap-2">
+								<p>Due: {task.end_time}</p>
+								<p>Completed: {instance.is_completed ? "Yes" : "No"}</p>
+							</div>
+							<div className="flex items-center gap-2">
+								<p>Progress:</p>
+								<Button
+									isIconOnly
+									size="sm"
+									variant="flat"
+									color="danger"
+									onClick={onDecrement}
+									isDisabled={!canDecrement}
+								>
+									-
+								</Button>
+								<p>{`${instance.completed_parts ?? 0} / ${instance.total_parts ?? 0}`}</p>
+								<Button
+									isIconOnly
+									size="sm"
+									variant="flat"
+									color="success"
+									onClick={onIncrement}
+									isDisabled={!canIncrement}
+								>
+									+
+								</Button>
+							</div>
 						</ModalBody>
 						<ModalFooter>
-							<Button color="danger" variant="light" onPress={onClose}>
-								Close
+							<Button
+								color="danger"
+								variant="light"
+								onPress={() => {
+									onDelete();
+									onClose();
+								}}
+							>
+								Delete
 							</Button>
 							<Button color="primary" onPress={onClose}>
 								Save
