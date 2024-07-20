@@ -71,22 +71,22 @@ export function TaskModal({
 									isIconOnly
 									size="sm"
 									variant="flat"
-									color="danger"
-									onClick={onDecrement}
-									isDisabled={!canDecrement}
+									color="success"
+									onClick={onIncrement}
+									isDisabled={!canIncrement}
 								>
-									-
+									+
 								</Button>
 								<p>{`${instance.completed_parts ?? 0} / ${instance.total_parts ?? 0}`}</p>
 								<Button
 									isIconOnly
 									size="sm"
 									variant="flat"
-									color="success"
-									onClick={onIncrement}
-									isDisabled={!canIncrement}
+									color="danger"
+									onClick={onDecrement}
+									isDisabled={!canDecrement}
 								>
-									+
+									-
 								</Button>
 							</div>
 						</ModalBody>

@@ -2,7 +2,10 @@
 
 "use client";
 
-import { Icon } from "@iconify/react";
+import ProfileMenu from "@/components/profile-menu";
+import { useAuthModal } from "@/components/providers/auth-context-provider";
+import { Routes } from "@/lib/constants";
+import { useSession } from "@/lib/hooks/use-session";
 import {
 	Button,
 	Navbar,
@@ -10,15 +13,9 @@ import {
 	NavbarContent,
 	NavbarItem,
 } from "@nextui-org/react";
-import React from "react";
-
-import { NotificationsMenu } from "@/components/notifications/notifications-menu";
-import ProfileMenu from "@/components/profile-menu";
-import { useAuthModal } from "@/components/providers/auth-context-provider";
-import { Routes } from "@/lib/constants";
-import { useSession } from "@/lib/hooks/use-session";
 import Image from "next/image";
 import Link from "next/link";
+import React from "react";
 
 export default function RootNavbar() {
 	const { openAuthModal } = useAuthModal();
@@ -67,16 +64,16 @@ export default function RootNavbar() {
 				</NavbarItem>
 
 				{/* Quests */}
-				<NavbarItem className="hidden sm:flex">
-					<Button isIconOnly radius="full" variant="light">
-						<Icon icon="solar:checklist-minimalistic-bold-duotone" width={24} />
-					</Button>
-				</NavbarItem>
+				{/*<NavbarItem className="hidden sm:flex">*/}
+				{/*	<Button isIconOnly radius="full" variant="light">*/}
+				{/*		<Icon icon="solar:checklist-minimalistic-bold-duotone" width={24} />*/}
+				{/*	</Button>*/}
+				{/*</NavbarItem>*/}
 
 				{/* Notifications */}
-				<NavbarItem className="flex">
-					<NotificationsMenu />
-				</NavbarItem>
+				{/*<NavbarItem className="flex">*/}
+				{/*	<NotificationsMenu />*/}
+				{/*</NavbarItem>*/}
 
 				{/* User Menu */}
 				<NavbarItem className="pl-2">

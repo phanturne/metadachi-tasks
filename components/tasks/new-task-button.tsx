@@ -1,5 +1,6 @@
 import { createTask } from "@/lib/db/tasks";
 import { useSession } from "@/lib/hooks/use-session";
+import { markTasksAsStale } from "@/lib/hooks/use-tasks";
 import type { Tables } from "@/supabase/types";
 import {
 	Button,
@@ -9,6 +10,7 @@ import {
 	ModalContent,
 	ModalFooter,
 	ModalHeader,
+	Slider,
 	Textarea,
 	useDisclosure,
 } from "@nextui-org/react";
@@ -18,6 +20,7 @@ import { toast } from "sonner";
 
 const EmptyTask: Partial<Tables<"tasks">> = {
 	name: "New Task",
+	parts_per_instance: 1,
 };
 
 export const NewTaskButton = () => {
@@ -40,7 +43,7 @@ export const NewTaskButton = () => {
 
 		try {
 			await createTask(taskData);
-			window.location.reload(); // TODO: Do not reload the page. Use SWR or a context provider instead.
+			markTasksAsStale(taskData.user_id);
 			toast.success("Task created successfully");
 		} catch (error) {
 			toast.error("Failed to create task");
@@ -64,6 +67,18 @@ export const NewTaskButton = () => {
 									label="Name"
 									value={task.name}
 									onChange={(e) => setTask({ ...task, name: e.target.value })}
+								/>
+								<Slider
+									label="Total Parts"
+									minValue={1}
+									maxValue={10}
+									value={task.parts_per_instance || 1}
+									onChange={(value) => {
+										setTask({
+											...task,
+											parts_per_instance: value as number,
+										});
+									}}
 								/>
 								<Textarea
 									label="Description"

@@ -11,7 +11,8 @@ import type React from "react";
 
 const TasksCard = () => {
 	const { session } = useSession();
-	const { tasks } = useTasksWithInstances(session?.user.id || "");
+	const userId = session?.user.id || "";
+	const { tasks, loading, error } = useTasksWithInstances(userId);
 
 	return (
 		<Card className="px-4 rounded-lg w-full flex flex-col overflow-y-scroll">
@@ -31,17 +32,26 @@ const TasksCard = () => {
 			</CardHeader>
 
 			<CardBody className="flex flex-col gap-2">
-				{tasks.map((task) => (
-					<div key={task.id}>
-						{task.instances.map((_, index) => (
-							<TaskItem
-								key={`${task.id}-${index}`}
-								task={task}
-								instance={index}
-							/>
-						))}
-					</div>
-				))}
+				{loading ? (
+					<div>Loading...</div>
+				) : tasks.length === 0 ? (
+					<div>No tasks found</div>
+				) : (
+					tasks.map(
+						(task) =>
+							task.instances.length > 0 && (
+								<div key={task.id}>
+									{task.instances.map((_, index) => (
+										<TaskItem
+											key={`${task.id}-${index}`}
+											task={task}
+											instance={index}
+										/>
+									))}
+								</div>
+							),
+					)
+				)}
 			</CardBody>
 		</Card>
 	);

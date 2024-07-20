@@ -33,6 +33,10 @@ export function TaskItem({
 		const updatedInstance = {
 			...localInstance,
 			is_completed: !localInstance.is_completed,
+			completed_parts: Math.min(
+				localInstance.completed_parts ?? 0,
+				(localInstance.total_parts ?? 0) - 1,
+			),
 		};
 
 		setLocalInstance(updatedInstance);
@@ -49,6 +53,7 @@ export function TaskItem({
 			const updatedInstance = {
 				...localInstance,
 				completed_parts: completedParts + 1,
+				is_completed: completedParts + 1 === totalParts,
 			};
 
 			setLocalInstance(updatedInstance);
@@ -65,6 +70,7 @@ export function TaskItem({
 			const updatedInstance = {
 				...localInstance,
 				completed_parts: completedParts - 1,
+				is_completed: false,
 			};
 
 			setLocalInstance(updatedInstance);
@@ -97,8 +103,7 @@ export function TaskItem({
 	const canIncrement =
 		(localInstance.completed_parts ?? 0) < (localInstance.total_parts ?? 0) &&
 		!localInstance.is_completed;
-	const canDecrement =
-		(localInstance.completed_parts ?? 0) > 0 && !localInstance.is_completed;
+	const canDecrement = (localInstance.completed_parts ?? 0) > 0;
 
 	return (
 		<>
@@ -109,7 +114,7 @@ export function TaskItem({
 			>
 				<div className="flex gap-2">
 					<Checkbox
-						checked={localInstance.is_completed ?? false}
+						isSelected={localInstance.is_completed ?? false}
 						onValueChange={onCheckboxClick}
 					/>
 					{/* TODO: Add Icon/Image */}

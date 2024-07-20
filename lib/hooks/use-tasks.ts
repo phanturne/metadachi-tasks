@@ -1,25 +1,25 @@
-import { type TaskWithInstances, getTasksWithInstances } from "@/lib/db/tasks";
-import { useEffect, useState } from "react";
+import type { TaskWithInstances } from "@/lib/db/tasks";
+import useSWR, { mutate } from "swr";
+
+// Define the fetcher function
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function useTasksWithInstances(userId: string) {
-	const [tasks, setTasks] = useState<TaskWithInstances[]>([]);
-	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string | null>(null);
+	const { data, error, mutate } = useSWR<TaskWithInstances[] | undefined>(
+		userId ? `/api/tasks/${userId}` : null,
+		fetcher,
+	);
 
-	useEffect(() => {
-		async function fetchTasks() {
-			try {
-				const tasksData = await getTasksWithInstances(userId);
-				setTasks(tasksData);
-				setLoading(false);
-			} catch (error) {
-				setError("Failed to fetch tasks");
-				setLoading(false);
-			}
-		}
+	// Returning data and error, and handling cases where data might be undefined
+	return {
+		tasks: data ?? [],
+		loading: !error && !data,
+		error,
+		mutate,
+	};
+}
 
-		fetchTasks();
-	}, [userId]);
-
-	return { tasks, loading, error };
+// Function to mark the data as stale
+export function markTasksAsStale(userId: string) {
+	mutate(`/api/tasks/${userId}`);
 }

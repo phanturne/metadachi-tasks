@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS task_instances (
 -- FUNCTIONS --
 CREATE OR REPLACE FUNCTION insert_task_instance() RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO task_instances (task_id, start_time, end_time)
-    VALUES (NEW.id, NEW.start_time, NEW.end_time);
+    INSERT INTO task_instances (task_id, start_time, end_time, total_parts)
+    VALUES (NEW.id, NEW.start_time, NEW.end_time, NEW.parts_per_instance);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -71,6 +71,15 @@ EXECUTE FUNCTION insert_task_instance();
 
 -- RLS --
 ALTER TABLE task_instances ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can create their own task instances" ON task_instances
+  FOR INSERT WITH CHECK (
+    auth.uid() IN (
+     SELECT user_id
+     FROM tasks
+     WHERE tasks.id = task_instances.task_id
+    )
+  );
 
 CREATE POLICY "Users can view their own task instances" ON task_instances
   FOR SELECT USING (
