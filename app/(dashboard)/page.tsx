@@ -1,4 +1,4 @@
-import { Chat } from "@/components/chat";
+import { Chat } from "@/components/chat/chat";
 import LeaderboardCard from "@/components/leaderboard-card";
 import StatsCard from "@/components/stats-card";
 import TasksCard from "@/components/tasks/task-card";
