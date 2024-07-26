@@ -134,7 +134,7 @@ export function TaskItem({
 						size="sm"
 						variant="flat"
 						color="success"
-						className="rounded-full !size-6"
+						className="rounded-full !size-6 text-lg"
 						onClick={(e) => {
 							e.stopPropagation();
 							onIncrement();
@@ -151,7 +151,7 @@ export function TaskItem({
 						size="sm"
 						variant="flat"
 						color="danger"
-						className="rounded-full !size-6"
+						className="rounded-full !size-6 text-lg"
 						onClick={(e) => {
 							e.stopPropagation();
 							onDecrement();

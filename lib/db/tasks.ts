@@ -30,8 +30,6 @@ export const getTaskById = async (taskId: string) => {
 
 // Create a new task
 export const createTask = async (taskData: TablesInsert<"tasks">) => {
-	console.log("taskData", taskData);
-
 	const { data, error } = await supabase
 		.from("tasks")
 		.insert(taskData)
@@ -63,6 +61,11 @@ export const deleteTask = async (taskId: string) => {
 	const { error } = await supabase.from("tasks").delete().eq("id", taskId);
 
 	if (error) throw new Error(error.message);
+};
+
+// Skip a task
+export const skipTask = async (taskId: number) => {
+	// TODO: implement
 };
 
 // Fetch task instances for a specific task
