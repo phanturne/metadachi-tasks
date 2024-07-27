@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS user_activities (
   -- ACTIVITY DETAILS
   activity_type VARCHAR(50) NOT NULL,
   activity_category VARCHAR(50) NOT NULL,
-  description TEXT,
+  activity_description TEXT,
   quantity INT,
   points_change INT,
   exp_change INT,
