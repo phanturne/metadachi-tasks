@@ -139,8 +139,5 @@ ALTER TABLE user_stats ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view their own stats" ON user_stats
   FOR SELECT USING (auth.uid() = user_id);
 
-CREATE POLICY "Users can update their own stats" ON user_stats
-  FOR UPDATE USING (auth.uid() = user_id);
-
 CREATE POLICY "System can insert and update user stats" ON user_stats
   FOR ALL USING (current_user = 'service_role');

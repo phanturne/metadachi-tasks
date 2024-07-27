@@ -172,6 +172,102 @@ export type Database = {
           },
         ]
       }
+      quests: {
+        Row: {
+          bonus_reward: Json | null
+          category: string | null
+          created_at: string
+          description: string | null
+          difficulty: string | null
+          duration: unknown | null
+          end_date: string | null
+          goal: number
+          gold_reward: number
+          id: string
+          is_repeatable: boolean | null
+          last_repeat_date: string | null
+          level_requirement: number | null
+          metadata: Json | null
+          parent_quest_id: string | null
+          prerequisites: Json | null
+          progress: number | null
+          repeat_interval: unknown | null
+          start_date: string | null
+          status: string | null
+          tags: Json | null
+          title: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          bonus_reward?: Json | null
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty?: string | null
+          duration?: unknown | null
+          end_date?: string | null
+          goal: number
+          gold_reward: number
+          id?: string
+          is_repeatable?: boolean | null
+          last_repeat_date?: string | null
+          level_requirement?: number | null
+          metadata?: Json | null
+          parent_quest_id?: string | null
+          prerequisites?: Json | null
+          progress?: number | null
+          repeat_interval?: unknown | null
+          start_date?: string | null
+          status?: string | null
+          tags?: Json | null
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          bonus_reward?: Json | null
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty?: string | null
+          duration?: unknown | null
+          end_date?: string | null
+          goal?: number
+          gold_reward?: number
+          id?: string
+          is_repeatable?: boolean | null
+          last_repeat_date?: string | null
+          level_requirement?: number | null
+          metadata?: Json | null
+          parent_quest_id?: string | null
+          prerequisites?: Json | null
+          progress?: number | null
+          repeat_interval?: unknown | null
+          start_date?: string | null
+          status?: string | null
+          tags?: Json | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quests_parent_quest_id_fkey"
+            columns: ["parent_quest_id"]
+            isOneToOne: false
+            referencedRelation: "quests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       task_instances: {
         Row: {
           completed_parts: number | null
@@ -182,6 +278,7 @@ export type Database = {
           is_completed: boolean | null
           is_skipped: boolean | null
           notes: string | null
+          reward_claimed: boolean | null
           start_time: string | null
           task_id: string | null
           total_parts: number | null
@@ -196,6 +293,7 @@ export type Database = {
           is_completed?: boolean | null
           is_skipped?: boolean | null
           notes?: string | null
+          reward_claimed?: boolean | null
           start_time?: string | null
           task_id?: string | null
           total_parts?: number | null
@@ -210,6 +308,7 @@ export type Database = {
           is_completed?: boolean | null
           is_skipped?: boolean | null
           notes?: string | null
+          reward_claimed?: boolean | null
           start_time?: string | null
           task_id?: string | null
           total_parts?: number | null
@@ -230,7 +329,9 @@ export type Database = {
           category: string | null
           created_at: string
           description: string | null
+          difficulty: string
           end_time: string | null
+          gold: number
           group_id: string | null
           icon: string | null
           id: string
@@ -250,7 +351,9 @@ export type Database = {
           category?: string | null
           created_at?: string
           description?: string | null
+          difficulty?: string
           end_time?: string | null
+          gold?: number
           group_id?: string | null
           icon?: string | null
           id?: string
@@ -270,7 +373,9 @@ export type Database = {
           category?: string | null
           created_at?: string
           description?: string | null
+          difficulty?: string
           end_time?: string | null
+          gold?: number
           group_id?: string | null
           icon?: string | null
           id?: string
@@ -303,11 +408,232 @@ export type Database = {
           },
         ]
       }
+      user_activities: {
+        Row: {
+          activity_category: string
+          activity_description: string | null
+          activity_type: string
+          after_value: Json | null
+          before_value: Json | null
+          created_at: string
+          exp_change: number | null
+          id: string
+          metadata: Json | null
+          points_change: number | null
+          quantity: number | null
+          related_entity_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          activity_category: string
+          activity_description?: string | null
+          activity_type: string
+          after_value?: Json | null
+          before_value?: Json | null
+          created_at?: string
+          exp_change?: number | null
+          id?: string
+          metadata?: Json | null
+          points_change?: number | null
+          quantity?: number | null
+          related_entity_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          activity_category?: string
+          activity_description?: string | null
+          activity_type?: string
+          after_value?: Json | null
+          before_value?: Json | null
+          created_at?: string
+          exp_change?: number | null
+          id?: string
+          metadata?: Json | null
+          points_change?: number | null
+          quantity?: number | null
+          related_entity_id?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_activities_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      user_rewards: {
+        Row: {
+          category: string | null
+          cost: number
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          image: string | null
+          is_active: boolean
+          is_group_reward: boolean
+          last_reset_at: string | null
+          max_quantity: number | null
+          name: string
+          quantity: number
+          reset_interval: unknown | null
+          tags: Json | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          category?: string | null
+          cost: number
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          image?: string | null
+          is_active?: boolean
+          is_group_reward?: boolean
+          last_reset_at?: string | null
+          max_quantity?: number | null
+          name: string
+          quantity?: number
+          reset_interval?: unknown | null
+          tags?: Json | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          category?: string | null
+          cost?: number
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          image?: string | null
+          is_active?: boolean
+          is_group_reward?: boolean
+          last_reset_at?: string | null
+          max_quantity?: number | null
+          name?: string
+          quantity?: number
+          reset_interval?: unknown | null
+          tags?: Json | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_rewards_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      user_stats: {
+        Row: {
+          created_at: string
+          current_streak: number | null
+          date: string
+          exp: number | null
+          gold_earned: number | null
+          gold_spent: number | null
+          level: number | null
+          longest_streak: number | null
+          tasks_completed: number | null
+          tasks_created: number | null
+          top_category: string | null
+          total_gold: number | null
+          total_time_spent: unknown | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_streak?: number | null
+          date?: string
+          exp?: number | null
+          gold_earned?: number | null
+          gold_spent?: number | null
+          level?: number | null
+          longest_streak?: number | null
+          tasks_completed?: number | null
+          tasks_created?: number | null
+          top_category?: string | null
+          total_gold?: number | null
+          total_time_spent?: unknown | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_streak?: number | null
+          date?: string
+          exp?: number | null
+          gold_earned?: number | null
+          gold_spent?: number | null
+          level?: number | null
+          longest_streak?: number | null
+          tasks_completed?: number | null
+          tasks_created?: number | null
+          top_category?: string | null
+          total_gold?: number | null
+          total_time_spent?: unknown | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_stats_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      check_expired_quests: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      claim_user_reward: {
+        Args: {
+          p_user_id: string
+          p_reward_id: string
+        }
+        Returns: boolean
+      }
+      create_quest: {
+        Args: {
+          p_user_id: string
+          p_title: string
+          p_description: string
+          p_category: string
+          p_difficulty: string
+          p_goal: number
+          p_end_date: string
+          p_gold_reward: number
+          p_bonus_reward?: Json
+          p_parent_quest_id?: string
+          p_is_repeatable?: boolean
+          p_repeat_interval?: unknown
+          p_level_requirement?: number
+          p_prerequisites?: Json
+          p_tags?: Json
+          p_metadata?: Json
+        }
+        Returns: string
+      }
       delete_storage_object: {
         Args: {
           bucket: string
@@ -322,6 +648,22 @@ export type Database = {
         }
         Returns: Record<string, unknown>
       }
+      get_active_quests: {
+        Args: {
+          p_user_id: string
+        }
+        Returns: {
+          id: string
+          title: string
+          description: string
+          category: string
+          difficulty: string
+          progress: number
+          goal: number
+          end_date: string
+          gold_reward: number
+        }[]
+      }
       get_tasks_with_instances: {
         Args: {
           p_user_id: string
@@ -334,6 +676,73 @@ export type Database = {
           start_time: string
           is_completed: boolean
         }[]
+      }
+      get_user_stats: {
+        Args: {
+          p_user_id: string
+          p_start_date: string
+          p_end_date: string
+        }
+        Returns: {
+          date: string
+          level: number
+          exp: number
+          total_gold: number
+          tasks_completed: number
+          current_streak: number
+          top_category: string
+        }[]
+      }
+      log_user_activity: {
+        Args: {
+          p_user_id: string
+          p_activity_type: string
+          p_activity_category: string
+          p_description: string
+          p_quantity: number
+          p_points_change: number
+          p_exp_change: number
+          p_related_entity_type: string
+          p_related_entity_id: string
+          p_before_value: Json
+          p_after_value: Json
+          p_metadata: Json
+        }
+        Returns: string
+      }
+      reset_user_rewards: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      summarize_daily_activities: {
+        Args: {
+          p_user_id: string
+          p_date: string
+        }
+        Returns: {
+          activity_category: string
+          total_quantity: number
+          total_points_change: number
+          total_exp_change: number
+        }[]
+      }
+      update_quest_progress: {
+        Args: {
+          p_quest_id: string
+          p_progress_increment: number
+        }
+        Returns: boolean
+      }
+      update_user_stats: {
+        Args: {
+          p_user_id: string
+          p_exp: number
+          p_gold: number
+          p_tasks_completed: number
+          p_tasks_created: number
+          p_time_spent: unknown
+        }
+        Returns: undefined
       }
     }
     Enums: {
