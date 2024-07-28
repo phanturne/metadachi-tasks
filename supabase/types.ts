@@ -684,13 +684,21 @@ export type Database = {
           p_end_date: string
         }
         Returns: {
+          created_at: string
+          current_streak: number | null
           date: string
-          level: number
-          exp: number
-          total_gold: number
-          tasks_completed: number
-          current_streak: number
-          top_category: string
+          exp: number | null
+          gold_earned: number | null
+          gold_spent: number | null
+          level: number | null
+          longest_streak: number | null
+          tasks_completed: number | null
+          tasks_created: number | null
+          top_category: string | null
+          total_gold: number | null
+          total_time_spent: unknown | null
+          updated_at: string | null
+          user_id: string
         }[]
       }
       log_user_activity: {

@@ -3,15 +3,18 @@
 import { GoldStatsChart } from "@/components/stats-chart";
 import { getUserStats } from "@/lib/db/user_stats";
 import { useSession } from "@/lib/hooks/use-session";
+import type { Tables } from "@/supabase/types";
 import { Icon } from "@iconify/react";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
+
+type UserStat = Tables<"user_stats">;
 
 export default function StatsCard() {
 	const { session } = useSession();
 	const userId = session?.user.id || "";
 
-	const [stats, setStats] = useState([]);
+	const [stats, setStats] = useState<UserStat[]>([]);
 	const [dates, setDates] = useState({ startDate: "", endDate: "" });
 
 	useEffect(() => {
@@ -43,15 +46,17 @@ export default function StatsCard() {
 		fetchStats();
 	}, [userId, dates]);
 
-	const todaysStats = stats?.[0] ?? {};
-	const yesterdayStats = stats?.[1] ?? {};
-	const goldChange =
-		(todaysStats.gold_earned ?? 0) - (todaysStats.gold_spent ?? 0);
-	const tasksCompletedToday =
-		stats.length >= 2
-			? (todaysStats.tasks_completed ?? 0) -
-				(yesterdayStats.tasks_completed ?? 0)
-			: todaysStats.tasks_completed ?? 0;
+	const todaysStats = stats[0];
+	const yesterdayStats = stats[1];
+
+	const goldChange = todaysStats
+		? (todaysStats.gold_earned ?? 0) - (todaysStats.gold_spent ?? 0)
+		: undefined;
+
+	const tasksCompletedToday = calculateTasksCompletedToday(
+		todaysStats,
+		yesterdayStats,
+	);
 
 	return (
 		<Card className="px-4 rounded-lg w-full flex flex-col overflow-y-scroll">
@@ -59,10 +64,10 @@ export default function StatsCard() {
 				<h1 className="text-xl bold">Stats</h1>
 			</CardHeader>
 			<CardBody className="overflow-visible">
-				<StatCardItem label="Level" value={todaysStats.level ?? 1} />
+				<StatCardItem label="Level" value={todaysStats?.level ?? 1} />
 				<StatCardItem
 					label="Gold"
-					value={todaysStats.total_gold ?? 0}
+					value={todaysStats?.total_gold ?? 0}
 					change={goldChange}
 				/>
 				<StatCardItem
@@ -81,10 +86,34 @@ export default function StatsCard() {
 	);
 }
 
-const StatCardItem = ({ label, value, change, icon }) => {
-	const changeColor = change >= 0 ? "text-green-500" : "text-red-500";
+function calculateTasksCompletedToday(
+	todaysStats?: UserStat,
+	yesterdayStats?: UserStat,
+): number {
+	if (!todaysStats) return 0;
+	if (!yesterdayStats) return todaysStats.tasks_completed ?? 0;
+	return (
+		(todaysStats.tasks_completed ?? 0) - (yesterdayStats.tasks_completed ?? 0)
+	);
+}
+
+const StatCardItem = ({
+	label,
+	value,
+	change,
+	icon,
+}: {
+	label: string;
+	value: number;
+	change?: number;
+	icon?: string;
+}) => {
+	const changeColor =
+		change !== undefined && change >= 0 ? "text-green-500" : "text-red-500";
 	const changeIcon =
-		change >= 0 ? "solar:alt-arrow-up-bold" : "solar:alt-arrow-down-bold";
+		change !== undefined && change >= 0
+			? "solar:alt-arrow-up-bold"
+			: "solar:alt-arrow-down-bold";
 
 	return (
 		<div className="flex items-center">

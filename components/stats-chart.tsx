@@ -1,7 +1,9 @@
+import type { Tables } from "@/supabase/types";
 import {
 	BarElement,
 	CategoryScale,
 	Chart as ChartJS,
+	type ChartOptions,
 	Legend,
 	LinearScale,
 	Title,
@@ -19,15 +21,21 @@ ChartJS.register(
 	Legend,
 );
 
-const options = (maxDataValue) => ({
+interface GoldStatsChartProps {
+	stats: Tables<"user_stats">[];
+	startDate: string;
+	endDate: string;
+}
+
+const options = (maxDataValue: number): ChartOptions<"bar"> => ({
 	responsive: true,
 	plugins: {
 		legend: {
 			position: "top" as const,
 		},
 		// title: {
-		// 	display: true,
-		// 	text: "Gold Earned vs Spent (Last 7 Days)",
+		//   display: true,
+		//   text: "Gold Earned vs Spent (Last 7 Days)",
 		// },
 	},
 	scales: {
@@ -39,11 +47,15 @@ const options = (maxDataValue) => ({
 	},
 });
 
-export function GoldStatsChart({ stats, startDate, endDate }) {
+export function GoldStatsChart({
+	stats,
+	startDate,
+	endDate,
+}: GoldStatsChartProps) {
 	const processData = () => {
-		const labels = [];
-		const goldEarned = [];
-		const goldSpent = [];
+		const labels: string[] = [];
+		const goldEarned: number[] = [];
+		const goldSpent: number[] = [];
 		let maxValue = 0;
 
 		for (
@@ -55,12 +67,8 @@ export function GoldStatsChart({ stats, startDate, endDate }) {
 			labels.push(dateString);
 
 			const dayStats = stats.find((s) => s.date === dateString);
-			const earned =
-				dayStats && dayStats.gold_earned !== undefined
-					? dayStats.gold_earned
-					: 0;
-			const spent =
-				dayStats && dayStats.gold_spent !== undefined ? dayStats.gold_spent : 0;
+			const earned = dayStats?.gold_earned ?? 0;
+			const spent = dayStats?.gold_spent ?? 0;
 
 			goldEarned.push(earned);
 			goldSpent.push(spent);
