@@ -59,28 +59,17 @@ export default function StatsCard() {
 				<h1 className="text-xl bold">Stats</h1>
 			</CardHeader>
 			<CardBody className="overflow-visible">
-				{/* Points */}
-				<div className="flex items-center">
-					<span className="font-semibold">Gold:</span>
-					<span className="ml-2">{todaysStats.total_gold ?? 0}</span>
-					{goldChange >= 0 ? (
-						<div className="flex items-center text-green-500 ml-2">
-							<Icon icon="solar:alt-arrow-up-bold" width={24} />
-							<span className="ml-1">{goldChange}</span>
-						</div>
-					) : (
-						<div className="flex items-center text-red-500 ml-2">
-							<Icon icon="solar:alt-arrow-down-bold" width={24} />
-							<span className="ml-1">{goldChange}</span>
-						</div>
-					)}
-				</div>
-
-				{/* Tasks Completed Today */}
-				<p className="flex items-center">
-					<span className="font-semibold">Tasks Completed Today:</span>
-					<span className="ml-2">{tasksCompletedToday}</span>
-				</p>
+				<StatCardItem label="Level" value={todaysStats.level ?? 1} />
+				<StatCardItem
+					label="Gold"
+					value={todaysStats.total_gold ?? 0}
+					change={goldChange}
+				/>
+				<StatCardItem
+					label="Tasks Completed Today"
+					value={tasksCompletedToday}
+					icon="mdi:task-complete"
+				/>
 
 				<GoldStatsChart
 					stats={stats}
@@ -91,3 +80,23 @@ export default function StatsCard() {
 		</Card>
 	);
 }
+
+const StatCardItem = ({ label, value, change, icon }) => {
+	const changeColor = change >= 0 ? "text-green-500" : "text-red-500";
+	const changeIcon =
+		change >= 0 ? "solar:alt-arrow-up-bold" : "solar:alt-arrow-down-bold";
+
+	return (
+		<div className="flex items-center">
+			<span className="font-semibold">{label}:</span>
+			<span className="ml-2">{value}</span>
+			{change !== undefined && (
+				<div className={`flex items-center ${changeColor} ml-2`}>
+					<Icon icon={changeIcon} width={24} />
+					<span className="ml-1">{Math.abs(change)}</span>
+				</div>
+			)}
+			{icon && <Icon icon={icon} className="ml-2" width={24} />}
+		</div>
+	);
+};
