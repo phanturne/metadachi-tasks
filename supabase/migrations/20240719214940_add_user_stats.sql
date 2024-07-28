@@ -90,32 +90,14 @@ $$ LANGUAGE plpgsql;
 
 -- FUNCTION TO GET USER STATS --
 CREATE OR REPLACE FUNCTION get_user_stats(p_user_id UUID, p_start_date DATE, p_end_date DATE)
-RETURNS TABLE (
-  date DATE,
-  level INT,
-  exp INT,
-  total_gold INT,
-  tasks_completed INT,
-  current_streak INT,
-  top_category VARCHAR(50)
-) AS $$
+RETURNS SETOF user_stats AS $$
 BEGIN
   RETURN QUERY
-  SELECT
-    us.date,
-    us.level,
-    us.exp,
-    us.total_gold,
-    us.tasks_completed,
-    us.current_streak,
-    us.top_category
-  FROM
-    user_stats us
-  WHERE
-    us.user_id = p_user_id
+  SELECT *
+  FROM user_stats us
+  WHERE us.user_id = p_user_id
     AND us.date BETWEEN p_start_date AND p_end_date
-  ORDER BY
-    us.date DESC;
+  ORDER BY us.date DESC;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -138,6 +120,12 @@ ALTER TABLE user_stats ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view their own stats" ON user_stats
   FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own stats" ON user_stats
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own stats" ON user_stats
+  FOR UPDATE USING (auth.uid() = user_id);
 
 CREATE POLICY "System can insert and update user stats" ON user_stats
   FOR ALL USING (current_user = 'service_role');

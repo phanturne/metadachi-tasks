@@ -19,41 +19,75 @@ ChartJS.register(
 	Legend,
 );
 
-export const options = {
+const options = (maxDataValue) => ({
 	responsive: true,
-	// plugins: {
-	// 	legend: {
-	// 		position: "top" as const,
-	// 	},
-	// 	title: {
-	// 		display: true,
-	// 		text: "Chart.js Bar Chart",
-	// 	},
-	// },
-};
-
-const labels = ["January", "February", "March", "April", "May", "June", "July"];
-
-// Mock data
-const dataset1Data = [100, 200, 300, 400, 500, 600, 700];
-const dataset2Data = [150, 250, 350, 450, 550, 650, 750];
-
-export const data = {
-	labels,
-	datasets: [
-		{
-			label: "Dataset 1",
-			data: dataset1Data,
-			backgroundColor: "rgba(255, 99, 132, 0.5)",
+	plugins: {
+		legend: {
+			position: "top" as const,
 		},
-		{
-			label: "Dataset 2",
-			data: dataset2Data,
-			backgroundColor: "rgba(53, 162, 235, 0.5)",
+		// title: {
+		// 	display: true,
+		// 	text: "Gold Earned vs Spent (Last 7 Days)",
+		// },
+	},
+	scales: {
+		y: {
+			min: 0,
+			// Set max value dynamically if data exists, otherwise default to 100
+			max: maxDataValue > 0 ? maxDataValue : 100,
 		},
-	],
-};
+	},
+});
 
-export function StatsChart() {
-	return <Bar options={options} data={data} />;
+export function GoldStatsChart({ stats, startDate, endDate }) {
+	const processData = () => {
+		const labels = [];
+		const goldEarned = [];
+		const goldSpent = [];
+		let maxValue = 0;
+
+		for (
+			let d = new Date(startDate);
+			d <= new Date(endDate);
+			d.setDate(d.getDate() + 1)
+		) {
+			const dateString = d.toISOString().split("T")[0];
+			labels.push(dateString);
+
+			const dayStats = stats.find((s) => s.date === dateString);
+			const earned =
+				dayStats && dayStats.gold_earned !== undefined
+					? dayStats.gold_earned
+					: 0;
+			const spent =
+				dayStats && dayStats.gold_spent !== undefined ? dayStats.gold_spent : 0;
+
+			goldEarned.push(earned);
+			goldSpent.push(spent);
+
+			maxValue = Math.max(maxValue, earned, spent);
+		}
+
+		return { labels, goldEarned, goldSpent, maxValue };
+	};
+
+	const { labels, goldEarned, goldSpent, maxValue } = processData();
+
+	const chartData = {
+		labels,
+		datasets: [
+			{
+				label: "Gold Earned",
+				data: goldEarned,
+				backgroundColor: "rgba(0, 128, 0, 0.6)", // Green
+			},
+			{
+				label: "Gold Spent",
+				data: goldSpent,
+				backgroundColor: "rgba(255, 0, 0, 0.6)", // Red
+			},
+		],
+	};
+
+	return <Bar options={options(maxValue)} data={chartData} />;
 }

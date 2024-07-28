@@ -5,6 +5,10 @@ export const getUserStats = async (
 	startDate: string,
 	endDate: string,
 ) => {
+	if (!userId) {
+		return null;
+	}
+
 	const { data, error } = await supabase.rpc("get_user_stats", {
 		p_user_id: userId,
 		p_start_date: startDate,

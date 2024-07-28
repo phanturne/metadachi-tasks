@@ -102,5 +102,11 @@ ALTER TABLE user_activities ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view their own activities" ON user_activities
   FOR SELECT USING (auth.uid() = user_id);
 
+CREATE POLICY "Users can insert their own activities" ON user_activities
+ FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own activities" ON user_activities
+ FOR UPDATE USING (auth.uid() = user_id);
+
 CREATE POLICY "System can insert and update user activities" ON user_activities
   FOR ALL USING (current_user = 'service_role');
