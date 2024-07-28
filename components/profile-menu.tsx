@@ -99,6 +99,21 @@ export default function ProfileMenu({
 						>
 							Assistants
 						</DropdownItem>
+						<DropdownItem key="shop" onClick={() => router.push(Routes.Shop)}>
+							Shop
+						</DropdownItem>
+						<DropdownItem
+							key="groups"
+							onClick={() => router.push(Routes.Friends)}
+						>
+							Friends & Groups
+						</DropdownItem>
+						<DropdownItem
+							key="leaderboard"
+							onClick={() => router.push(Routes.Leaderboard)}
+						>
+							Leaderboard
+						</DropdownItem>
 					</DropdownSection>
 
 					<DropdownSection aria-label="Preferences" showDivider>

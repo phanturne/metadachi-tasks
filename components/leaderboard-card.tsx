@@ -19,7 +19,7 @@ export default function LeaderboardCard() {
 			</CardHeader>
 			<CardBody className="overflow-visible">
 				{/* Overlay */}
-				<div className=" rounded absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center text-white text-xl font-semibold z-10 mb-4">
+				<div className="rounded absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center text-white text-xl font-semibold z-10 mb-4">
 					<p>Coming soon...</p>
 				</div>
 
