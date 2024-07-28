@@ -97,10 +97,13 @@ export default function ProfileMenu({
 							key="assistants"
 							onClick={() => router.push(Routes.Assistants)}
 						>
-							Assistants
+							AI Assistants
 						</DropdownItem>
-						<DropdownItem key="shop" onClick={() => router.push(Routes.Shop)}>
-							Shop
+						<DropdownItem
+							key="rewards"
+							onClick={() => router.push(Routes.Rewards)}
+						>
+							Rewards
 						</DropdownItem>
 						<DropdownItem
 							key="groups"
@@ -113,6 +116,12 @@ export default function ProfileMenu({
 							onClick={() => router.push(Routes.Leaderboard)}
 						>
 							Leaderboard
+						</DropdownItem>
+						<DropdownItem
+							key="history"
+							onClick={() => router.push(Routes.History)}
+						>
+							History
 						</DropdownItem>
 					</DropdownSection>
 
