@@ -1,10 +1,11 @@
 // Source: https://sdk.vercel.ai/examples/next-app/interface/stream-component-updates
 
 import "server-only";
+import { TaskSuggestion } from "@/components/tasks/task-suggestion";
 import { skipTask } from "@/lib/db/tasks";
 import type { ClientMessage, ServerMessage } from "@/lib/types";
+import type { Tables } from "@/supabase/types";
 import { openai } from "@ai-sdk/openai";
-import { Card, CardBody } from "@nextui-org/react";
 import { generateId } from "ai";
 import { createAI, getMutableAIState, streamUI } from "ai/rsc";
 import { z } from "zod";
@@ -14,6 +15,7 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
 
 	const history = getMutableAIState();
 
+	// @ts-ignore
 	const result = await streamUI({
 		model: openai("gpt-4o-mini"),
 		messages: [...history.get(), { role: "user", content: input }],
@@ -28,44 +30,50 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
 			return <div>{content}</div>;
 		},
 		tools: {
-			CreateTask: {
-				description: "Create a new task",
+			CreateTasks: {
+				description: "Create multiple new tasks",
 				parameters: z.object({
-					taskName: z.string(),
-					dueDate: z.string(),
-					taskFrequency: z.string(),
-					taskType: z.string(),
-					measurementAmount: z.string(),
+					tasks: z.array(
+						z.object({
+							taskName: z.string(),
+							dueDate: z.string(),
+							taskFrequency: z.string(),
+							category: z.string(),
+							difficulty: z.string(),
+							goldReward: z.number(),
+						}),
+					),
 				}),
-				generate: async ({
-					taskName,
-					dueDate,
-					taskFrequency,
-					taskType,
-					measurementAmount,
-				}) => {
-					// await createTask({
-					// 	taskName,
-					// 	dueDate,
-					// 	taskFrequency,
-					// 	taskType,
-					// 	measurementAmount,
-					// } as Tables<"tasks">);
+				generate: async ({ tasks }) => {
+					const newTasks: Partial<Tables<"tasks">>[] = tasks.map((task) => ({
+						name: task.taskName,
+						end_time: task.dueDate,
+						recurrence_pattern: task.taskFrequency,
+						category: task.category,
+						difficulty: task.difficulty,
+						gold: task.goldReward,
+					}));
 
 					history.done((messages: ServerMessage[]) => [
 						...messages,
 						{
 							role: "assistant",
-							content: `Task "${taskName}" has been created.`,
+							content: `${newTasks.length} tasks have been created.`,
 						},
 					]);
 
 					return (
-						<Card className="bg-blue-600">
-							<CardBody>
-								<div>Task "{taskName}" created successfully!</div>
-							</CardBody>
-						</Card>
+						<>
+							<p className="pb-2">
+								Here are {newTasks.length} task suggestions. Click the checkbox
+								to add.
+							</p>
+							<div className="flex flex-col gap-2">
+								{newTasks.map((task) => (
+									<TaskSuggestion key={generateId()} task={task} />
+								))}
+							</div>
+						</>
 					);
 				},
 			},

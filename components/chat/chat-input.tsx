@@ -34,14 +34,14 @@ export const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(
 				{ id: generateId(), role: "user", display: input },
 			]);
 
+			setInput(""); // Clear the input field immediately (value is captured in the closure of this function)
+
 			const message = await submitUserMessage(input);
 
 			setConversation((currentConversation) => [
 				...currentConversation,
 				message,
 			]);
-
-			setInput(""); // Clear input after sending
 		};
 
 		const handleKeyDown = (event: React.KeyboardEvent) => {

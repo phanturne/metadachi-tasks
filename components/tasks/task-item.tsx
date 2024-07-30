@@ -109,7 +109,7 @@ export function TaskItem({
 		<>
 			<Card
 				isPressable
-				className="flex flex-row justify-between items-center p-4 cursor-pointer w-full"
+				className="flex flex-row justify-between items-center p-4 cursor-pointer w-full border border-gray-300 dark:border-gray-700"
 				onClick={onCardClick}
 			>
 				<div className="flex gap-2">
