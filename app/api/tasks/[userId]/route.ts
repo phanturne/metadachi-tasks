@@ -1,5 +1,4 @@
-import type { TaskWithInstances } from "@/lib/db/tasks";
-import { createClient } from "@/lib/supabase/server";
+import { getTasksWithInstances } from "@/lib/db/tasks";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -22,21 +21,3 @@ export async function GET(
 		);
 	}
 }
-
-const getTasksWithInstances = async (
-	userId: string,
-): Promise<TaskWithInstances[]> => {
-	const supabase = createClient();
-
-	const { data, error } = await supabase
-		.from("tasks")
-		.select(`
-      *,
-      instances:task_instances(*)
-    `)
-		.eq("user_id", userId)
-		.order("created_at", { ascending: false });
-
-	if (error) throw new Error(error.message);
-	return data as TaskWithInstances[];
-};

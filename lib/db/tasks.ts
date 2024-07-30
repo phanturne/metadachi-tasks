@@ -1,4 +1,6 @@
-import { supabase } from "@/lib/supabase/browser-client";
+"use server";
+
+import { createClient } from "@/lib/supabase/server";
 import type { Tables, TablesInsert, TablesUpdate } from "@/supabase/types";
 
 export type TaskWithInstances = Tables<"tasks"> & {
@@ -7,6 +9,8 @@ export type TaskWithInstances = Tables<"tasks"> & {
 
 // Fetch all tasks for the current user
 export const getUserTasks = async () => {
+	const supabase = createClient();
+
 	const { data, error } = await supabase
 		.from("tasks")
 		.select("*")
@@ -18,6 +22,8 @@ export const getUserTasks = async () => {
 
 // Fetch a specific task by ID
 export const getTaskById = async (taskId: string) => {
+	const supabase = createClient();
+
 	const { data, error } = await supabase
 		.from("tasks")
 		.select("*")
@@ -30,6 +36,8 @@ export const getTaskById = async (taskId: string) => {
 
 // Create a new task
 export const createTask = async (taskData: TablesInsert<"tasks">) => {
+	const supabase = createClient();
+
 	const { data, error } = await supabase
 		.from("tasks")
 		.insert(taskData)
@@ -45,6 +53,8 @@ export const updateTask = async (
 	taskId: string,
 	updates: TablesUpdate<"tasks">,
 ) => {
+	const supabase = createClient();
+
 	const { data, error } = await supabase
 		.from("tasks")
 		.update(updates)
@@ -58,6 +68,8 @@ export const updateTask = async (
 
 // Delete a task
 export const deleteTask = async (taskId: string) => {
+	const supabase = createClient();
+
 	const { error } = await supabase.from("tasks").delete().eq("id", taskId);
 
 	if (error) throw new Error(error.message);
@@ -70,6 +82,8 @@ export const skipTask = async (taskId: number) => {
 
 // Fetch task instances for a specific task
 export const getTaskInstances = async (taskId: string) => {
+	const supabase = createClient();
+
 	const { data, error } = await supabase
 		.from("task_instances")
 		.select("*")
@@ -85,6 +99,8 @@ export const updateTaskInstance = async (
 	instanceId: string,
 	updates: TablesUpdate<"task_instances">,
 ) => {
+	const supabase = createClient();
+
 	const { data, error } = await supabase
 		.from("task_instances")
 		.update(updates)
@@ -98,6 +114,8 @@ export const updateTaskInstance = async (
 
 // Function to delete a task instance by its ID
 export const deleteTaskInstance = async (instanceId: string) => {
+	const supabase = createClient();
+
 	const { error } = await supabase
 		.from("task_instances")
 		.delete()
@@ -109,6 +127,8 @@ export const deleteTaskInstance = async (instanceId: string) => {
 export const getTasksWithInstances = async (
 	userId: string,
 ): Promise<TaskWithInstances[]> => {
+	const supabase = createClient();
+
 	const { data, error } = await supabase
 		.from("tasks")
 		.select(`

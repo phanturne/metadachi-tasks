@@ -1,5 +1,8 @@
-import { supabase } from "@/lib/supabase/browser-client";
+"use server";
 
+import { createClient } from "@/lib/supabase/server";
+
+// Fetch user stats within a date range
 export const getUserStats = async (
 	userId: string,
 	startDate: string,
@@ -8,6 +11,8 @@ export const getUserStats = async (
 	if (!userId) {
 		return null;
 	}
+
+	const supabase = createClient();
 
 	const { data, error } = await supabase.rpc("get_user_stats", {
 		p_user_id: userId,

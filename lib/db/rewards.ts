@@ -1,7 +1,12 @@
-import { supabase } from "@/lib/supabase/browser-client";
+"use server";
+
+import { createClient } from "@/lib/supabase/server";
 import type { TablesInsert, TablesUpdate } from "@/supabase/types";
 
+// Fetch user rewards
 export const getUserRewards = async (userId: string) => {
+	const supabase = createClient();
+
 	const { data, error } = await supabase
 		.from("user_rewards")
 		.select("*")
@@ -13,9 +18,12 @@ export const getUserRewards = async (userId: string) => {
 	return data;
 };
 
+// Create a user reward
 export const createUserReward = async (
 	rewardData: TablesInsert<"user_rewards">,
 ) => {
+	const supabase = createClient();
+
 	const { data, error } = await supabase
 		.from("user_rewards")
 		.insert(rewardData)
@@ -26,10 +34,13 @@ export const createUserReward = async (
 	return data;
 };
 
+// Update a user reward
 export const updateUserReward = async (
 	rewardId: string,
 	updates: TablesUpdate<"user_rewards">,
 ) => {
+	const supabase = createClient();
+
 	const { data, error } = await supabase
 		.from("user_rewards")
 		.update(updates)
@@ -41,7 +52,10 @@ export const updateUserReward = async (
 	return data;
 };
 
+// Claim a user reward
 export const claimUserReward = async (userId: string, rewardId: string) => {
+	const supabase = createClient();
+
 	const { data, error } = await supabase.rpc("claim_user_reward", {
 		p_user_id: userId,
 		p_reward_id: rewardId,
@@ -51,7 +65,10 @@ export const claimUserReward = async (userId: string, rewardId: string) => {
 	return data;
 };
 
+// Reset user rewards
 export const resetUserRewards = async () => {
+	const supabase = createClient();
+
 	const { data, error } = await supabase.rpc("reset_user_rewards");
 
 	if (error) throw new Error(error.message);

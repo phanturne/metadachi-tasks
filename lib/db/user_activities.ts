@@ -1,10 +1,15 @@
-import { supabase } from "@/lib/supabase/browser-client";
+"use server";
 
+import { createClient } from "@/lib/supabase/server";
+
+// Fetch user activities within a date range
 export const getUserActivities = async (
 	userId: string,
 	startDate: string,
 	endDate: string,
 ) => {
+	const supabase = createClient();
+
 	const { data, error } = await supabase
 		.from("user_activities")
 		.select("*")
@@ -17,10 +22,13 @@ export const getUserActivities = async (
 	return data;
 };
 
+// Summarize daily activities for a user
 export const summarizeDailyActivities = async (
 	userId: string,
 	date: string,
 ) => {
+	const supabase = createClient();
+
 	const { data, error } = await supabase.rpc("summarize_daily_activities", {
 		p_user_id: userId,
 		p_date: date,
