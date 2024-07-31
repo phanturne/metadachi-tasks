@@ -1,6 +1,7 @@
 import { TaskModal } from "@/components/tasks/task-item-modal";
 import type { TaskWithInstances } from "@/lib/db/tasks";
 import { deleteTaskInstance, updateTaskInstance } from "@/lib/db/tasks";
+import { formatDateTime } from "@/lib/utils";
 import type { Tables } from "@/supabase/types";
 import { Button, Card, Checkbox, useDisclosure } from "@nextui-org/react";
 import type React from "react";
@@ -121,8 +122,8 @@ export function TaskItem({
 
 					<div className="flex flex-col items-start">
 						<h4 className="text-lg">{task.name}</h4>
-						{localInstance.end_time && (
-							<p className="text-sm">Due: {task.end_time}</p>
+						{task.end_time && (
+							<p className="text-sm">Due: {formatDateTime(task.end_time)}</p>
 						)}
 					</div>
 					{/*  TODO: Add streak for recurring tasks*/}

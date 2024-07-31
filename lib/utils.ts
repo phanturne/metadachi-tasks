@@ -28,3 +28,23 @@ const twMerge = extendTailwindMerge({
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
+
+export function formatDateTime(dateTime: string): string {
+	const date = new Date(dateTime);
+
+	// Check if the date is valid
+	if (Number.isNaN(date.getTime())) {
+		return "Invalid date";
+	}
+
+	const options: Intl.DateTimeFormatOptions = {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
+	};
+
+	// Use a single call to toLocaleString with combined options for date and time
+	return date.toLocaleString(undefined, options);
+}
