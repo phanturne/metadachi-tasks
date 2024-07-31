@@ -17,6 +17,7 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
 
 	// @ts-ignore
 	const result = await streamUI({
+		// model: google("models/gemini-1.5-pro-latest"),
 		model: openai("gpt-4o-mini"),
 		messages: [...history.get(), { role: "user", content: input }],
 		text: ({ content, done }) => {
@@ -37,7 +38,7 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
 						z.object({
 							taskName: z.string(),
 							dueDate: z.string(),
-							taskFrequency: z.string(),
+							// taskFrequency: z.string(),
 							category: z.string(),
 							difficulty: z.string(),
 							goldReward: z.number(),
@@ -48,7 +49,7 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
 					const newTasks: Partial<Tables<"tasks">>[] = tasks.map((task) => ({
 						name: task.taskName,
 						end_time: task.dueDate,
-						recurrence_pattern: task.taskFrequency,
+						// recurrence_pattern: task.taskFrequency,
 						category: task.category,
 						difficulty: task.difficulty,
 						gold: task.goldReward,
@@ -70,7 +71,10 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
 							</p>
 							<div className="flex flex-col gap-2">
 								{newTasks.map((task) => (
-									<TaskSuggestion key={generateId()} task={task} />
+									<TaskSuggestion
+										key={generateId()}
+										task={task as Tables<"tasks">}
+									/>
 								))}
 							</div>
 						</>
