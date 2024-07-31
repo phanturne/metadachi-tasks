@@ -2,6 +2,7 @@
 
 import "server-only";
 import { TaskSuggestion } from "@/components/tasks/task-suggestion";
+import { TaskDifficultySchema, difficultyGoldMap } from "@/lib/db/constants";
 import { skipTask } from "@/lib/db/tasks";
 import type { ClientMessage, ServerMessage } from "@/lib/types";
 import type { Tables } from "@/supabase/types";
@@ -40,20 +41,22 @@ export async function submitUserMessage(input: string): Promise<ClientMessage> {
 							dueDate: z.string(),
 							// taskFrequency: z.string(),
 							category: z.string(),
-							difficulty: z.string(),
-							goldReward: z.number(),
+							difficulty: TaskDifficultySchema,
 						}),
 					),
 				}),
 				generate: async ({ tasks }) => {
-					const newTasks: Partial<Tables<"tasks">>[] = tasks.map((task) => ({
-						name: task.taskName,
-						end_time: task.dueDate,
-						// recurrence_pattern: task.taskFrequency,
-						category: task.category,
-						difficulty: task.difficulty,
-						gold: task.goldReward,
-					}));
+					const newTasks = tasks.map((task) => {
+						const difficulty = TaskDifficultySchema.parse(task.difficulty);
+						return {
+							name: task.taskName,
+							end_time: task.dueDate,
+							category: task.category,
+							difficulty: difficulty,
+							gold: difficultyGoldMap[difficulty],
+							// recurrence_patterN: task.taskFrequency
+						};
+					});
 
 					history.done((messages: ServerMessage[]) => [
 						...messages,

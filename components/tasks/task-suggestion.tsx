@@ -1,22 +1,42 @@
 "use client";
 
+import { createTask } from "@/lib/db/tasks";
+import { useSession } from "@/lib/hooks/use-session";
+import { markTasksAsStale } from "@/lib/hooks/use-tasks";
 import type { Tables } from "@/supabase/types";
 import { Card, Checkbox } from "@nextui-org/react";
 import type React from "react";
 import { useState } from "react";
+import { toast } from "sonner";
 
-export function TaskSuggestion({ task }: { task: Partial<Tables<"tasks">> }) {
+export function TaskSuggestion({ task }: { task: Tables<"tasks"> }) {
+	const { session } = useSession();
 	const [isChecked, setIsChecked] = useState(false);
 
-	const onCheckboxChange = (checked: boolean) => {
+	const onCheckboxChange = async (checked: boolean) => {
 		setIsChecked(checked);
-		console.log("task selected:", task);
+
+		const taskData = {
+			...task,
+			user_id: session?.user.id,
+		} as Tables<"tasks">;
+
+		// Handle task creation
+		const data = await createTask(taskData);
+		if (data) {
+			markTasksAsStale(taskData.user_id);
+			toast.success("Task created successfully!");
+		}
 	};
 
 	return (
 		<Card className="flex flex-row justify-between items-center p-4 cursor-pointer w-full border border-gray-300 dark:border-gray-700">
 			<div className="flex gap-2 items-center w-full">
-				<Checkbox isSelected={isChecked} onValueChange={onCheckboxChange} />
+				<Checkbox
+					isSelected={isChecked}
+					onValueChange={onCheckboxChange}
+					isDisabled={isChecked}
+				/>
 
 				<div className="flex w-full justify-between">
 					<div className="flex flex-col items-start">
