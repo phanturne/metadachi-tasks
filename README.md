@@ -5,13 +5,23 @@
 [![Discord](https://img.shields.io/discord/1142672787820007454?logo=discord&label=Discord)](https://t.co/Wwdk6CoGxq)
 [![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/metadachi)](https://twitter.com/metadachi)
 
-Introducing Metadachi Tasks: your smart productivity partner. This AI-powered tool learns your goals and habits, creating custom schedules to optimize your day. Compete on leaderboards, team up with friends, and reflect in your digital journal. Metadachi Tasks doesn't just help you check off to-dos—it empowers you to become a more efficient, happier you. Try it and transform your daily grind into a journey of personal growth.
+
+Ever dreamed of an app that ruins your binge-watching marathons and snack fests? Look no further. Metadachi Tasks is the AI overlord you never asked for, ready to whip your day into shape. Enjoy the thrill of personalized goals, team challenges, and a digital journal to document your misery—oops, we mean growth. Join the productivity revolution and watch your downtime vanish before your eyes.
 </div>
 
 ## Getting Started
-Welcome to our community! 🎉
+Welcome to our realm, humans!
 
-> Hosted version is coming soon.
+Prepare to be amazed as we transform your chaotic existence. Just adhere to these instructions and let Metadachi Tasks bring order to your disarray:
+
+1. **Visit Our Website**: [Metadachi Tasks](https://www.tasks.metadachi.com)
+2. **Create an Account**: Give us your details so our AI overlord can tailor its commands.
+   - Or explore as a guest—only the brave unlock the full spellbinding experience within.
+3. **Set Your Goals**: Input your aspirations and watch as AI molds them into a rigid schedule.
+4. **Sync Your Calendar**: Let us take over your free time with our productivity regime.
+5. **Join a Team**: Misery loves company—team up and share the joy of constant productivity.
+6. **Compete on Leaderboards**: Because nothing says fun like competing over who can be the busiest.
+7. **Reflect in Your Digital Journal**: Log your thoughts on how AI is revolutionizing your daily grind.
 
 ## Features
 *To be updated*
