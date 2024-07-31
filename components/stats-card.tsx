@@ -1,50 +1,20 @@
 "use client";
 
 import { GoldStatsChart } from "@/components/stats-chart";
-import { getUserStats } from "@/lib/db/user_stats";
 import { useSession } from "@/lib/hooks/use-session";
-import type { Tables } from "@/supabase/types";
+import { calculateTasksCompletedToday, useStats } from "@/lib/hooks/use-stats";
 import { Icon } from "@iconify/react";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
-import React, { useEffect, useState } from "react";
-
-type UserStat = Tables<"user_stats">;
+import React from "react";
 
 export default function StatsCard() {
 	const { session } = useSession();
 	const userId = session?.user.id || "";
+	const { stats, isLoading, isError, dates } = useStats(userId);
 
-	const [stats, setStats] = useState<UserStat[]>([]);
-	const [dates, setDates] = useState({ startDate: "", endDate: "" });
-
-	useEffect(() => {
-		const end = new Date();
-		const start = new Date(end);
-		start.setDate(start.getDate() - 6);
-
-		setDates({
-			startDate: start.toISOString().split("T")[0],
-			endDate: end.toISOString().split("T")[0],
-		});
-	}, []);
-
-	useEffect(() => {
-		const fetchStats = async () => {
-			if (!userId || !dates.startDate || !dates.endDate) return;
-			try {
-				const fetchedStats = await getUserStats(
-					userId,
-					dates.startDate,
-					dates.endDate,
-				);
-				setStats(fetchedStats ?? []);
-			} catch (error) {
-				console.error("Error fetching user stats:", error);
-			}
-		};
-
-		fetchStats();
-	}, [userId, dates]);
+	// TODO: Add proper skeletons
+	if (isLoading) return <div>Loading...</div>;
+	if (isError) return <div>Error loading stats</div>;
 
 	const todaysStats = stats[0];
 	const yesterdayStats = stats[1];
@@ -83,17 +53,6 @@ export default function StatsCard() {
 				/>
 			</CardBody>
 		</Card>
-	);
-}
-
-function calculateTasksCompletedToday(
-	todaysStats?: UserStat,
-	yesterdayStats?: UserStat,
-): number {
-	if (!todaysStats) return 0;
-	if (!yesterdayStats) return todaysStats.tasks_completed ?? 0;
-	return (
-		(todaysStats.tasks_completed ?? 0) - (yesterdayStats.tasks_completed ?? 0)
 	);
 }
 

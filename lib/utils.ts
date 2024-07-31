@@ -48,3 +48,7 @@ export function formatDateTime(dateTime: string): string {
 	// Use a single call to toLocaleString with combined options for date and time
 	return date.toLocaleString(undefined, options);
 }
+
+// Helper function to create a delay using setTimeout
+export const delay = (ms: number) =>
+	new Promise((resolve) => setTimeout(resolve, ms));

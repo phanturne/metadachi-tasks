@@ -1,6 +1,8 @@
 import { TaskModal } from "@/components/tasks/task-item-modal";
 import type { TaskWithInstances } from "@/lib/db/tasks";
 import { deleteTaskInstance, updateTaskInstance } from "@/lib/db/tasks";
+import { useSession } from "@/lib/hooks/use-session";
+import { markStatsAsStale } from "@/lib/hooks/use-stats";
 import { formatDateTime } from "@/lib/utils";
 import type { Tables } from "@/supabase/types";
 import { Button, Card, Checkbox, useDisclosure } from "@nextui-org/react";
@@ -12,6 +14,7 @@ export function TaskItem({
 	task,
 	instance,
 }: { task: TaskWithInstances; instance: number }) {
+	const { session } = useSession();
 	const [localInstance, setLocalInstance] = useState<
 		Tables<"task_instances"> | undefined
 	>(task?.instances[instance] as Tables<"task_instances"> | undefined);
@@ -42,6 +45,7 @@ export function TaskItem({
 
 		setLocalInstance(updatedInstance);
 		updateTaskInstance(localInstance.id, updatedInstance);
+		markStatsAsStale(session?.user?.id ?? "");
 	};
 
 	const onIncrement = () => {
@@ -59,6 +63,10 @@ export function TaskItem({
 
 			setLocalInstance(updatedInstance);
 			updateTaskInstance(localInstance.id, updatedInstance);
+
+			if (updatedInstance.is_completed) {
+				markStatsAsStale(session?.user?.id ?? "");
+			}
 		}
 	};
 
@@ -84,6 +92,7 @@ export function TaskItem({
 		try {
 			deleteTaskInstance(localInstance.id);
 			setLocalInstance(undefined);
+			markStatsAsStale(session?.user?.id ?? "");
 			toast.success("Task deleted successfully");
 		} catch (error) {
 			toast.error("Failed to delete task");

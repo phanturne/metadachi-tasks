@@ -12,10 +12,10 @@ import type React from "react";
 const TasksCard = () => {
 	const { session } = useSession();
 	const userId = session?.user.id || "";
-	const { tasks, loading, error } = useTasksWithInstances(userId);
+	const { tasks, loading } = useTasksWithInstances(userId);
 
 	return (
-		<Card className="px-4 rounded-lg w-full flex flex-col overflow-y-scroll">
+		<Card className="px-4 rounded-lg w-full flex flex-col pb-4">
 			<CardHeader className="flex justify-between">
 				<h1 className="text-xl bold">Tasks</h1>
 				{/* TODO: Add row of selectable chips for All, Morning, Afternoon, Evening, Today, Week, Month, Year */}
@@ -31,7 +31,7 @@ const TasksCard = () => {
 				</div>
 			</CardHeader>
 
-			<CardBody className="flex flex-col gap-2">
+			<CardBody className="flex flex-col gap-2 overflow-y-scroll">
 				{loading ? (
 					<div>Loading...</div>
 				) : tasks.length === 0 ? (
