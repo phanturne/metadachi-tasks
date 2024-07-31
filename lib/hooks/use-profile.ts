@@ -1,33 +1,23 @@
-import { getProfileByUserId } from "@/lib/db/profile";
 import type { Tables } from "@/supabase/types";
-import { useEffect, useState } from "react";
+import useSWR, { mutate } from "swr";
+
+// Define the fetcher function
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function useProfile(userId?: string) {
-	const [profile, setProfile] = useState<Tables<"profiles"> | null>(null);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const { data, error } = useSWR<Tables<"profiles"> | null>(
+		userId ? `/api/profile/${userId}` : null,
+		fetcher,
+	);
 
-	useEffect(() => {
-		if (!userId) {
-			setLoading(false);
-			setProfile(null);
-			setError("User ID is required");
-			return;
-		}
+	return {
+		profile: data ?? null,
+		loading: !error && !data,
+		error,
+	};
+}
 
-		const fetchProfile = async () => {
-			try {
-				const fetchedProfile = await getProfileByUserId(userId);
-				setProfile(fetchedProfile);
-				setLoading(false);
-			} catch (err) {
-				setError(err instanceof Error ? err.message : String(err));
-				setLoading(false);
-			}
-		};
-
-		fetchProfile();
-	}, [userId]);
-
-	return { profile, loading, error };
+// Function to mark the data as stale
+export function markProfileAsStale(userId: string) {
+	mutate(`/api/profile/${userId}`);
 }
