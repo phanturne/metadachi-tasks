@@ -4,6 +4,7 @@
 
 "use client";
 
+import { UserMessage } from "@/components/chat/message";
 import type { ClientMessage } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Icon } from "@iconify/react";
@@ -31,7 +32,11 @@ export const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(
 
 			setConversation((currentConversation) => [
 				...currentConversation,
-				{ id: generateId(), role: "user", display: input },
+				{
+					id: generateId(),
+					role: "user",
+					display: <UserMessage>{input}</UserMessage>,
+				},
 			]);
 
 			setInput(""); // Clear the input field immediately (value is captured in the closure of this function)
