@@ -2,10 +2,9 @@ import { delay } from "@/lib/utils";
 import type { Tables } from "@/supabase/types";
 import { useState } from "react";
 import useSWR, { mutate } from "swr";
+import { fetcher } from "../fetcher";
 
 type UserStat = Tables<"user_stats">;
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 // Helper function to get default dates
 const getDefaultDates = () => {
@@ -43,7 +42,7 @@ export function useStats(userId: string) {
 export function markStatsAsStale(userId: string) {
 	const { startDate, endDate } = getDefaultDates();
 	const url = `/api/stats/${userId}?startDate=${startDate}&endDate=${endDate}`;
-	delay(1500); // TODO: Hacky delay for the data to be updated. Use optimistic UI w/ context provider instead?
+	delay(2500); // TODO: Hacky delay for the data to be updated. Use optimistic UI w/ context provider instead?
 	mutate(url);
 }
 

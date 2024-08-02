@@ -45,7 +45,12 @@ export function TaskItem({
 
 		setLocalInstance(updatedInstance);
 		updateTaskInstance(localInstance.id, updatedInstance);
-		markStatsAsStale(session?.user?.id ?? "");
+
+		// TODO: Investigate why StatsCard won't update when the if statement is removed.
+		if (updatedInstance.is_completed) {
+			markStatsAsStale(session?.user?.id ?? "");
+		}
+		// markStatsAsStale(session?.user?.id ?? "");
 	};
 
 	const onIncrement = () => {

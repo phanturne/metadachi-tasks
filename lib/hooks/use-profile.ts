@@ -1,8 +1,6 @@
 import type { Tables } from "@/supabase/types";
 import useSWR, { mutate } from "swr";
-
-// Define the fetcher function
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import { fetcher } from "../fetcher";
 
 export function useProfile(userId?: string) {
 	const { data, error } = useSWR<Tables<"profiles"> | null>(

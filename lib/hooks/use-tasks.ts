@@ -1,8 +1,6 @@
 import type { TaskWithInstances } from "@/lib/db/tasks";
 import useSWR, { mutate } from "swr";
-
-// Define the fetcher function
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import { fetcher } from "../fetcher";
 
 export function useTasksWithInstances(userId: string) {
 	const { data, error, mutate } = useSWR<TaskWithInstances[] | undefined>(
