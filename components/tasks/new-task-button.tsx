@@ -19,7 +19,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 const EmptyTask: Partial<Tables<"tasks">> = {
-	name: "New Task",
+	name: "",
 	parts_per_instance: 1,
 };
 
@@ -44,6 +44,7 @@ export const NewTaskButton = () => {
 		try {
 			await createTask(taskData);
 			markTasksAsStale(taskData.user_id);
+			setTask(EmptyTask);
 			toast.success("Task created successfully");
 		} catch (error) {
 			toast.error("Failed to create task");
@@ -65,6 +66,7 @@ export const NewTaskButton = () => {
 							<ModalBody>
 								<Input
 									label="Name"
+									isRequired
 									value={task.name}
 									onChange={(e) => setTask({ ...task, name: e.target.value })}
 								/>
@@ -107,6 +109,7 @@ export const NewTaskButton = () => {
 										handleCreateTask();
 										onClose();
 									}}
+									isDisabled={!task.name}
 								>
 									Save
 								</Button>
