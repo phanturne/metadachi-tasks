@@ -17,10 +17,10 @@ import { useActions, useUIState } from "ai/rsc";
 import React from "react";
 
 export function Chat() {
-	const [conversation, setConversation] = useUIState();
+	const [messages, setMessages] = useUIState();
 	const { submitUserMessage } = useActions();
 
-	const isNewChat = conversation.length === 0;
+	const isNewChat = messages.length === 0;
 
 	return (
 		<Card className="px-4 rounded-lg w-full flex flex-col">
@@ -32,14 +32,14 @@ export function Chat() {
 					{isNewChat ? (
 						<NewChatContent />
 					) : (
-						<ChatMessages conversation={conversation} />
+						<ChatMessages messages={messages} />
 					)}
 				</ScrollShadow>
 			</CardBody>
 			<CardFooter>
 				<div className="relative flex w-full flex-col gap-4">
 					<ChatInput
-						setConversation={setConversation}
+						setMessages={setMessages}
 						submitUserMessage={submitUserMessage}
 					/>
 				</div>

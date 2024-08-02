@@ -1,10 +1,9 @@
-import type { ClientMessage } from "@/lib/types";
+import type { UIState } from "@/lib/chat/actions";
 
-// biome-ignore lint/suspicious/noExplicitAny: Vercel AI SDK's conversation type is any
-export function ChatMessages({ conversation }: { conversation: any }) {
+export function ChatMessages({ messages }: { messages: UIState }) {
 	return (
 		<div className="flex flex-col gap-4">
-			{conversation.map((message: ClientMessage) => (
+			{messages.map((message) => (
 				<div key={message.id}>{message.display}</div>
 			))}
 		</div>

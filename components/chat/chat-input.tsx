@@ -14,12 +14,12 @@ import { generateId } from "ai";
 import React, { useState } from "react";
 
 interface ChatInputProps extends TextAreaProps {
-	setConversation: React.Dispatch<React.SetStateAction<ClientMessage[]>>;
+	setMessages: React.Dispatch<React.SetStateAction<ClientMessage[]>>;
 	submitUserMessage: (message: string) => Promise<ClientMessage>;
 }
 
 export const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(
-	({ classNames = {}, setConversation, submitUserMessage, ...props }, ref) => {
+	({ classNames = {}, setMessages, submitUserMessage, ...props }, ref) => {
 		const [input, setInput] = useState<string>("");
 		const [isComposing, setIsComposing] = useState<boolean>(false);
 
@@ -30,8 +30,8 @@ export const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(
 		const handleSendMessage = async () => {
 			if (!input.trim()) return;
 
-			setConversation((currentConversation) => [
-				...currentConversation,
+			setMessages((currentMessages) => [
+				...currentMessages,
 				{
 					id: generateId(),
 					role: "user",
@@ -43,10 +43,7 @@ export const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(
 
 			const message = await submitUserMessage(input);
 
-			setConversation((currentConversation) => [
-				...currentConversation,
-				message,
-			]);
+			setMessages((currentMessages) => [...currentMessages, message]);
 		};
 
 		const handleKeyDown = (event: React.KeyboardEvent) => {

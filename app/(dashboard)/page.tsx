@@ -3,8 +3,11 @@ import LeaderboardCard from "@/components/leaderboard-card";
 import StatsCard from "@/components/stats-card";
 import TasksCard from "@/components/tasks/task-card";
 import { AI } from "@/lib/chat/actions";
+import { generateId } from "ai";
 
 export default function HomePage() {
+	const id = generateId();
+
 	return (
 		<div className="flex flex-grow gap-4 px-6 w-full overflow-hidden pb-4 shrink">
 			{/* Left Panel */}
@@ -27,7 +30,7 @@ export default function HomePage() {
 
 			{/* Right Panel */}
 			<div className="flex flex-grow" style={{ flex: 2 }}>
-				<AI>
+				<AI initialAIState={{ chatId: id, messages: [] }}>
 					<Chat />
 				</AI>
 			</div>
