@@ -137,7 +137,7 @@ export function TaskItem({
 					<div className="flex flex-col items-start">
 						<h4 className="text-lg">{task.name}</h4>
 						{task.end_time && (
-							<p className="text-sm">Due: {formatDateTime(task.end_time)}</p>
+							<p className="text-sm">{formatDateTime(task.end_time)}</p>
 						)}
 					</div>
 					{/*  TODO: Add streak for recurring tasks*/}

@@ -3,6 +3,7 @@
 import { createTask } from "@/lib/db/tasks";
 import { useSession } from "@/lib/hooks/use-session";
 import { markTasksAsStale } from "@/lib/hooks/use-tasks";
+import { formatDateTime } from "@/lib/utils";
 import type { Tables } from "@/supabase/types";
 import { Card, Checkbox } from "@nextui-org/react";
 import type React from "react";
@@ -46,7 +47,9 @@ export function TaskSuggestion({ task }: { task: Tables<"tasks"> }) {
 						</p>
 					</div>
 					<p className="text-md justify-end">
-						Due: {task.end_time ? task.end_time : "N/A"}
+						{task.end_time && (
+							<p className="text-sm">{formatDateTime(task.end_time)}</p>
+						)}
 					</p>
 				</div>
 			</div>

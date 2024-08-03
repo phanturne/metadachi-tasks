@@ -2,8 +2,10 @@ import { createTask } from "@/lib/db/tasks";
 import { useSession } from "@/lib/hooks/use-session";
 import { markTasksAsStale } from "@/lib/hooks/use-tasks";
 import type { Tables } from "@/supabase/types";
+import { parseAbsoluteToLocal } from "@internationalized/date";
 import {
 	Button,
+	DatePicker,
 	Input,
 	Modal,
 	ModalBody,
@@ -12,6 +14,7 @@ import {
 	ModalHeader,
 	Slider,
 	Textarea,
+	Tooltip,
 	useDisclosure,
 } from "@nextui-org/react";
 import type React from "react";
@@ -21,6 +24,7 @@ import { toast } from "sonner";
 const EmptyTask: Partial<Tables<"tasks">> = {
 	name: "",
 	parts_per_instance: 1,
+	end_time: undefined,
 };
 
 export const NewTaskButton = () => {
@@ -73,7 +77,7 @@ export const NewTaskButton = () => {
 								<Slider
 									label="Total Parts"
 									minValue={1}
-									maxValue={10}
+									maxValue={50}
 									value={task.parts_per_instance || 1}
 									onChange={(value) => {
 										setTask({
@@ -81,6 +85,37 @@ export const NewTaskButton = () => {
 											parts_per_instance: value as number,
 										});
 									}}
+									// we extract the default children to render the input
+									renderValue={({ children, ...props }) => (
+										<output {...props}>
+											<Tooltip
+												className="text-tiny text-default-500 rounded-md"
+												content="Please enter a value from 1 to 50"
+												placement="left"
+											>
+												<input
+													className="px-1 py-0.5 w-12 text-right text-small text-default-700 font-medium bg-default-100 outline-none transition-colors rounded-small border-medium border-transparent hover:border-primary focus:border-primary"
+													type="text"
+													aria-label="Total parts"
+													value={task.parts_per_instance || 1}
+													onChange={(
+														e: React.ChangeEvent<HTMLInputElement>,
+													) => {
+														let v = Number(e.target.value);
+
+														if (Number.isInteger(v)) {
+															if (v < 1) v = 1;
+															if (v > 50) v = 50;
+															setTask({
+																...task,
+																parts_per_instance: v,
+															});
+														}
+													}}
+												/>
+											</Tooltip>
+										</output>
+									)}
 								/>
 								<Textarea
 									label="Description"
@@ -89,9 +124,28 @@ export const NewTaskButton = () => {
 										setTask({ ...task, description: e.target.value })
 									}
 								/>
-								<div className="flex items-center gap-2">
-									<p>Due: {task.end_time}</p>
-								</div>
+								<DatePicker
+									label="Deadline"
+									labelPlacement="outside"
+									value={
+										task.end_time
+											? parseAbsoluteToLocal(task.end_time)
+											: undefined
+									}
+									onChange={(v) => {
+										const dateWithMidnight = new Date(
+											v.year,
+											v.month - 1,
+											v.day,
+											v?.hour ?? 0,
+											v?.minute ?? 0,
+										);
+										setTask({
+											...task,
+											end_time: dateWithMidnight.toISOString(),
+										});
+									}}
+								/>
 							</ModalBody>
 							<ModalFooter>
 								<Button

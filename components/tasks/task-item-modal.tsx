@@ -1,4 +1,5 @@
 import type { TaskWithInstances } from "@/lib/db/tasks";
+import { formatDateTime } from "@/lib/utils";
 import type { Tables } from "@/supabase/types";
 import {
 	Button,
@@ -61,9 +62,10 @@ export function TaskModal({
 							{/*	value={instance.notes || ""}*/}
 							{/*	onChange={(e) => onUpdateInstance({ notes: e.target.value })}*/}
 							{/*/>*/}
-							<div className="flex items-center gap-2">
-								<p>Due: {task.end_time}</p>
-								<p>Completed: {instance.is_completed ? "Yes" : "No"}</p>
+							<div className="flex flex-col gap-2">
+								{task.end_time && (
+									<p className="text-sm">{formatDateTime(task.end_time)}</p>
+								)}
 							</div>
 							<div className="flex items-center gap-2">
 								<p>Progress:</p>
