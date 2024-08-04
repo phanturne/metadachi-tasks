@@ -45,14 +45,3 @@ export function markStatsAsStale(userId: string) {
 	delay(2500); // TODO: Hacky delay for the data to be updated. Use optimistic UI w/ context provider instead?
 	mutate(url);
 }
-
-export function calculateTasksCompletedToday(
-	todaysStats?: UserStat,
-	yesterdayStats?: UserStat,
-): number {
-	if (!todaysStats) return 0;
-	if (!yesterdayStats) return todaysStats.tasks_completed ?? 0;
-	return (
-		(todaysStats.tasks_completed ?? 0) - (yesterdayStats.tasks_completed ?? 0)
-	);
-}

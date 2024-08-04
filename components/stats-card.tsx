@@ -2,7 +2,7 @@
 
 import { GoldStatsChart } from "@/components/stats-chart";
 import { useSession } from "@/lib/hooks/use-session";
-import { calculateTasksCompletedToday, useStats } from "@/lib/hooks/use-stats";
+import { useStats } from "@/lib/hooks/use-stats";
 import { Icon } from "@iconify/react";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import React from "react";
@@ -17,16 +17,10 @@ export default function StatsCard() {
 	if (isError) return <div>Error loading stats</div>;
 
 	const todaysStats = stats[0];
-	const yesterdayStats = stats[1];
 
 	const goldChange = todaysStats
-		? (todaysStats.gold_earned ?? 0) - (todaysStats.gold_spent ?? 0)
+		? (todaysStats?.gold_earned ?? 0) - (todaysStats?.gold_spent ?? 0)
 		: undefined;
-
-	const tasksCompletedToday = calculateTasksCompletedToday(
-		todaysStats,
-		yesterdayStats,
-	);
 
 	return (
 		<Card className="px-4 rounded-lg w-full flex flex-col overflow-y-scroll">
@@ -42,7 +36,7 @@ export default function StatsCard() {
 				/>
 				<StatCardItem
 					label="Tasks Completed Today"
-					value={tasksCompletedToday}
+					value={todaysStats?.tasks_completed ?? 0}
 					icon="mdi:task-complete"
 				/>
 

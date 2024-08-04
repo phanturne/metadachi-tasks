@@ -108,7 +108,7 @@ export async function submitUserMessage(content: string) {
 						const difficulty = TaskDifficultySchema.parse(task.difficulty);
 						return {
 							name: task.taskName,
-							end_time: task.dueDate,
+							end_time: task.dueDate === "" ? undefined : task.dueDate,
 							category: task.category,
 							difficulty: difficulty,
 							gold: difficultyGoldMap[difficulty],
