@@ -417,9 +417,9 @@ export type Database = {
           before_value: Json | null
           created_at: string
           exp_change: number | null
+          gold_change: number | null
           id: string
           metadata: Json | null
-          points_change: number | null
           quantity: number | null
           related_entity_id: string | null
           updated_at: string | null
@@ -433,9 +433,9 @@ export type Database = {
           before_value?: Json | null
           created_at?: string
           exp_change?: number | null
+          gold_change?: number | null
           id?: string
           metadata?: Json | null
-          points_change?: number | null
           quantity?: number | null
           related_entity_id?: string | null
           updated_at?: string | null
@@ -449,9 +449,9 @@ export type Database = {
           before_value?: Json | null
           created_at?: string
           exp_change?: number | null
+          gold_change?: number | null
           id?: string
           metadata?: Json | null
-          points_change?: number | null
           quantity?: number | null
           related_entity_id?: string | null
           updated_at?: string | null
@@ -599,7 +599,34 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      user_stats_view: {
+        Row: {
+          created_at: string | null
+          current_streak: number | null
+          date: string | null
+          exp: number | null
+          gold_earned: number | null
+          gold_spent: number | null
+          level: number | null
+          longest_streak: number | null
+          tasks_completed: number | null
+          tasks_created: number | null
+          top_category: string | null
+          total_gold: number | null
+          total_time_spent: unknown | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_stats_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
     }
     Functions: {
       check_expired_quests: {
@@ -684,9 +711,9 @@ export type Database = {
           p_end_date: string
         }
         Returns: {
-          created_at: string
+          created_at: string | null
           current_streak: number | null
-          date: string
+          date: string | null
           exp: number | null
           gold_earned: number | null
           gold_spent: number | null
@@ -698,7 +725,7 @@ export type Database = {
           total_gold: number | null
           total_time_spent: unknown | null
           updated_at: string | null
-          user_id: string
+          user_id: string | null
         }[]
       }
       log_user_activity: {
