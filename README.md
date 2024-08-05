@@ -24,7 +24,20 @@ Prepare to be amazed as we transform your chaotic existence. Just adhere to thes
 7. **Reflect in Your Digital Journal**: Log your thoughts on how AI is revolutionizing your daily grind.
 
 ## Features
-*To be updated*
+- **AI Chat**: Engage in conversations with an AI assistant.
+- **Generative UI**: Enjoy an interactive and dynamic chat experience w/ Vercel AI SDK's generative UI
+- **Task System**: Organize and manage your tasks efficiently.
+- **Leveling System**: Earn experience points for completing tasks.
+- **User Stats & Activity Log**: Track your progress and activity.
+
+## Planned Features
+- **Friends & Groups**: Connect with friends and form groups for collaborative task management.
+- **Leaderboard System**: Compete with others and climb the leaderboard.
+- **User-defined Reward System**: Customize your rewards for task completion.
+- **Journaling**: Track your mood, make journal entries, and set goals for the next day.
+- **More AI Assistants**: Expand your productivity with additional AI helpers.
+- **Enhanced AI Features**: Unlock advanced AI capabilities.
+- **Guest Accounts**: Use the app without signing up for an account.
 
 ## Technology Stack
 | Technology  | Description                                                                                                         |
