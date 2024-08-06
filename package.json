@@ -23,7 +23,7 @@
 		"@supabase/ssr": "^0.4.0",
 		"@supabase/supabase-js": "^2.44.2",
 		"@vercel/edge-config": "^1.2.0",
-		"ai": "^3.2.36",
+		"ai": "^3.3.0",
 		"chart.js": "^4.4.3",
 		"clsx": "^2.1.1",
 		"framer-motion": "^11.2.13",
