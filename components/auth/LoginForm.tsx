@@ -6,8 +6,10 @@ import {
 	AuthFormType,
 	useAuthModal,
 } from "@/components/providers/auth-context-provider";
+import { Routes } from "@/lib/constants";
 import { supabase } from "@/lib/supabase/browser-client";
 import { Button, Checkbox, Divider, Link } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
 import { toast } from "sonner";
 
@@ -24,6 +26,7 @@ export function LoginForm({
 	const [error, setError] = useState<string>("");
 	const isInvalid = error !== "";
 	const { closeAuthModal } = useAuthModal();
+	const router = useRouter();
 
 	async function handleLogin(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
@@ -55,7 +58,8 @@ export function LoginForm({
 		// Handle successful login
 		toast.success("Successfully logged in");
 		closeAuthModal();
-		window.location.reload();
+		window.location.reload(); // TODO: Possibly hacky solution for reloading when already on home page. Consider invalidating caches
+		router.push(Routes.Home);
 	}
 
 	return (
