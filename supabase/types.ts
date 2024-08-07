@@ -100,6 +100,7 @@ export type Database = {
           bio: string
           created_at: string
           display_name: string
+          goals: string[] | null
           google_gemini_api_key: string | null
           has_onboarded: boolean
           id: string
@@ -124,6 +125,7 @@ export type Database = {
           bio: string
           created_at?: string
           display_name: string
+          goals?: string[] | null
           google_gemini_api_key?: string | null
           has_onboarded?: boolean
           id?: string
@@ -148,6 +150,7 @@ export type Database = {
           bio?: string
           created_at?: string
           display_name?: string
+          goals?: string[] | null
           google_gemini_api_key?: string | null
           has_onboarded?: boolean
           id?: string

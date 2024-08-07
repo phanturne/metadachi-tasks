@@ -1,0 +1,2 @@
+ALTER TABLE profiles
+ADD COLUMN goals TEXT[] DEFAULT ARRAY[]::TEXT[];
