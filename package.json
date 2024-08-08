@@ -44,7 +44,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.8.3",
-		"@iconify/react": "^5.0.1",
+		"@iconify/react": "^5.0.2",
 		"@types/node": "^20.14.9",
 		"@types/react": "^18.3.3",
 		"@types/react-dom": "^18.3.0",
