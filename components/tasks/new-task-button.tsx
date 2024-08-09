@@ -1,3 +1,4 @@
+import { useAuthModal } from "@/components/providers/auth-context-provider";
 import { createTask } from "@/lib/db/tasks";
 import { useSession } from "@/lib/hooks/use-session";
 import { markTasksAsStale } from "@/lib/hooks/use-tasks";
@@ -30,12 +31,17 @@ const EmptyTask: Partial<Tables<"tasks">> = {
 export const NewTaskButton = () => {
 	const { session } = useSession();
 	const { isOpen, onOpen, onOpenChange } = useDisclosure();
+	const { openAuthModal } = useAuthModal();
 
 	const [task, setTask] = useState<Partial<Tables<"tasks">>>({
 		...EmptyTask,
 	});
 
 	const handleNewTask = () => {
+		if (!session) {
+			return openAuthModal();
+		}
+
 		onOpen();
 	};
 

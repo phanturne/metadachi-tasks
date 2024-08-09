@@ -1,6 +1,7 @@
 // Adapted from https://github.com/mckaywrigley/chatbot-ui/blob/d60e1f3ee9d2caf8c9aab659791b841690183b2d/%5Blocale%5D/login/page.tsx#L145
 
 import OAuthButtons from "@/components/auth/OAuthButtons";
+import { GuestLoginButton } from "@/components/auth/guest-login-button";
 import { EmailInput, PasswordInput } from "@/components/input";
 import {
 	AuthFormType,
@@ -90,6 +91,7 @@ export function LoginForm({
 				<Divider className="flex-1" />
 			</div>
 			<OAuthButtons />
+			<GuestLoginButton />
 			<p className="pt-2 text-center text-small">
 				New to Metadachi?&nbsp;
 				<Link

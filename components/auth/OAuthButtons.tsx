@@ -1,3 +1,4 @@
+import { useAuthModal } from "@/components/providers/auth-context-provider";
 import { supabase } from "@/lib/supabase/browser-client";
 import { Icon } from "@iconify/react";
 import { Button } from "@nextui-org/react";
@@ -6,11 +7,15 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 export default function OAuthButtons() {
+	const { closeAuthModal } = useAuthModal();
+
 	async function handleOauthLogin(provider: Provider) {
 		const { data, error } = await supabase.auth.signInWithOAuth({
 			provider,
 			options: {},
 		});
+
+		closeAuthModal();
 
 		if (data.url) {
 			redirect(data.url); // use the redirect API for your server framework
@@ -21,7 +26,7 @@ export default function OAuthButtons() {
 		<div className="flex grow gap-2">
 			{/*<Button*/}
 			{/*  isIconOnly*/}
-			{/*  variant="bordered"*/}
+			{/*  variant="ghost"*/}
 			{/*  onClick={() => handleOauthLogin("google")}*/}
 			{/*  className="grow"*/}
 			{/*>*/}
@@ -29,7 +34,7 @@ export default function OAuthButtons() {
 			{/*</Button>*/}
 			{/*<Button*/}
 			{/*  isIconOnly*/}
-			{/*  variant="bordered"*/}
+			{/*  variant="ghost"*/}
 			{/*  className="grow"*/}
 			{/*  onClick={() => handleOauthLogin("apple")}*/}
 			{/*>*/}
@@ -37,7 +42,7 @@ export default function OAuthButtons() {
 			{/*</Button>*/}
 			{/*<Button*/}
 			{/*  isIconOnly*/}
-			{/*  variant="bordered"*/}
+			{/*  variant="ghost"*/}
 			{/*  className="grow"*/}
 			{/*  onClick={() => handleOauthLogin("discord")}*/}
 			{/*>*/}
@@ -45,14 +50,14 @@ export default function OAuthButtons() {
 			{/*</Button>*/}
 			{/*<Button*/}
 			{/*  isIconOnly*/}
-			{/*  variant="bordered"*/}
+			{/*  variant="ghost"*/}
 			{/*  className="grow"*/}
 			{/*  onClick={() => handleOauthLogin("github")}*/}
 			{/*>*/}
 			{/*  <Icon className="text-xl dark:invert" icon="logos:github-icon" />*/}
 			{/*</Button>*/}
 			<Button
-				variant="bordered"
+				variant="ghost"
 				className="grow"
 				onClick={() => handleOauthLogin("discord")}
 				startContent={<Icon className="text-xl" icon="logos:discord-icon" />}
@@ -60,7 +65,7 @@ export default function OAuthButtons() {
 				Discord
 			</Button>
 			<Button
-				variant="bordered"
+				variant="ghost"
 				className="grow"
 				onClick={() => handleOauthLogin("github")}
 				startContent={

@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuthModal } from "@/components/providers/auth-context-provider";
 import { createTask } from "@/lib/db/tasks";
 import { useSession } from "@/lib/hooks/use-session";
 import { markTasksAsStale } from "@/lib/hooks/use-tasks";
@@ -13,8 +14,13 @@ import { toast } from "sonner";
 export function TaskSuggestion({ task }: { task: Tables<"tasks"> }) {
 	const { session } = useSession();
 	const [isChecked, setIsChecked] = useState(false);
+	const { openAuthModal } = useAuthModal();
 
 	const onCheckboxChange = async (checked: boolean) => {
+		if (!session) {
+			return openAuthModal();
+		}
+
 		setIsChecked(checked);
 
 		const taskData = {

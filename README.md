@@ -83,6 +83,7 @@ Head over to [Supabase](https://supabase.com/) and create a new project.
 #### d. Configure auth
 1. Click on the "Authentication" icon tab on the far left.
 2. In the text tabs, click on "Providers" and make sure "Email" is enabled.
+3. [Optional] In the `Configuration > Authentication` tab, enable `Allow anonymous sign-ins` from the `User Signups` section.
 
 #### e. Connect database
 1. Open a terminal in the root directory of your local repository.
