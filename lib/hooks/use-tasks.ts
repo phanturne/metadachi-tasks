@@ -11,7 +11,7 @@ export function useTasksWithInstances(userId: string) {
 	// Returning data and error, and handling cases where data might be undefined
 	return {
 		tasks: data ?? [],
-		loading: !error && !data,
+		loading: !error && !data && userId !== "",
 		error,
 		mutate,
 	};

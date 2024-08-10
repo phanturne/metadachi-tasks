@@ -156,7 +156,7 @@ export default function ProfileMenu({
 							Feedback
 						</DropdownItem>
 						{!session || isAnonymous ? (
-							<DropdownItem key="login" onClick={openAuthModal}>
+							<DropdownItem key="login" onClick={() => openAuthModal()}>
 								{"Sign Up / Log In"}
 							</DropdownItem>
 						) : (

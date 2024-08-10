@@ -30,7 +30,7 @@ export function useStats(userId: string) {
 
 	return {
 		stats: data ?? [],
-		isLoading: !error && !data,
+		isLoading: !error && !data && userId !== "",
 		isError: error,
 		dates,
 		mutate,

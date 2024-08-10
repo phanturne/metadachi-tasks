@@ -4,7 +4,7 @@ import { NewTaskButton } from "@/components/tasks/new-task-button";
 import { TaskItem } from "@/components/tasks/task-item";
 import { useSession } from "@/lib/hooks/use-session";
 import { useTasksWithInstances } from "@/lib/hooks/use-tasks";
-import { Card, CardBody, CardHeader } from "@nextui-org/react";
+import { Card, CardBody, CardHeader, Skeleton } from "@nextui-org/react";
 import type React from "react";
 
 const TasksCard = () => {
@@ -31,7 +31,11 @@ const TasksCard = () => {
 
 			<CardBody className="flex flex-col gap-2 overflow-y-scroll">
 				{loading ? (
-					<div>Loading...</div>
+					<>
+						{Array.from({ length: 6 }).map((_, index) => (
+							<Skeleton key={index} className="h-12 rounded-lg mb-2" />
+						))}
+					</>
 				) : tasks.length === 0 ? (
 					<div>No tasks found</div>
 				) : (

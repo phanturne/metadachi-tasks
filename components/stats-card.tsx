@@ -1,20 +1,85 @@
 "use client";
 
+import {
+	AuthFormType,
+	useAuthModal,
+} from "@/components/providers/auth-context-provider";
 import { GoldStatsChart } from "@/components/stats-chart";
 import { useSession } from "@/lib/hooks/use-session";
 import { useStats } from "@/lib/hooks/use-stats";
 import { Icon } from "@iconify/react";
-import { Card, CardBody, CardHeader } from "@nextui-org/react";
+import {
+	Button,
+	Card,
+	CardBody,
+	CardHeader,
+	Skeleton,
+} from "@nextui-org/react";
 import React from "react";
 
 export default function StatsCard() {
 	const { session } = useSession();
 	const userId = session?.user.id || "";
 	const { stats, isLoading, isError, dates } = useStats(userId);
+	const { openAuthModal } = useAuthModal();
 
 	// TODO: Add proper skeletons
-	if (isLoading) return <div>Loading...</div>;
-	if (isError) return <div>Error loading stats</div>;
+	if (isLoading) {
+		return (
+			<Card className="px-4 rounded-lg w-full flex flex-col overflow-y-scroll">
+				<CardHeader className="flex justify-between">
+					<h1 className="text-xl bold">Stats</h1>
+				</CardHeader>
+				<CardBody className="overflow-visible gap-2">
+					<Skeleton className="h-5 rounded-lg" />
+					<Skeleton className="h-5 rounded-lg" />
+					<Skeleton className="h-5 rounded-lg" />
+					<Skeleton className="h-32 rounded-lg" />
+				</CardBody>
+			</Card>
+		);
+	}
+
+	if (!session) {
+		return (
+			<Card className="px-4 rounded-lg w-full flex flex-col overflow-y-scroll">
+				<CardHeader className="flex justify-between">
+					<h1 className="text-xl bold">Stats</h1>
+				</CardHeader>
+				<CardBody className="overflow-visible flex flex-col items-center justify-center">
+					<Icon icon="mdi:lock" className="text-4xl mb-4" />
+					<p>Log in to view stats</p>
+					<div className="flex gap-2 mt-4">
+						<Button
+							variant="ghost"
+							onClick={() => openAuthModal(AuthFormType.Login)}
+						>
+							Login
+						</Button>
+						<Button
+							variant="ghost"
+							onClick={() => openAuthModal(AuthFormType.SignUp)}
+						>
+							Sign Up
+						</Button>
+					</div>
+				</CardBody>
+			</Card>
+		);
+	}
+
+	if (isError) {
+		return (
+			<Card className="px-4 rounded-lg w-full flex flex-col overflow-y-scroll">
+				<CardHeader className="flex justify-between">
+					<h1 className="text-xl bold">Stats</h1>
+				</CardHeader>
+				<CardBody className="overflow-visible gap-2">
+					<p>Error loading stats...</p>
+				</CardBody>
+			</Card>
+		);
+	}
 
 	const todaysStats = stats[0];
 
