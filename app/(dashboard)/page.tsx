@@ -23,7 +23,10 @@ export default function HomePage() {
 				</div>
 
 				{/* Bottom Left Panel */}
-				<div className="flex flex-grow h-full" style={{ flex: 2 }}>
+				<div
+					className="flex flex-grow h-full overflow-auto"
+					style={{ flex: 2 }}
+				>
 					<TasksCard />
 				</div>
 			</div>

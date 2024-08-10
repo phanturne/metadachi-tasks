@@ -62,7 +62,7 @@ export const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(
 					...classNames,
 					label: cn("hidden", classNames?.label),
 					input: cn("py-0", classNames?.input),
-					inputWrapper: "!bg-transparent shadow-none items-center",
+					inputWrapper: "!bg-transparent shadow-none items-center rounded-full",
 					innerWrapper: "relative items-center",
 				}}
 				minRows={1}
@@ -78,6 +78,7 @@ export const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(
 					<div className="flex gap-2">
 						<Button
 							isIconOnly
+							size="sm"
 							color={!input.trim() ? "default" : "primary"}
 							radius="full"
 							variant={!input.trim() ? "flat" : "solid"}
