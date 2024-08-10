@@ -16,7 +16,9 @@ export function GuestLoginButton() {
 			console.error("Error creating a guest account:", error);
 		} else {
 			closeAuthModal();
-			toast.success("Successfully logged in as guest");
+			toast.success(
+				"You're in as a guest! Sign up anytime to save your progress.",
+			);
 			router.push(Routes.Setup);
 		}
 	}

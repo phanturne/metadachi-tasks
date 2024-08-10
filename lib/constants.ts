@@ -14,3 +14,5 @@ export const Routes = {
 	Help: "/help",
 	NotFound: "/404",
 };
+
+export const ProtectedRoutes = [Routes.Setup, Routes.Settings];

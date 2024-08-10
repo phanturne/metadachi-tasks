@@ -1,5 +1,6 @@
 // Adapted from https://supabase.com/docs/guides/auth/server-side/nextjs
 
+import { ProtectedRoutes, Routes } from "@/lib/constants";
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -49,6 +50,18 @@ export async function updateSession(request: NextRequest) {
 	// 	url.pathname = "/login";
 	// 	return NextResponse.redirect(url);
 	// }
+
+	// Check if the request is for a protected route
+	const isProtectedRoute = ProtectedRoutes.some((route) =>
+		request.nextUrl.pathname.startsWith(route),
+	);
+
+	// If accessing a protected route and no session, redirect to login
+	if (isProtectedRoute && !user) {
+		const url = request.nextUrl.clone();
+		url.pathname = Routes.Login;
+		return NextResponse.redirect(url);
+	}
 
 	// IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
 	// creating a new response object with NextResponse.next() make sure to:
