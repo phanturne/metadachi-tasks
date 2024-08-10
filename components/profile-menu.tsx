@@ -117,21 +117,9 @@ export default function ProfileMenu({
 						>
 							Leaderboard
 						</DropdownItem>
-						<DropdownItem
-							key="history"
-							onClick={() => router.push(Routes.History)}
-						>
-							History
-						</DropdownItem>
 					</DropdownSection>
 
 					<DropdownSection aria-label="Preferences" showDivider>
-						<DropdownItem
-							key="settings"
-							onClick={() => router.push(Routes.Settings)}
-						>
-							Settings
-						</DropdownItem>
 						<DropdownItem
 							isReadOnly
 							key="theme"
@@ -139,6 +127,18 @@ export default function ProfileMenu({
 							endContent={<ThemeSwitcher />}
 						>
 							Theme
+						</DropdownItem>
+						<DropdownItem
+							key="settings"
+							onClick={() => router.push(Routes.Settings)}
+						>
+							Settings
+						</DropdownItem>
+						<DropdownItem
+							key="history"
+							onClick={() => router.push(Routes.History)}
+						>
+							History
 						</DropdownItem>
 					</DropdownSection>
 
