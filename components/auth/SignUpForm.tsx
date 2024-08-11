@@ -7,7 +7,7 @@ import {
 	AuthFormType,
 	useAuthModal,
 } from "@/components/providers/auth-context-provider";
-import { EMAIL_VERIFICATION, ROOT_URL } from "@/lib/config";
+import { EMAIL_VERIFICATION } from "@/lib/config";
 import { Routes } from "@/lib/constants";
 import { supabase } from "@/lib/supabase/browser-client";
 import { Button, Divider, Link } from "@nextui-org/react";
@@ -41,7 +41,7 @@ export function SignUpForm({
 			email: email,
 			password: password,
 			options: {
-				emailRedirectTo: `${ROOT_URL}/${Routes.Setup}`,
+				emailRedirectTo: `${process.env.NEXT_PUBLIC_ROOT_URL}/${Routes.Setup}`,
 			},
 		});
 

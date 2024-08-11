@@ -1,6 +1,7 @@
 "use client";
 
 import AuthForm from "@/components/auth/AuthForm";
+import { AuthFormType } from "@/components/providers/auth-context-provider";
 import { Routes } from "@/lib/constants";
 import { useProfile } from "@/lib/hooks/use-profile";
 import { useSession } from "@/lib/hooks/use-session";
@@ -19,18 +20,16 @@ export default function LoginPage() {
 	}
 
 	return (
-		<div className="flex justify-center items-center h-screen p-4">
-			<div className="text-center max-w-md w-full p-4">
-				<div className="flex justify-center items-center p-4">
-					<Image
-						src="/apple-touch-icon.png"
-						alt="Metadachi Icon"
-						width={50}
-						height={50}
-					/>
-				</div>
-				<AuthForm />
+		<>
+			<div className="flex justify-center items-center p-4">
+				<Image
+					src="/apple-touch-icon.png"
+					alt="Metadachi Icon"
+					width={50}
+					height={50}
+				/>
 			</div>
-		</div>
+			<AuthForm type={AuthFormType.Login} />
+		</>
 	);
 }

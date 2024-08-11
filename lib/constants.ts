@@ -15,8 +15,4 @@ export const Routes = {
 	NotFound: "/404",
 };
 
-export const ProtectedRoutes = [
-	Routes.Setup,
-	Routes.Settings,
-	Routes.ResetPassword,
-];
+export const ProtectedRoutes = [Routes.Setup, Routes.Settings];

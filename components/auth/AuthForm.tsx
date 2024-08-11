@@ -13,7 +13,7 @@ export default function AuthForm({ type }: { type?: AuthFormType }) {
 	);
 
 	return (
-		<>
+		<div className="flex flex-col w-full gap-2">
 			{formType === AuthFormType.Login && (
 				<LoginForm setAuthFormType={setFormType} />
 			)}
@@ -24,6 +24,6 @@ export default function AuthForm({ type }: { type?: AuthFormType }) {
 				<ForgotPasswordForm setAuthFormType={setFormType} />
 			)}
 			{formType === AuthFormType.ResetPassword && <ResetPasswordForm />}
-		</>
+		</div>
 	);
 }

@@ -4,7 +4,6 @@ import {
 	AuthFormType,
 	useAuthModal,
 } from "@/components/providers/auth-context-provider";
-import { ROOT_URL } from "@/lib/config";
 import { Routes } from "@/lib/constants";
 import { supabase } from "@/lib/supabase/browser-client";
 import { Button, Input, Link } from "@nextui-org/react";
@@ -29,9 +28,9 @@ export function ForgotPasswordForm({
 		const email = formData.get("email") as string;
 
 		// TODO: Add to docs
-		/* In order for redirect to work, make sure ROOT_URL is set correctly. This absolute URL must be saved in your Supabase's allowed Redirect URLs list found at Authentication > Redirect Configuration. */
+		/* In order for redirect to work, make sure process.env.NEXT_PUBLIC_ROOT_URL is set correctly. This absolute URL must be saved in your Supabase's allowed Redirect URLs list found at Authentication > Redirect Configuration. */
 		const { error } = await supabase.auth.resetPasswordForEmail(email, {
-			redirectTo: `${ROOT_URL}${Routes.ResetPassword}`,
+			redirectTo: `${process.env.NEXT_PUBLIC_ROOT_URL}${Routes.ResetPassword}`,
 		});
 
 		// Show error message and return early if the signup failed
