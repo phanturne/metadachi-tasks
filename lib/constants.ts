@@ -3,8 +3,8 @@ export const Routes = {
 	Login: "/login",
 	SignUp: "/sign-up",
 	Setup: "/setup",
-	ResetPassword: "reset-password",
-	Assistants: "assistants",
+	ResetPassword: "/reset-password",
+	Assistants: "/assistants",
 	Rewards: "/rewards",
 	Friends: "/friends",
 	Leaderboard: "/leaderboard",
@@ -15,4 +15,8 @@ export const Routes = {
 	NotFound: "/404",
 };
 
-export const ProtectedRoutes = [Routes.Setup, Routes.Settings];
+export const ProtectedRoutes = [
+	Routes.Setup,
+	Routes.Settings,
+	Routes.ResetPassword,
+];
