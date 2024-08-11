@@ -1,114 +1,143 @@
-import type { TaskWithInstances } from "@/lib/db/tasks";
-import { formatDateTime } from "@/lib/utils";
 import type { Tables } from "@/supabase/types";
+import { parseAbsoluteToLocal } from "@internationalized/date";
 import {
 	Button,
+	DatePicker,
+	Input,
 	Modal,
 	ModalBody,
 	ModalContent,
 	ModalFooter,
 	ModalHeader,
+	Textarea,
 } from "@nextui-org/react";
-import React from "react";
+import React, { useState } from "react";
 
 interface TaskModalProps {
 	isOpen: boolean;
-	onOpenChange: () => void;
-	task: TaskWithInstances;
+	onClose: () => void;
+	task: Tables<"tasks">;
 	instance: Tables<"task_instances">;
-	onIncrement: () => void;
-	onDecrement: () => void;
 	onDelete: () => void;
-	onUpdateInstance: (updates: Partial<Tables<"task_instances">>) => void;
+	onIncrement: (instance: Tables<"task_instances">) => void;
+	onDecrement: (instance: Tables<"task_instances">) => void;
+	onSave: (task: Tables<"tasks">, instance: Tables<"task_instances">) => void;
 }
 
 export function TaskModal({
 	isOpen,
-	onOpenChange,
+	onClose,
 	task,
 	instance,
+	onDelete,
 	onIncrement,
 	onDecrement,
-	onDelete,
-	onUpdateInstance,
+	onSave,
 }: TaskModalProps) {
+	const [localTask, setLocalTask] = useState(task);
+	const [localInstance, setLocalInstance] = useState(instance);
+
 	const canIncrement =
-		(instance.completed_parts ?? 0) < (instance.total_parts ?? 0) &&
-		!instance.is_completed;
+		(localInstance.completed_parts ?? 0) < (localInstance.total_parts ?? 0) &&
+		!localInstance.is_completed;
 	const canDecrement =
-		(instance.completed_parts ?? 0) > 0 && !instance.is_completed;
+		(localInstance.completed_parts ?? 0) > 0 && !localInstance.is_completed;
 
 	return (
-		<Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
+		<Modal isOpen={isOpen} onClose={onClose} size="2xl">
 			<ModalContent>
-				{(onClose) => (
-					<>
-						<ModalHeader className="flex flex-col gap-1">
-							{task.name}
-						</ModalHeader>
-						<ModalBody>
-							{/*<Input*/}
-							{/*	label="Name"*/}
-							{/*	value={task.name}*/}
-							{/*	onChange={(e) => onUpdateInstance({ name: e.target.value })}*/}
-							{/*/>*/}
-							{/*<Textarea*/}
-							{/*	label="Description"*/}
-							{/*	value={task.description || ""}*/}
-							{/*	onChange={(e) => onUpdateInstance({ description: e.target.value })}*/}
-							{/*/>*/}
-							{/*<Textarea*/}
-							{/*	label="Notes"*/}
-							{/*	value={instance.notes || ""}*/}
-							{/*	onChange={(e) => onUpdateInstance({ notes: e.target.value })}*/}
-							{/*/>*/}
-							<div className="flex flex-col gap-2">
-								{task.end_time && (
-									<p className="text-sm">{formatDateTime(task.end_time)}</p>
-								)}
-							</div>
-							<div className="flex items-center gap-2">
-								<p>Progress:</p>
-								<Button
-									isIconOnly
-									size="sm"
-									variant="flat"
-									color="success"
-									onClick={onIncrement}
-									isDisabled={!canIncrement}
-								>
-									+
-								</Button>
-								<p>{`${instance.completed_parts ?? 0} / ${instance.total_parts ?? 0}`}</p>
-								<Button
-									isIconOnly
-									size="sm"
-									variant="flat"
-									color="danger"
-									onClick={onDecrement}
-									isDisabled={!canDecrement}
-								>
-									-
-								</Button>
-							</div>
-						</ModalBody>
-						<ModalFooter>
-							<Button
-								color="danger"
-								variant="light"
-								onPress={() => {
-									onDelete();
-									onClose();
-								}}
-							>
-								Delete
-							</Button>
-							<Button color="primary" onPress={onClose}>
-								Save
-							</Button>
-						</ModalFooter>
-					</>
-				)}
+				<ModalHeader className="flex flex-col gap-1">{task.name}</ModalHeader>
+				<ModalBody>
+					<Input
+						label="Name"
+						value={localTask.name || ""}
+						onChange={(e) =>
+							setLocalTask({ ...localTask, name: e.target.value })
+						}
+					/>
+					<Textarea
+						label="Description"
+						value={localTask.description || ""}
+						onChange={(e) =>
+							setLocalTask({ ...localTask, description: e.target.value })
+						}
+					/>
+					<Textarea
+						label="Notes"
+						value={localInstance.notes || ""}
+						onChange={(e) =>
+							setLocalInstance({ ...localInstance, notes: e.target.value })
+						}
+					/>
+
+					<DatePicker
+						label="Deadline"
+						labelPlacement="outside"
+						value={
+							localInstance.end_time
+								? parseAbsoluteToLocal(localInstance.end_time)
+								: undefined
+						}
+						onChange={(v) => {
+							const dateWithMidnight = new Date(
+								v.year,
+								v.month - 1,
+								v.day,
+								v?.hour ?? 0,
+								v?.minute ?? 0,
+							);
+							setLocalInstance({
+								...instance,
+								end_time: dateWithMidnight.toISOString(),
+							});
+						}}
+					/>
+					<div className="flex items-center gap-2">
+						<p>Progress:</p>
+						<Button
+							isIconOnly
+							size="sm"
+							variant="flat"
+							color="success"
+							onClick={() => onIncrement(localInstance)}
+							isDisabled={!canIncrement}
+						>
+							+
+						</Button>
+						<p>{`${localInstance.is_completed ? localInstance.total_parts ?? 0 : localInstance.completed_parts ?? 0} / ${localInstance.total_parts ?? 0}`}</p>
+						<Button
+							isIconOnly
+							size="sm"
+							variant="flat"
+							color="danger"
+							onClick={() => onDecrement(localInstance)}
+							isDisabled={!canDecrement}
+						>
+							-
+						</Button>
+					</div>
+				</ModalBody>
+				<ModalFooter>
+					<Button
+						color="danger"
+						variant="light"
+						onPress={() => {
+							onDelete();
+							onClose();
+						}}
+					>
+						Delete
+					</Button>
+					<Button
+						color="primary"
+						onPress={() => {
+							onSave(localTask, localInstance);
+							onClose();
+						}}
+					>
+						Save
+					</Button>
+				</ModalFooter>
 			</ModalContent>
 		</Modal>
 	);

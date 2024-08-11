@@ -1,11 +1,17 @@
 import { TaskModal } from "@/components/tasks/task-item-modal";
 import type { TaskWithInstances } from "@/lib/db/tasks";
-import { deleteTaskInstance, updateTaskInstance } from "@/lib/db/tasks";
+import {
+	deleteTaskInstance,
+	updateTask,
+	updateTaskInstance,
+} from "@/lib/db/tasks";
 import { useSession } from "@/lib/hooks/use-session";
 import { markStatsAsStale } from "@/lib/hooks/use-stats";
+import { markTasksAsStale } from "@/lib/hooks/use-tasks";
 import { formatDateTime } from "@/lib/utils";
 import type { Tables } from "@/supabase/types";
 import { Button, Card, Checkbox, useDisclosure } from "@nextui-org/react";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -15,16 +21,14 @@ export function TaskItem({
 	instance,
 }: { task: TaskWithInstances; instance: number }) {
 	const { session } = useSession();
-	const [localInstance, setLocalInstance] = useState<
-		Tables<"task_instances"> | undefined
-	>(task?.instances[instance] as Tables<"task_instances"> | undefined);
+	const [localInstance, setLocalInstance] = useState<Tables<"task_instances">>(
+		task?.instances[instance] ?? {},
+	);
 
-	const { isOpen, onOpen, onOpenChange } = useDisclosure();
+	const { isOpen, onOpen, onClose } = useDisclosure();
 
 	useEffect(() => {
-		setLocalInstance(
-			task?.instances[instance] as Tables<"task_instances"> | undefined,
-		);
+		setLocalInstance(task?.instances[instance] ?? {});
 	}, [task, instance]);
 
 	const onCardClick = () => {
@@ -53,21 +57,21 @@ export function TaskItem({
 		// markStatsAsStale(session?.user?.id ?? "");
 	};
 
-	const onIncrement = () => {
-		if (!localInstance) return;
+	const onIncrement = (unsavedInstance: Tables<"task_instances">) => {
+		if (!unsavedInstance) return;
 
-		const completedParts = localInstance.completed_parts ?? 0;
-		const totalParts = localInstance.total_parts ?? 0;
+		const completedParts = unsavedInstance.completed_parts ?? 0;
+		const totalParts = unsavedInstance.total_parts ?? 0;
 
-		if (completedParts < totalParts && !localInstance.is_completed) {
+		if (completedParts < totalParts && !unsavedInstance.is_completed) {
 			const updatedInstance = {
-				...localInstance,
+				...unsavedInstance,
 				completed_parts: completedParts + 1,
 				is_completed: completedParts + 1 === totalParts,
 			};
 
 			setLocalInstance(updatedInstance);
-			updateTaskInstance(localInstance.id, updatedInstance);
+			updateTaskInstance(unsavedInstance.id, updatedInstance);
 
 			if (updatedInstance.is_completed) {
 				markStatsAsStale(session?.user?.id ?? "");
@@ -75,20 +79,20 @@ export function TaskItem({
 		}
 	};
 
-	const onDecrement = () => {
-		if (!localInstance) return;
+	const onDecrement = (unsavedInstance: Tables<"task_instances">) => {
+		if (!unsavedInstance) return;
 
-		const completedParts = localInstance.completed_parts ?? 0;
+		const completedParts = unsavedInstance.completed_parts ?? 0;
 
-		if (completedParts > 0 && !localInstance.is_completed) {
+		if (completedParts > 0 && !unsavedInstance.is_completed) {
 			const updatedInstance = {
-				...localInstance,
+				...unsavedInstance,
 				completed_parts: completedParts - 1,
 				is_completed: false,
 			};
 
 			setLocalInstance(updatedInstance);
-			updateTaskInstance(localInstance.id, updatedInstance);
+			updateTaskInstance(unsavedInstance.id, updatedInstance);
 		}
 	};
 
@@ -96,19 +100,31 @@ export function TaskItem({
 		if (!localInstance) return;
 		try {
 			deleteTaskInstance(localInstance.id);
-			setLocalInstance(undefined);
+			setLocalInstance({} as Tables<"task_instances">);
 			markStatsAsStale(session?.user?.id ?? "");
+			markTasksAsStale(session?.user?.id ?? "");
 			toast.success("Task deleted successfully");
 		} catch (error) {
 			toast.error("Failed to delete task");
 		}
 	};
 
-	const onUpdate = (updates: Partial<Tables<"task_instances">>) => {
-		if (!localInstance) return;
-		const updatedInstance = { ...localInstance, ...updates };
-		setLocalInstance(updatedInstance);
-		updateTaskInstance(localInstance.id, updatedInstance);
+	// TODO: Create Supabase function to update both task_instance and task instead of using 2 queries
+	const onSave = (
+		task: Tables<"tasks">,
+		instance: Tables<"task_instances">,
+	) => {
+		updateTask(task.id, task);
+		updateTaskInstance(instance.id, instance);
+
+		try {
+			markStatsAsStale(session?.user?.id ?? "");
+			markTasksAsStale(session?.user?.id ?? "");
+
+			toast.success("Task updated successfully");
+		} catch (e) {
+			toast.error("Failed to update task.");
+		}
 	};
 
 	if (!localInstance) {
@@ -136,8 +152,10 @@ export function TaskItem({
 
 					<div className="flex flex-col items-start">
 						<h4 className="text-lg">{task.name}</h4>
-						{task.end_time && (
-							<p className="text-sm">{formatDateTime(task.end_time)}</p>
+						{localInstance.end_time && (
+							<p className="text-sm">
+								{formatDateTime(localInstance.end_time)}
+							</p>
 						)}
 					</div>
 					{/*  TODO: Add streak for recurring tasks*/}
@@ -152,7 +170,7 @@ export function TaskItem({
 						className="rounded-full !size-6 text-lg"
 						onClick={(e) => {
 							e.stopPropagation();
-							onIncrement();
+							onIncrement(localInstance);
 						}}
 						isDisabled={!canIncrement}
 					>
@@ -169,7 +187,7 @@ export function TaskItem({
 						className="rounded-full !size-6 text-lg"
 						onClick={(e) => {
 							e.stopPropagation();
-							onDecrement();
+							onDecrement(localInstance);
 						}}
 						isDisabled={!canDecrement}
 					>
@@ -180,13 +198,13 @@ export function TaskItem({
 
 			<TaskModal
 				isOpen={isOpen}
-				onOpenChange={onOpenChange}
-				task={task}
+				onClose={onClose}
+				task={omit(task, ["instances"]) as Tables<"tasks">}
 				instance={localInstance}
+				onDelete={onDelete}
 				onIncrement={onIncrement}
 				onDecrement={onDecrement}
-				onDelete={onDelete}
-				onUpdateInstance={onUpdate}
+				onSave={onSave}
 			/>
 		</>
 	);
