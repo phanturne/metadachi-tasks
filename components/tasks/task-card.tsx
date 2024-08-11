@@ -4,6 +4,7 @@ import { NewTaskButton } from "@/components/tasks/new-task-button";
 import { TaskItem } from "@/components/tasks/task-item";
 import { useSession } from "@/lib/hooks/use-session";
 import { useTasksWithInstances } from "@/lib/hooks/use-tasks";
+import { Icon } from "@iconify/react";
 import { Card, CardBody, CardHeader, Skeleton } from "@nextui-org/react";
 import type React from "react";
 
@@ -37,7 +38,17 @@ const TasksCard = () => {
 						))}
 					</>
 				) : tasks.length === 0 ? (
-					<div>No tasks found</div>
+					<div className="h-full w-full flex flex-col items-center justify-center text-center space-y-4">
+						<Icon
+							icon="solar:checklist-bold"
+							className="size-28 text-green-500"
+						/>
+						<p className="text-lg">
+							{session
+								? "All tasks done! You’re on fire today!"
+								: "No tasks yet. Start by adding something to do!"}
+						</p>
+					</div>
 				) : (
 					tasks.map(
 						(task) =>
