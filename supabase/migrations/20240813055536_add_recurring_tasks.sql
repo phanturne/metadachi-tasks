@@ -2,6 +2,7 @@
 ALTER TABLE tasks
 DROP COLUMN time_duration,
 DROP COLUMN recurrence_pattern,
+DROP COLUMN is_recurring,
 ADD COLUMN recurrence_interval VARCHAR(20) CHECK (recurrence_interval IN (
     'HOURLY', 'DAILY', 'WEEKLY', 'WEEKDAYS', 'WEEKENDS', 'BIWEEKLY', 'MONTHLY', 'YEARLY', 'INFINITE'
 )),
@@ -19,7 +20,6 @@ USING
         WHEN start_time IS NOT NULL THEN (created_at)::timestamptz
         ELSE NULL
     END;
-
 COMMIT;
 
 -- Function to calculate the next date or end time based on the recurrence pattern
@@ -60,7 +60,7 @@ DECLARE
 BEGIN
     FOR task IN (
         SELECT * FROM tasks
-        WHERE is_recurring = TRUE
+        WHERE recurrence_interval IS NOT NULL
         AND recurrence_interval != 'INFINITE'
         AND (end_repeat IS NULL OR end_repeat > current_date)
         AND (max_recurrences IS NULL OR instances_completed < max_recurrences)
@@ -100,10 +100,9 @@ DECLARE
 BEGIN
     SELECT * INTO task_record FROM tasks WHERE id = NEW.task_id;
 
-    IF task_record.is_recurring AND
-       (task_record.recurrence_interval = 'INFINITE' OR
-        (task_record.max_recurrences IS NOT NULL AND task_record.instances_completed < task_record.max_recurrences) OR
-        (task_record.end_repeat IS NULL OR NEW.start_time < task_record.end_repeat)) THEN
+    IF (task_record.recurrence_interval IS NOT NULL AND task_record.recurrence_interval != 'INFINITE') AND
+       (task_record.max_recurrences IS NOT NULL AND task_record.instances_completed < task_record.max_recurrences OR
+        task_record.end_repeat IS NULL OR NEW.start_time < task_record.end_repeat) THEN
 
         next_instance_date := calculate_next_date_or_end_time(NEW.start_time, task_record.recurrence_interval);
         calculated_end_time := calculate_next_date_or_end_time(next_instance_date, task_record.recurrence_interval);
@@ -137,8 +136,7 @@ EXECUTE FUNCTION generate_next_instance_after_completion();
 SELECT cron.schedule('hourly_generate_recurring_task_instances', '0 * * * *',
     $$SELECT generate_recurring_task_instances() WHERE EXISTS (
         SELECT 1 FROM tasks
-        WHERE is_recurring = TRUE
-        AND recurrence_interval = 'HOURLY'
+        WHERE recurrence_interval = 'HOURLY'
         AND (end_repeat IS NULL OR end_repeat > CURRENT_TIMESTAMP)
         AND (max_recurrences IS NULL OR instances_completed < max_recurrences)
     );$$
@@ -148,7 +146,7 @@ SELECT cron.schedule('hourly_generate_recurring_task_instances', '0 * * * *',
 SELECT cron.schedule('daily_generate_recurring_task_instances', '0 0 * * *',
     $$SELECT generate_recurring_task_instances() WHERE EXISTS (
         SELECT 1 FROM tasks
-        WHERE is_recurring = TRUE
+        WHERE recurrence_interval IS NOT NULL
         AND recurrence_interval != 'HOURLY'
         AND recurrence_interval != 'INFINITE'
         AND (end_repeat IS NULL OR end_repeat > CURRENT_TIMESTAMP)
