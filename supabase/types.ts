@@ -333,6 +333,7 @@ export type Database = {
           created_at: string
           description: string | null
           difficulty: string
+          end_repeat: string | null
           end_time: string | null
           gold: number
           group_id: string | null
@@ -341,12 +342,13 @@ export type Database = {
           image: string | null
           increment_value: number | null
           instances: number | null
-          is_recurring: boolean | null
+          instances_completed: number | null
+          max_recurrences: number | null
           name: string
           parts_per_instance: number | null
-          recurrence_pattern: string | null
+          recurrence_interval: string | null
           start_time: string | null
-          time_duration: unknown | null
+          task_type: string | null
           updated_at: string | null
           user_id: string
         }
@@ -355,6 +357,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           difficulty?: string
+          end_repeat?: string | null
           end_time?: string | null
           gold?: number
           group_id?: string | null
@@ -363,12 +366,13 @@ export type Database = {
           image?: string | null
           increment_value?: number | null
           instances?: number | null
-          is_recurring?: boolean | null
+          instances_completed?: number | null
+          max_recurrences?: number | null
           name: string
           parts_per_instance?: number | null
-          recurrence_pattern?: string | null
+          recurrence_interval?: string | null
           start_time?: string | null
-          time_duration?: unknown | null
+          task_type?: string | null
           updated_at?: string | null
           user_id: string
         }
@@ -377,6 +381,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           difficulty?: string
+          end_repeat?: string | null
           end_time?: string | null
           gold?: number
           group_id?: string | null
@@ -385,12 +390,13 @@ export type Database = {
           image?: string | null
           increment_value?: number | null
           instances?: number | null
-          is_recurring?: boolean | null
+          instances_completed?: number | null
+          max_recurrences?: number | null
           name?: string
           parts_per_instance?: number | null
-          recurrence_pattern?: string | null
+          recurrence_interval?: string | null
           start_time?: string | null
-          time_duration?: unknown | null
+          task_type?: string | null
           updated_at?: string | null
           user_id?: string
         }
@@ -632,6 +638,13 @@ export type Database = {
       }
     }
     Functions: {
+      calculate_next_date_or_end_time: {
+        Args: {
+          base_time: string
+          pattern: string
+        }
+        Returns: string
+      }
       check_expired_quests: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -677,6 +690,10 @@ export type Database = {
           object_path: string
         }
         Returns: Record<string, unknown>
+      }
+      generate_recurring_task_instances: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       get_active_quests: {
         Args: {

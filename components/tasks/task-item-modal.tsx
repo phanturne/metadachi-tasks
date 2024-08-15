@@ -1,3 +1,5 @@
+import { recurrencePatterns } from "@/components/tasks/new-task-button";
+import { capitalizeWord } from "@/lib/utils";
 import type { Tables } from "@/supabase/types";
 import { parseAbsoluteToLocal } from "@internationalized/date";
 import {
@@ -9,9 +11,12 @@ import {
 	ModalContent,
 	ModalFooter,
 	ModalHeader,
+	Select,
+	SelectItem,
 	Textarea,
 } from "@nextui-org/react";
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 
 interface TaskModalProps {
 	isOpen: boolean;
@@ -55,43 +60,7 @@ export function TaskModal({
 							setLocalTask({ ...localTask, name: e.target.value })
 						}
 					/>
-					<Textarea
-						label="Description"
-						value={localTask.description || ""}
-						onChange={(e) =>
-							setLocalTask({ ...localTask, description: e.target.value })
-						}
-					/>
-					<Textarea
-						label="Notes"
-						value={localInstance.notes || ""}
-						onChange={(e) =>
-							setLocalInstance({ ...localInstance, notes: e.target.value })
-						}
-					/>
 
-					<DatePicker
-						label="Deadline"
-						labelPlacement="outside"
-						value={
-							localInstance.end_time
-								? parseAbsoluteToLocal(localInstance.end_time)
-								: undefined
-						}
-						onChange={(v) => {
-							const dateWithMidnight = new Date(
-								v.year,
-								v.month - 1,
-								v.day,
-								v?.hour ?? 0,
-								v?.minute ?? 0,
-							);
-							setLocalInstance({
-								...instance,
-								end_time: dateWithMidnight.toISOString(),
-							});
-						}}
-					/>
 					<div className="flex items-center gap-2">
 						<p>Progress:</p>
 						<Button
@@ -116,6 +85,109 @@ export function TaskModal({
 							-
 						</Button>
 					</div>
+
+					<div className="flex gap-2">
+						<DatePicker
+							label="Deadline"
+							value={
+								localTask.end_time
+									? parseAbsoluteToLocal(localTask.end_time)
+									: undefined
+							}
+							onChange={(v) => {
+								const dateWithMidnight = new Date(
+									v.year,
+									v.month - 1,
+									v.day,
+									v?.hour ?? 0,
+									v?.minute ?? 0,
+								);
+								setLocalTask({
+									...localTask,
+									end_time: dateWithMidnight.toISOString(),
+								});
+							}}
+						/>
+
+						<Input
+							label="Gold"
+							type="number"
+							value={(localTask.gold ?? "").toString()}
+							onChange={(e) => {
+								// Parse the input value as an integer
+								const intValue = Number.parseInt(e.target.value, 10);
+
+								// Only update the task if the parsed value is a valid number
+								if (!Number.isNaN(intValue)) {
+									setLocalTask({ ...localTask, gold: intValue });
+								} else {
+									setLocalTask({ ...localTask, gold: 0 }); // or handle the case where input is invalid
+								}
+							}}
+							min="0"
+						/>
+					</div>
+
+					{localTask.end_time && (
+						<div className="flex gap-2">
+							<Select
+								label="Repeat"
+								selectedKeys={[task.recurrence_interval ?? "NEVER"]}
+								className="max-w-xs"
+								onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+									setLocalTask({
+										...localTask,
+										recurrence_interval: e.target.value,
+									});
+									console.log(e.target.value, localTask);
+								}}
+							>
+								{recurrencePatterns.map((pattern) => (
+									<SelectItem key={pattern}>
+										{capitalizeWord(pattern)}
+									</SelectItem>
+								))}
+							</Select>
+
+							<DatePicker
+								isDisabled={localTask.recurrence_interval === "NEVER"}
+								label="End Repeat"
+								value={
+									localTask.end_repeat
+										? parseAbsoluteToLocal(localTask.end_repeat)
+										: undefined
+								}
+								onChange={(v) => {
+									const dateWithMidnight = new Date(
+										v.year,
+										v.month - 1,
+										v.day,
+										v?.hour ?? 0,
+										v?.minute ?? 0,
+									);
+									setLocalTask({
+										...localTask,
+										end_repeat: dateWithMidnight.toISOString(),
+									});
+								}}
+							/>
+						</div>
+					)}
+
+					<Textarea
+						label="Description"
+						value={localTask.description || ""}
+						onChange={(e) =>
+							setLocalTask({ ...localTask, description: e.target.value })
+						}
+					/>
+					<Textarea
+						label="Notes"
+						value={localInstance.notes || ""}
+						onChange={(e) =>
+							setLocalInstance({ ...localInstance, notes: e.target.value })
+						}
+					/>
 				</ModalBody>
 				<ModalFooter>
 					<Button

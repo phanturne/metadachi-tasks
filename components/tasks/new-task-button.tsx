@@ -2,6 +2,7 @@ import { useAuthModal } from "@/components/providers/auth-context-provider";
 import { createTask } from "@/lib/db/tasks";
 import { useSession } from "@/lib/hooks/use-session";
 import { markTasksAsStale } from "@/lib/hooks/use-tasks";
+import { capitalizeWord } from "@/lib/utils";
 import type { Tables } from "@/supabase/types";
 import { parseAbsoluteToLocal } from "@internationalized/date";
 import {
@@ -13,6 +14,8 @@ import {
 	ModalContent,
 	ModalFooter,
 	ModalHeader,
+	Select,
+	SelectItem,
 	Slider,
 	Textarea,
 	Tooltip,
@@ -123,34 +126,100 @@ export const NewTaskButton = () => {
 										</output>
 									)}
 								/>
+
+								<div className="flex gap-2">
+									<DatePicker
+										label="Deadline"
+										value={
+											task.end_time
+												? parseAbsoluteToLocal(task.end_time)
+												: undefined
+										}
+										onChange={(v) => {
+											const dateWithMidnight = new Date(
+												v.year,
+												v.month - 1,
+												v.day,
+												v?.hour ?? 0,
+												v?.minute ?? 0,
+											);
+											setTask({
+												...task,
+												end_time: dateWithMidnight.toISOString(),
+											});
+										}}
+									/>
+
+									<Input
+										label="Gold"
+										type="number"
+										value={(task.gold ?? "").toString()}
+										onChange={(e) => {
+											// Parse the input value as an integer
+											const intValue = Number.parseInt(e.target.value, 10);
+
+											// Only update the task if the parsed value is a valid number
+											if (!Number.isNaN(intValue)) {
+												setTask({ ...task, gold: intValue });
+											} else {
+												setTask({ ...task, gold: 0 }); // or handle the case where input is invalid
+											}
+										}}
+										min="0"
+									/>
+								</div>
+
+								{task.end_time && (
+									<div className="flex gap-2">
+										<Select
+											label="Repeat"
+											selectedKeys={[task.recurrence_interval ?? "NEVER"]}
+											className="max-w-xs"
+											onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+												setTask({
+													...task,
+													recurrence_interval: e.target.value,
+												});
+											}}
+										>
+											{recurrencePatterns.map((pattern) => (
+												<SelectItem key={pattern}>
+													{capitalizeWord(pattern)}
+												</SelectItem>
+											))}
+										</Select>
+
+										<DatePicker
+											isDisabled={task.recurrence_interval === "NEVER"}
+											label="End Repeat"
+											value={
+												task.end_repeat
+													? parseAbsoluteToLocal(task.end_repeat)
+													: undefined
+											}
+											onChange={(v) => {
+												const dateWithMidnight = new Date(
+													v.year,
+													v.month - 1,
+													v.day,
+													v?.hour ?? 0,
+													v?.minute ?? 0,
+												);
+												setTask({
+													...task,
+													end_repeat: dateWithMidnight.toISOString(),
+												});
+											}}
+										/>
+									</div>
+								)}
+
 								<Textarea
 									label="Description"
 									value={task.description || ""}
 									onChange={(e) =>
 										setTask({ ...task, description: e.target.value })
 									}
-								/>
-								<DatePicker
-									label="Deadline"
-									labelPlacement="outside"
-									value={
-										task.end_time
-											? parseAbsoluteToLocal(task.end_time)
-											: undefined
-									}
-									onChange={(v) => {
-										const dateWithMidnight = new Date(
-											v.year,
-											v.month - 1,
-											v.day,
-											v?.hour ?? 0,
-											v?.minute ?? 0,
-										);
-										setTask({
-											...task,
-											end_time: dateWithMidnight.toISOString(),
-										});
-									}}
 								/>
 							</ModalBody>
 							<ModalFooter>
@@ -181,3 +250,16 @@ export const NewTaskButton = () => {
 		</>
 	);
 };
+
+export const recurrencePatterns = [
+	"NEVER",
+	"HOURLY",
+	"DAILY",
+	"WEEKLY",
+	"WEEKDAYS",
+	"WEEKENDS",
+	"BIWEEKLY",
+	"MONTHLY",
+	"YEARLY",
+	"INFINITE",
+];

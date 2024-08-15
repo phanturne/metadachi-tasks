@@ -3,13 +3,18 @@ ALTER TABLE tasks
 DROP COLUMN time_duration,
 DROP COLUMN recurrence_pattern,
 DROP COLUMN is_recurring,
-ADD COLUMN recurrence_interval VARCHAR(20) CHECK (recurrence_interval IN (
-    'HOURLY', 'DAILY', 'WEEKLY', 'WEEKDAYS', 'WEEKENDS', 'BIWEEKLY', 'MONTHLY', 'YEARLY', 'INFINITE'
-)),
+ADD COLUMN recurrence_interval VARCHAR(20) DEFAULT 'NEVER' CHECK (recurrence_interval IN (
+    'NEVER', 'HOURLY', 'DAILY', 'WEEKLY', 'WEEKDAYS', 'WEEKENDS', 'BIWEEKLY', 'MONTHLY', 'YEARLY', 'INFINITE'
+));
 ADD COLUMN end_repeat TIMESTAMPTZ,
 ADD COLUMN instances_completed INTEGER DEFAULT 0,
 ADD COLUMN max_recurrences INTEGER,
 ADD COLUMN task_type VARCHAR(20) CHECK (task_type IN ('INSTANCE', 'TIME'));
+
+-- Update existing rows to set the default recurrence_interval value of 'NEVER'
+UPDATE tasks
+SET recurrence_interval = 'NEVER'
+WHERE recurrence_interval IS NULL;
 
 -- Modify the task_instances table
 BEGIN;
@@ -60,7 +65,7 @@ DECLARE
 BEGIN
     FOR task IN (
         SELECT * FROM tasks
-        WHERE recurrence_interval IS NOT NULL
+        WHERE recurrence_interval != 'NEVER'
         AND recurrence_interval != 'INFINITE'
         AND (end_repeat IS NULL OR end_repeat > current_date)
         AND (max_recurrences IS NULL OR instances_completed < max_recurrences)
@@ -100,7 +105,7 @@ DECLARE
 BEGIN
     SELECT * INTO task_record FROM tasks WHERE id = NEW.task_id;
 
-    IF (task_record.recurrence_interval IS NOT NULL AND task_record.recurrence_interval != 'INFINITE') AND
+    IF (task_record.recurrence_interval != 'NEVER' AND task_record.recurrence_interval != 'INFINITE') AND
        (task_record.max_recurrences IS NOT NULL AND task_record.instances_completed < task_record.max_recurrences OR
         task_record.end_repeat IS NULL OR NEW.start_time < task_record.end_repeat) THEN
 
@@ -146,7 +151,7 @@ SELECT cron.schedule('hourly_generate_recurring_task_instances', '0 * * * *',
 SELECT cron.schedule('daily_generate_recurring_task_instances', '0 0 * * *',
     $$SELECT generate_recurring_task_instances() WHERE EXISTS (
         SELECT 1 FROM tasks
-        WHERE recurrence_interval IS NOT NULL
+        WHERE recurrence_interval != 'NEVER'
         AND recurrence_interval != 'HOURLY'
         AND recurrence_interval != 'INFINITE'
         AND (end_repeat IS NULL OR end_repeat > CURRENT_TIMESTAMP)
