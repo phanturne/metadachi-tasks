@@ -47,20 +47,21 @@ const TasksRewardsCard = () => {
 						</div>
 					) : (
 						<div className="flex flex-col gap-2">
-							{tasks.map(
-								(task) =>
-									task.instances.length > 0 && (
-										<React.Fragment key={task.id}>
-											{task.instances.map((_, index) => (
-												<TaskItem
-													key={`${task.id}-${index}`}
-													task={task}
-													instance={index}
-												/>
-											))}
-										</React.Fragment>
-									),
-							)}
+							{tasks.map((task) => {
+								const firstUncompletedIndex = task.instances.findIndex(
+									(instance) => !instance.is_completed,
+								);
+								if (firstUncompletedIndex !== -1) {
+									return (
+										<TaskItem
+											key={task.id}
+											task={task}
+											instance={firstUncompletedIndex}
+										/>
+									);
+								}
+								return null;
+							})}
 						</div>
 					)}
 				</>

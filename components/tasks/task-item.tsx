@@ -134,7 +134,8 @@ export function TaskItem({
 	const canIncrement =
 		(localInstance.completed_parts ?? 0) < (localInstance.total_parts ?? 0) &&
 		!localInstance.is_completed;
-	const canDecrement = (localInstance.completed_parts ?? 0) > 0;
+	const canDecrement =
+		(localInstance.completed_parts ?? 0) > 0 && !localInstance.is_completed;
 
 	return (
 		<>
