@@ -82,7 +82,6 @@ const TasksRewardsCard = () => {
 			<CardHeader className="flex justify-between items-center">
 				<div className="flex items-center gap-2">
 					<Button
-						auto
 						variant={activeView === "tasks" ? "bordered" : "light"}
 						onPress={() => setActiveView("tasks")}
 						className={`text-xl ${activeView === "tasks" ? "font-bold" : ""}`}
@@ -91,7 +90,6 @@ const TasksRewardsCard = () => {
 					</Button>
 					<p className="px-1">/</p>
 					<Button
-						auto
 						variant={activeView === "rewards" ? "bordered" : "light"}
 						onPress={() => setActiveView("rewards")}
 						className={`text-xl ${activeView === "rewards" ? "font-bold" : ""}`}

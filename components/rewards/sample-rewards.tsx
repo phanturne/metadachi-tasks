@@ -6,8 +6,6 @@ const rewards: RewardItem[] = [
 		name: "Ponta do Sol, Portugal",
 		href: "#",
 		price: 50,
-		isNew: false,
-		rating: 4.5,
 		description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 		imageSrc:
 			"https://nextuipro.nyc3.cdn.digitaloceanspaces.com/components-images/places/1.jpeg",
@@ -26,8 +24,6 @@ const rewards: RewardItem[] = [
 		name: "Marton, New Zealand",
 		href: "#",
 		price: 40,
-		isNew: false,
-		rating: 3.94,
 		description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
 		imageSrc:
 			"https://nextuipro.nyc3.cdn.digitaloceanspaces.com/components-images/places/3.jpeg",
