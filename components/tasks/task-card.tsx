@@ -1,73 +1,114 @@
 "use client";
 
+import { NewRewardButton } from "@/components/rewards/new-reward-button";
+import RewardItem from "@/components/rewards/reward-item";
+import rewards from "@/components/rewards/sample-rewards";
 import { NewTaskButton } from "@/components/tasks/new-task-button";
 import { TaskItem } from "@/components/tasks/task-item";
 import { useSession } from "@/lib/hooks/use-session";
 import { useTasksWithInstances } from "@/lib/hooks/use-tasks";
 import { Icon } from "@iconify/react";
-import { Card, CardBody, CardHeader, Skeleton } from "@nextui-org/react";
-import type React from "react";
+import {
+	Button,
+	Card,
+	CardBody,
+	CardHeader,
+	Skeleton,
+} from "@nextui-org/react";
+import React, { useState } from "react";
 
-const TasksCard = () => {
+const TasksRewardsCard = () => {
+	const [activeView, setActiveView] = useState("tasks");
 	const { session } = useSession();
 	const userId = session?.user.id || "";
 	const { tasks, loading } = useTasksWithInstances(userId);
 
+	const renderContent = () => {
+		if (activeView === "tasks") {
+			return (
+				<>
+					{loading ? (
+						<>
+							{Array.from({ length: 6 }).map((_, index) => (
+								<Skeleton key={index} className="h-12 rounded-lg mb-2" />
+							))}
+						</>
+					) : tasks.length === 0 ? (
+						<div className="h-full w-full flex flex-col items-center justify-center text-center space-y-4">
+							<Icon
+								icon="solar:checklist-bold"
+								className="size-28 text-green-500"
+							/>
+							<p className="text-lg">
+								{session
+									? "All tasks done! You're on fire today!"
+									: "No tasks yet. Start by adding something to do!"}
+							</p>
+						</div>
+					) : (
+						<div className="flex flex-col gap-2">
+							{tasks.map(
+								(task) =>
+									task.instances.length > 0 && (
+										<React.Fragment key={task.id}>
+											{task.instances.map((_, index) => (
+												<TaskItem
+													key={`${task.id}-${index}`}
+													task={task}
+													instance={index}
+												/>
+											))}
+										</React.Fragment>
+									),
+							)}
+						</div>
+					)}
+				</>
+			);
+		}
+
+		return (
+			<div className="my-auto grid max-w-7xl grid-cols-1 gap-5 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+				{rewards.map((reward) => (
+					<RewardItem key={reward.id} {...reward} />
+				))}
+			</div>
+		);
+	};
+
 	return (
 		<Card className="px-4 rounded-lg w-full flex flex-col pb-4">
-			<CardHeader className="flex justify-between">
-				<h1 className="text-xl bold">Tasks</h1>
-				{/* TODO: Add row of selectable chips for All, Morning, Afternoon, Evening, Today, Week, Month, Year */}
+			<CardHeader className="flex justify-between items-center">
+				<div className="flex items-center gap-2">
+					<Button
+						auto
+						variant={activeView === "tasks" ? "bordered" : "light"}
+						onPress={() => setActiveView("tasks")}
+						className={`text-xl ${activeView === "tasks" ? "font-bold" : ""}`}
+					>
+						Tasks
+					</Button>
+					<p className="px-1">/</p>
+					<Button
+						auto
+						variant={activeView === "rewards" ? "bordered" : "light"}
+						onPress={() => setActiveView("rewards")}
+						className={`text-xl ${activeView === "rewards" ? "font-bold" : ""}`}
+					>
+						Rewards
+					</Button>
+				</div>
 				<div className="flex">
-					{/*<Button isIconOnly radius="full" variant="light">*/}
-					{/*	<Icon icon="solar:filter-bold-duotone" width={24} />*/}
-					{/*</Button>*/}
-					{/*<Button isIconOnly radius="full" variant="light" color="primary">*/}
-					{/*	<Icon icon="solar:sort-vertical-bold-duotone" width={24} />*/}
-					{/*</Button>*/}
-					{/*<TaskCardSettings />*/}
-					<NewTaskButton />
+					{activeView === "tasks" && <NewTaskButton />}
+					{activeView === "rewards" && <NewRewardButton />}
 				</div>
 			</CardHeader>
 
 			<CardBody className="flex flex-col gap-2 overflow-y-scroll">
-				{loading ? (
-					<>
-						{Array.from({ length: 6 }).map((_, index) => (
-							<Skeleton key={index} className="h-12 rounded-lg mb-2" />
-						))}
-					</>
-				) : tasks.length === 0 ? (
-					<div className="h-full w-full flex flex-col items-center justify-center text-center space-y-4">
-						<Icon
-							icon="solar:checklist-bold"
-							className="size-28 text-green-500"
-						/>
-						<p className="text-lg">
-							{session
-								? "All tasks done! You’re on fire today!"
-								: "No tasks yet. Start by adding something to do!"}
-						</p>
-					</div>
-				) : (
-					tasks.map(
-						(task) =>
-							task.instances.length > 0 && (
-								<div key={task.id}>
-									{task.instances.map((_, index) => (
-										<TaskItem
-											key={`${task.id}-${index}`}
-											task={task}
-											instance={index}
-										/>
-									))}
-								</div>
-							),
-					)
-				)}
+				{renderContent()}
 			</CardBody>
 		</Card>
 	);
 };
 
-export default TasksCard;
+export default TasksRewardsCard;

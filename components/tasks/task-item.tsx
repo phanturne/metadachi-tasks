@@ -140,10 +140,10 @@ export function TaskItem({
 		<>
 			<Card
 				isPressable
-				className="flex flex-row justify-between items-center p-4 cursor-pointer w-full border border-gray-300 dark:border-gray-700"
+				className="flex flex-row justify-between items-center p-4 cursor-pointer w-full border border-gray-300 dark:border-gray-700 h-16" // Set a consistent height
 				onClick={onCardClick}
 			>
-				<div className="flex gap-2">
+				<div className="flex gap-2 items-center">
 					<Checkbox
 						isSelected={localInstance.is_completed ?? false}
 						onValueChange={onCheckboxClick}
@@ -153,7 +153,7 @@ export function TaskItem({
 					<div className="flex flex-col items-start">
 						<h4 className="text-lg">{task.name}</h4>
 						{localInstance.end_time && (
-							<p className="text-sm">
+							<p className="text-xs text-gray-500 truncate">
 								{formatDateTime(localInstance.end_time)}
 							</p>
 						)}

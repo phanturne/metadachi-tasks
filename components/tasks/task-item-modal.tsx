@@ -139,7 +139,6 @@ export function TaskModal({
 										...localTask,
 										recurrence_interval: e.target.value,
 									});
-									console.log(e.target.value, localTask);
 								}}
 							>
 								{recurrencePatterns.map((pattern) => (
