@@ -9,7 +9,7 @@ export function useUserRewards(userId?: string) {
 	);
 
 	return {
-		profile: data ?? null,
+		rewards: data ?? null,
 		loading: !error && !data,
 		error,
 	};

@@ -65,6 +65,20 @@ export const claimUserReward = async (userId: string, rewardId: string) => {
 	return data;
 };
 
+export const deleteUserReward = async (rewardId: string) => {
+	const supabase = createClient();
+
+	const { data, error } = await supabase
+		.from("user_rewards")
+		.delete()
+		.eq("id", rewardId)
+		.select()
+		.single();
+
+	if (error) throw new Error(error.message);
+	return data;
+};
+
 // Reset user rewards
 export const resetUserRewards = async () => {
 	const supabase = createClient();

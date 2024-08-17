@@ -1,10 +1,14 @@
 "use client";
 
 import { NewRewardButton } from "@/components/rewards/new-reward-button";
-import RewardItem from "@/components/rewards/reward-item";
-import rewards from "@/components/rewards/sample-rewards";
+import {
+	RewardItem,
+	RewardItemSkeleton,
+} from "@/components/rewards/reward-item";
+import { EmptyRewardsList } from "@/components/rewards/rewards-list";
 import { NewTaskButton } from "@/components/tasks/new-task-button";
 import { TaskItem } from "@/components/tasks/task-item";
+import { useUserRewards } from "@/lib/hooks/use-rewards";
 import { useSession } from "@/lib/hooks/use-session";
 import { useTasksWithInstances } from "@/lib/hooks/use-tasks";
 import { Icon } from "@iconify/react";
@@ -22,6 +26,18 @@ const TasksRewardsCard = () => {
 	const { session } = useSession();
 	const userId = session?.user.id || "";
 	const { tasks, loading } = useTasksWithInstances(userId);
+	const { rewards, loading: rewardsLoading } = useUserRewards(userId);
+
+	const displayedTaskList = tasks
+		.filter((task) => task.instances.some((instance) => !instance.is_completed))
+		.map((task) => {
+			const firstUncompletedIndex = task.instances.findIndex(
+				(instance) => !instance.is_completed,
+			);
+			return (
+				<TaskItem key={task.id} task={task} instance={firstUncompletedIndex} />
+			);
+		});
 
 	const renderContent = () => {
 		if (activeView === "tasks") {
@@ -30,11 +46,11 @@ const TasksRewardsCard = () => {
 					{loading ? (
 						<>
 							{Array.from({ length: 6 }).map((_, index) => (
-								<Skeleton key={index} className="h-12 rounded-lg mb-2" />
+								<Skeleton key={index} className="mb-2 h-12 rounded-lg" />
 							))}
 						</>
-					) : tasks.length === 0 ? (
-						<div className="h-full w-full flex flex-col items-center justify-center text-center space-y-4">
+					) : displayedTaskList.length === 0 ? (
+						<div className="flex h-full w-full flex-col items-center justify-center space-y-4 text-center">
 							<Icon
 								icon="solar:checklist-bold"
 								className="size-28 text-green-500"
@@ -46,40 +62,36 @@ const TasksRewardsCard = () => {
 							</p>
 						</div>
 					) : (
-						<div className="flex flex-col gap-2">
-							{tasks.map((task) => {
-								const firstUncompletedIndex = task.instances.findIndex(
-									(instance) => !instance.is_completed,
-								);
-								if (firstUncompletedIndex !== -1) {
-									return (
-										<TaskItem
-											key={task.id}
-											task={task}
-											instance={firstUncompletedIndex}
-										/>
-									);
-								}
-								return null;
-							})}
-						</div>
+						<div className="flex flex-col gap-2">{displayedTaskList}</div>
 					)}
 				</>
 			);
 		}
 
 		return (
-			<div className="my-auto grid max-w-7xl grid-cols-1 gap-5 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-				{rewards.map((reward) => (
-					<RewardItem key={reward.id} {...reward} />
-				))}
-			</div>
+			<>
+				{loading ? (
+					<>
+						{Array.from({ length: 6 }).map((_, index) => (
+							<RewardItemSkeleton key={index} />
+						))}
+					</>
+				) : rewards.length === 0 ? (
+					<EmptyRewardsList />
+				) : (
+					<div className="grid max-w-7xl grid-cols-1 gap-5 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+						{rewards.map((reward) => (
+							<RewardItem key={reward.id} {...reward} />
+						))}
+					</div>
+				)}
+			</>
 		);
 	};
 
 	return (
-		<Card className="px-4 rounded-lg w-full flex flex-col pb-4">
-			<CardHeader className="flex justify-between items-center">
+		<Card className="flex w-full flex-col rounded-lg px-4 pb-4">
+			<CardHeader className="flex items-center justify-between">
 				<div className="flex items-center gap-2">
 					<Button
 						variant={activeView === "tasks" ? "bordered" : "light"}

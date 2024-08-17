@@ -2,94 +2,102 @@
 
 "use client";
 
-import { cn } from "@/lib/utils";
+import { RewardModal } from "@/components/rewards/reward-item-modal";
+import {
+	claimUserReward,
+	deleteUserReward,
+	updateUserReward,
+} from "@/lib/db/rewards";
+import { markUserRewardsAsStale } from "@/lib/hooks/use-rewards";
+import { useSession } from "@/lib/hooks/use-session";
+import { markStatsAsStale, useStats } from "@/lib/hooks/use-stats";
+import type { Tables } from "@/supabase/types";
 import { Icon } from "@iconify/react";
-import { Button, Image, Skeleton } from "@nextui-org/react";
+import {
+	Button,
+	Card,
+	Image,
+	Skeleton,
+	useDisclosure,
+} from "@nextui-org/react";
 import React from "react";
+import { toast } from "sonner";
 
-export type RewardListItemColor = {
-	name: string;
-	hex: string;
-};
+export const RewardItem = React.forwardRef<
+	HTMLDivElement,
+	Tables<"user_rewards">
+>((reward, ref) => {
+	const { session } = useSession();
+	const { stats } = useStats(session?.user?.id ?? "");
 
-export type RewardItem = {
-	id: string;
-	name: string;
-	href: string;
-	price: number;
-	description?: string;
-	imageSrc: string;
-};
+	const { isOpen, onOpen, onClose } = useDisclosure();
 
-export type RewardListItemProps = Omit<
-	React.HTMLAttributes<HTMLDivElement>,
-	"id"
-> & {
-	isPopular?: boolean;
-	isLoading?: boolean;
-	removeWrapper?: boolean;
-} & RewardItem;
+	const onDelete = () => {
+		try {
+			deleteUserReward(reward.id);
+			markUserRewardsAsStale(reward.id);
+			toast.success("Task deleted successfully");
+		} catch (error) {
+			toast.error("Failed to delete reward");
+		}
+	};
 
-// TODO: Change input type to Tables<"user_rewards">
-const RewardListItem = React.forwardRef<HTMLDivElement, RewardListItemProps>(
-	(
-		{
-			name,
-			price,
-			isLoading,
-			description,
-			imageSrc,
-			removeWrapper,
-			className,
-			...props
-		},
-		ref,
-	) => {
-		const [isLiked, setIsLiked] = React.useState(false);
+	const onSave = (reward: Tables<"user_rewards">) => {
+		updateUserReward(reward.id, reward);
 
-		return (
-			<div
-				ref={ref}
-				className={cn(
-					"relative flex w-full flex-none flex-col gap-3",
-					{
-						"rounded-none bg-background shadow-none": removeWrapper,
-					},
-					className,
-				)}
-				{...props}
-			>
-				{/* TODO: Handle purchase reward*/}
+		try {
+			markUserRewardsAsStale(session?.user?.id ?? "");
+
+			toast.success("Reward updated successfully");
+		} catch (e) {
+			toast.error("Failed to update reward");
+		}
+	};
+
+	const purchaseReward = async () => {
+		if (!session) return;
+
+		console.log(stats, reward);
+		if (reward.cost > stats?.[0].total_gold) {
+			return toast.error("Insufficient balance");
+		}
+
+		try {
+			claimUserReward(session.user.id, reward.id);
+			markUserRewardsAsStale(session.user.id);
+			markStatsAsStale(session.user.id);
+			toast.success("Reward purchased successfully");
+		} catch (error) {
+			toast.error("Failed to purchase reward");
+		}
+	};
+
+	return (
+		<>
+			<Card ref={ref} className="relative flex w-full flex-none flex-col gap-3">
 				<Button
 					isIconOnly
-					className="absolute right-2 top-2 z-20 bg-background/60 backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50"
+					className="absolute top-2 right-2 z-20 bg-background/60 backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50"
 					radius="full"
 					size="sm"
 					variant="flat"
-					onPress={() => setIsLiked(!isLiked)}
+					onClick={() => onOpen()}
 				>
-					<Icon
-						className={cn("text-default-900/50", {
-							"text-danger-400": isLiked,
-						})}
-						icon="mingcute:add-fill"
-						width={16}
-					/>
+					<Icon icon="solar:pen-bold-duotone" width={16} />
 				</Button>
 
-				{imageSrc ? (
+				{reward.image ? (
 					<Image
 						isBlurred
 						isZoomed
-						alt={name}
+						alt={reward.name}
 						className="aspect-square w-full hover:scale-110"
-						isLoading={isLoading}
-						src={imageSrc}
+						src={reward.image}
 					/>
 				) : (
-					<div className="aspect-square w-full flex items-center justify-center bg-gray-200  rounded">
+					<div className="flex aspect-square w-full items-center justify-center rounded-2xl bg-gray-200">
 						<Icon
-							icon="mingcute:gift-fill"
+							icon={reward.icon ?? "solar:gift-bold-duotone"}
 							width={48}
 							className="text-gray-500 hover:scale-110"
 						/>
@@ -97,39 +105,46 @@ const RewardListItem = React.forwardRef<HTMLDivElement, RewardListItemProps>(
 				)}
 
 				<div className="mt-1 flex flex-col gap-2 px-1">
-					{isLoading ? (
-						<div className="my-1 flex flex-col gap-3">
-							<Skeleton className="w-3/5 rounded-lg">
-								<div className="h-3 w-3/5 rounded-lg bg-default-200" />
-							</Skeleton>
-							<Skeleton className="mt-3 w-4/5 rounded-lg">
-								<div className="h-3 w-4/5 rounded-lg bg-default-200" />
-							</Skeleton>
-							<Skeleton className="mt-4 w-2/5 rounded-lg">
-								<div className="h-3 w-2/5 rounded-lg bg-default-300" />
-							</Skeleton>
-						</div>
-					) : (
-						<>
-							<div className="flex items-start justify-between gap-1">
-								<h3 className="text-small font-medium text-default-700 truncate">
-									{name}
-								</h3>
-							</div>
-							{/*{description ? (*/}
-							{/*	<p className="text-small text-default-500">{description}</p>*/}
-							{/*) : null}*/}
-							<Button size="sm" onClick={() => {}}>
-								{price} 🪙
-							</Button>
-						</>
-					)}
+					<div className="flex items-start justify-between gap-1">
+						<h3 className="truncate font-medium text-default-700 text-small">
+							{reward.name}
+						</h3>
+					</div>
+					{/*{description ? (*/}
+					{/*	<p className="text-small text-default-500">{description}</p>*/}
+					{/*) : null}*/}
+					<Button size="sm" onClick={purchaseReward}>
+						{reward.cost} 🪙
+					</Button>
 				</div>
+				<RewardModal
+					isOpen={isOpen}
+					onClose={onClose}
+					reward={reward}
+					onDelete={onDelete}
+					onSave={onSave}
+				/>
+			</Card>
+		</>
+	);
+});
+
+RewardItem.displayName = "RewardListItem";
+
+export const RewardItemSkeleton = () => {
+	return (
+		<div className="mt-1 flex flex-col gap-2 px-1">
+			<div className="my-1 flex flex-col gap-3">
+				<Skeleton className="w-3/5 rounded-lg">
+					<div className="h-3 w-3/5 rounded-lg bg-default-200" />
+				</Skeleton>
+				<Skeleton className="mt-3 w-4/5 rounded-lg">
+					<div className="h-3 w-4/5 rounded-lg bg-default-200" />
+				</Skeleton>
+				<Skeleton className="mt-4 w-2/5 rounded-lg">
+					<div className="h-3 w-2/5 rounded-lg bg-default-300" />
+				</Skeleton>
 			</div>
-		);
-	},
-);
-
-RewardListItem.displayName = "RewardListItem";
-
-export default RewardListItem;
+		</div>
+	);
+};
