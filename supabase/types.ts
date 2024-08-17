@@ -494,7 +494,7 @@ export type Database = {
           reset_interval: unknown | null
           tags: Json | null
           updated_at: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           category?: string | null
@@ -513,7 +513,7 @@ export type Database = {
           reset_interval?: unknown | null
           tags?: Json | null
           updated_at?: string | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           category?: string | null
@@ -532,7 +532,7 @@ export type Database = {
           reset_interval?: unknown | null
           tags?: Json | null
           updated_at?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {

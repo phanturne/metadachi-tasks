@@ -5,7 +5,7 @@ DROP COLUMN recurrence_pattern,
 DROP COLUMN is_recurring,
 ADD COLUMN recurrence_interval VARCHAR(20) DEFAULT 'NEVER' CHECK (recurrence_interval IN (
     'NEVER', 'HOURLY', 'DAILY', 'WEEKLY', 'WEEKDAYS', 'WEEKENDS', 'BIWEEKLY', 'MONTHLY', 'YEARLY', 'INFINITE'
-));
+)),
 ADD COLUMN end_repeat TIMESTAMPTZ,
 ADD COLUMN instances_completed INTEGER DEFAULT 0,
 ADD COLUMN max_recurrences INTEGER,

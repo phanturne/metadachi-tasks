@@ -30,6 +30,7 @@ export type RewardListItemProps = Omit<
 	removeWrapper?: boolean;
 } & RewardItem;
 
+// TODO: Change input type to Tables<"user_rewards">
 const RewardListItem = React.forwardRef<HTMLDivElement, RewardListItemProps>(
 	(
 		{
@@ -75,14 +76,25 @@ const RewardListItem = React.forwardRef<HTMLDivElement, RewardListItemProps>(
 						width={16}
 					/>
 				</Button>
-				<Image
-					isBlurred
-					isZoomed
-					alt={name}
-					className="aspect-square w-full hover:scale-110"
-					isLoading={isLoading}
-					src={imageSrc}
-				/>
+
+				{imageSrc ? (
+					<Image
+						isBlurred
+						isZoomed
+						alt={name}
+						className="aspect-square w-full hover:scale-110"
+						isLoading={isLoading}
+						src={imageSrc}
+					/>
+				) : (
+					<div className="aspect-square w-full flex items-center justify-center bg-gray-200  rounded">
+						<Icon
+							icon="mingcute:gift-fill"
+							width={48}
+							className="text-gray-500 hover:scale-110"
+						/>
+					</div>
+				)}
 
 				<div className="mt-1 flex flex-col gap-2 px-1">
 					{isLoading ? (
@@ -107,9 +119,9 @@ const RewardListItem = React.forwardRef<HTMLDivElement, RewardListItemProps>(
 							{/*{description ? (*/}
 							{/*	<p className="text-small text-default-500">{description}</p>*/}
 							{/*) : null}*/}
-							<p className="text-small font-medium text-default-500 text-center">
+							<Button size="sm" onClick={() => {}}>
 								{price} 🪙
-							</p>
+							</Button>
 						</>
 					)}
 				</div>
