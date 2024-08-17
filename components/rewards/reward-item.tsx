@@ -55,10 +55,10 @@ export const RewardItem = React.forwardRef<
 	};
 
 	const purchaseReward = async () => {
-		if (!session) return;
+		const firstStat = stats?.[0] ?? null;
+		if (!session || !firstStat) return;
 
-		console.log(stats, reward);
-		if (reward.cost > stats?.[0].total_gold) {
+		if (reward.cost > (firstStat.total_gold ?? 0)) {
 			return toast.error("Insufficient balance");
 		}
 
@@ -133,18 +133,24 @@ RewardItem.displayName = "RewardListItem";
 
 export const RewardItemSkeleton = () => {
 	return (
-		<div className="mt-1 flex flex-col gap-2 px-1">
-			<div className="my-1 flex flex-col gap-3">
-				<Skeleton className="w-3/5 rounded-lg">
-					<div className="h-3 w-3/5 rounded-lg bg-default-200" />
+		<Card className="relative flex w-full flex-none flex-col gap-3">
+			<Skeleton className="absolute top-2 right-2 z-20 rounded-full bg-default-100">
+				<div className="h-6 w-6 rounded-full" />
+			</Skeleton>
+
+			<Skeleton className="aspect-square w-full rounded-2xl">
+				<div className="h-full w-full bg-default-200" />
+			</Skeleton>
+
+			<div className="mt-1 flex flex-col gap-2 px-1">
+				<Skeleton className="w-full rounded-lg">
+					<div className="h-4 w-full rounded-lg bg-default-200" />
 				</Skeleton>
-				<Skeleton className="mt-3 w-4/5 rounded-lg">
-					<div className="h-3 w-4/5 rounded-lg bg-default-200" />
-				</Skeleton>
-				<Skeleton className="mt-4 w-2/5 rounded-lg">
-					<div className="h-3 w-2/5 rounded-lg bg-default-300" />
+
+				<Skeleton className="mt-2 w-full rounded-lg">
+					<div className="h-8 w-full rounded-lg bg-default-300" />
 				</Skeleton>
 			</div>
-		</div>
+		</Card>
 	);
 };

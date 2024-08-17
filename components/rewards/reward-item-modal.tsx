@@ -79,8 +79,8 @@ export function RewardModal({
 
 								if (Number.isInteger(v)) {
 									if (v < 1) v = 1;
-									if (v > localReward.max_quantity)
-										v = localReward.max_quantity ?? 999;
+									const maxQuantity = localReward.max_quantity ?? 999;
+									if (v > maxQuantity) v = maxQuantity;
 									setLocalReward({
 										...localReward,
 										quantity: v,
@@ -88,7 +88,7 @@ export function RewardModal({
 								}
 							}}
 							min={1}
-							max={localReward.max_quantity as number}
+							max={localReward.max_quantity ?? 999}
 						/>
 
 						<Input

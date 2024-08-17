@@ -9,8 +9,8 @@ export function useUserRewards(userId?: string) {
 	);
 
 	return {
-		rewards: data ?? null,
-		loading: !error && !data,
+		rewards: data ?? ([] as Tables<"user_rewards">[]),
+		loading: !error && !data && userId !== "",
 		error,
 	};
 }

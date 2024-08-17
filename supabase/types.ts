@@ -491,14 +491,14 @@ export type Database = {
           max_quantity: number | null
           name: string
           quantity: number
-          reset_interval: unknown | null
+          reset_interval: string | null
           tags: Json | null
           updated_at: string | null
           user_id: string
         }
         Insert: {
           category?: string | null
-          cost: number
+          cost?: number
           created_at?: string
           description?: string | null
           icon?: string | null
@@ -510,7 +510,7 @@ export type Database = {
           max_quantity?: number | null
           name: string
           quantity?: number
-          reset_interval?: unknown | null
+          reset_interval?: string | null
           tags?: Json | null
           updated_at?: string | null
           user_id: string
@@ -529,7 +529,7 @@ export type Database = {
           max_quantity?: number | null
           name?: string
           quantity?: number
-          reset_interval?: unknown | null
+          reset_interval?: string | null
           tags?: Json | null
           updated_at?: string | null
           user_id?: string
@@ -755,7 +755,7 @@ export type Database = {
           p_activity_category: string
           p_description: string
           p_quantity: number
-          p_points_change: number
+          p_gold_change: number
           p_exp_change: number
           p_related_entity_type: string
           p_related_entity_id: string
