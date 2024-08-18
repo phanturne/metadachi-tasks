@@ -36,7 +36,7 @@ export function TaskItem({
 		onOpen();
 	};
 
-	const onCheckboxClick = () => {
+	const onCheckboxClick = async () => {
 		if (!localInstance) return;
 
 		const updatedInstance = {
@@ -49,13 +49,8 @@ export function TaskItem({
 		};
 
 		setLocalInstance(updatedInstance);
-		updateTaskInstance(localInstance.id, updatedInstance);
-
-		// TODO: Investigate why StatsCard won't update when the if statement is removed.
-		if (updatedInstance.is_completed) {
-			markStatsAsStale(session?.user?.id ?? "");
-		}
-		// markStatsAsStale(session?.user?.id ?? "");
+		await updateTaskInstance(localInstance.id, updatedInstance);
+		markStatsAsStale(session?.user?.id ?? "");
 	};
 
 	const onIncrement = (unsavedInstance: Tables<"task_instances">) => {
@@ -97,10 +92,10 @@ export function TaskItem({
 		}
 	};
 
-	const onDeleteInstance = () => {
+	const onDeleteInstance = async () => {
 		if (!localInstance) return;
 		try {
-			deleteTaskInstance(localInstance.id);
+			await deleteTaskInstance(localInstance.id);
 			setLocalInstance({} as Tables<"task_instances">);
 			markStatsAsStale(session?.user?.id ?? "");
 			markTasksAsStale(session?.user?.id ?? "");
@@ -110,9 +105,9 @@ export function TaskItem({
 		}
 	};
 
-	const onDeleteTask = () => {
+	const onDeleteTask = async () => {
 		try {
-			deleteTask(task.id);
+			await deleteTask(task.id);
 			setLocalInstance({} as Tables<"task_instances">);
 			markStatsAsStale(session?.user?.id ?? "");
 			markTasksAsStale(session?.user?.id ?? "");
@@ -123,14 +118,16 @@ export function TaskItem({
 	};
 
 	// TODO: Create Supabase function to update both task_instance and task instead of using 2 queries
-	const onSave = (
+	const onSave = async (
 		task: Tables<"tasks">,
 		instance: Tables<"task_instances">,
 	) => {
-		updateTask(task.id, task);
-		updateTaskInstance(instance.id, instance);
-
 		try {
+			await Promise.all([
+				updateTask(task.id, task),
+				updateTaskInstance(instance.id, instance),
+			]);
+
 			markStatsAsStale(session?.user?.id ?? "");
 			markTasksAsStale(session?.user?.id ?? "");
 

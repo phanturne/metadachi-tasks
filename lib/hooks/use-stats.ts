@@ -1,4 +1,3 @@
-import { delay } from "@/lib/utils";
 import type { Tables } from "@/supabase/types";
 import { useState } from "react";
 import useSWR, { mutate } from "swr";
@@ -42,6 +41,5 @@ export function useStats(userId: string) {
 export function markStatsAsStale(userId: string) {
 	const { startDate, endDate } = getDefaultDates();
 	const url = `/api/stats/${userId}?startDate=${startDate}&endDate=${endDate}`;
-	delay(2500); // TODO: Hacky delay for the data to be updated. Use optimistic UI w/ context provider instead?
 	mutate(url);
 }

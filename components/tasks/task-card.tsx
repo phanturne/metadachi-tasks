@@ -42,10 +42,7 @@ const TasksRewardsCard = () => {
 				{activeView === "tasks" ? (
 					<TasksList tasks={tasks} loading={tasksLoading} session={session} />
 				) : (
-					<RewardsList
-						rewards={Array.isArray(rewards) ? rewards : [rewards]}
-						loading={rewardsLoading}
-					/>
+					<RewardsList rewards={rewards} loading={rewardsLoading} />
 				)}
 			</CardBody>
 		</Card>

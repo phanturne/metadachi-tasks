@@ -3,7 +3,7 @@ import useSWR, { mutate } from "swr";
 import { fetcher } from "../fetcher";
 
 export function useUserRewards(userId?: string) {
-	const { data, error } = useSWR<Tables<"user_rewards"> | null>(
+	const { data, error } = useSWR<Tables<"user_rewards">[] | undefined>(
 		userId ? `/api/user-rewards/${userId}` : null,
 		fetcher,
 	);

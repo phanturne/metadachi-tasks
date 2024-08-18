@@ -32,20 +32,19 @@ export const RewardItem = React.forwardRef<
 
 	const { isOpen, onOpen, onClose } = useDisclosure();
 
-	const onDelete = () => {
+	const onDelete = async () => {
 		try {
-			deleteUserReward(reward.id);
-			markUserRewardsAsStale(reward.id);
-			toast.success("Task deleted successfully");
+			await deleteUserReward(reward.id);
+			markUserRewardsAsStale(reward.user_id);
+			toast.success("Reward deleted successfully");
 		} catch (error) {
 			toast.error("Failed to delete reward");
 		}
 	};
 
-	const onSave = (reward: Tables<"user_rewards">) => {
-		updateUserReward(reward.id, reward);
-
+	const onSave = async (reward: Tables<"user_rewards">) => {
 		try {
+			await updateUserReward(reward.id, reward);
 			markUserRewardsAsStale(session?.user?.id ?? "");
 
 			toast.success("Reward updated successfully");
@@ -63,7 +62,7 @@ export const RewardItem = React.forwardRef<
 		}
 
 		try {
-			claimUserReward(session.user.id, reward.id);
+			await claimUserReward(session.user.id, reward.id);
 			markUserRewardsAsStale(session.user.id);
 			markStatsAsStale(session.user.id);
 			toast.success("Reward purchased successfully");
