@@ -1,6 +1,7 @@
 import { TaskModal } from "@/components/tasks/task-item-modal";
 import type { TaskWithInstances } from "@/lib/db/tasks";
 import {
+	deleteTask,
 	deleteTaskInstance,
 	updateTask,
 	updateTaskInstance,
@@ -96,10 +97,22 @@ export function TaskItem({
 		}
 	};
 
-	const onDelete = () => {
+	const onDeleteInstance = () => {
 		if (!localInstance) return;
 		try {
 			deleteTaskInstance(localInstance.id);
+			setLocalInstance({} as Tables<"task_instances">);
+			markStatsAsStale(session?.user?.id ?? "");
+			markTasksAsStale(session?.user?.id ?? "");
+			toast.success("Task instance deleted successfully");
+		} catch (error) {
+			toast.error("Failed to delete task instance");
+		}
+	};
+
+	const onDeleteTask = () => {
+		try {
+			deleteTask(task.id);
 			setLocalInstance({} as Tables<"task_instances">);
 			markStatsAsStale(session?.user?.id ?? "");
 			markTasksAsStale(session?.user?.id ?? "");
@@ -141,10 +154,10 @@ export function TaskItem({
 		<>
 			<Card
 				isPressable
-				className="flex flex-row justify-between items-center p-4 cursor-pointer w-full border border-gray-300 dark:border-gray-700 h-16" // Set a consistent height
+				className="flex h-16 w-full cursor-pointer flex-row items-center justify-between border border-gray-300 p-4 dark:border-gray-700" // Set a consistent height
 				onClick={onCardClick}
 			>
-				<div className="flex gap-2 items-center">
+				<div className="flex items-center gap-2">
 					<Checkbox
 						isSelected={localInstance.is_completed ?? false}
 						onValueChange={onCheckboxClick}
@@ -154,7 +167,7 @@ export function TaskItem({
 					<div className="flex flex-col items-start">
 						<h4 className="text-lg">{task.name}</h4>
 						{localInstance.end_time && (
-							<p className="text-xs text-gray-500 truncate">
+							<p className="truncate text-gray-500 text-xs">
 								{formatDateTime(localInstance.end_time)}
 							</p>
 						)}
@@ -162,13 +175,13 @@ export function TaskItem({
 					{/*  TODO: Add streak for recurring tasks*/}
 				</div>
 
-				<div className="flex gap-2 items-center">
+				<div className="flex items-center gap-2">
 					<Button
 						isIconOnly
 						size="sm"
 						variant="flat"
 						color="success"
-						className="rounded-full !size-6 text-lg"
+						className="!size-6 rounded-full text-lg"
 						onClick={(e) => {
 							e.stopPropagation();
 							onIncrement(localInstance);
@@ -185,7 +198,7 @@ export function TaskItem({
 						size="sm"
 						variant="flat"
 						color="danger"
-						className="rounded-full !size-6 text-lg"
+						className="!size-6 rounded-full text-lg"
 						onClick={(e) => {
 							e.stopPropagation();
 							onDecrement(localInstance);
@@ -202,7 +215,8 @@ export function TaskItem({
 				onClose={onClose}
 				task={omit(task, ["instances"]) as Tables<"tasks">}
 				instance={localInstance}
-				onDelete={onDelete}
+				onDeleteInstance={onDeleteInstance}
+				onDeleteTask={onDeleteTask}
 				onIncrement={onIncrement}
 				onDecrement={onDecrement}
 				onSave={onSave}

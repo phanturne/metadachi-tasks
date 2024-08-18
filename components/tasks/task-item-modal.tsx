@@ -1,3 +1,4 @@
+import { DeleteTaskButtonGroup } from "@/components/tasks/delete-task-button-group";
 import { recurrencePatterns } from "@/components/tasks/new-task-button";
 import { capitalizeWord } from "@/lib/utils";
 import type { Tables } from "@/supabase/types";
@@ -23,7 +24,8 @@ interface TaskModalProps {
 	onClose: () => void;
 	task: Tables<"tasks">;
 	instance: Tables<"task_instances">;
-	onDelete: () => void;
+	onDeleteInstance: () => void;
+	onDeleteTask: () => void;
 	onIncrement: (instance: Tables<"task_instances">) => void;
 	onDecrement: (instance: Tables<"task_instances">) => void;
 	onSave: (task: Tables<"tasks">, instance: Tables<"task_instances">) => void;
@@ -34,7 +36,8 @@ export function TaskModal({
 	onClose,
 	task,
 	instance,
-	onDelete,
+	onDeleteInstance,
+	onDeleteTask,
 	onIncrement,
 	onDecrement,
 	onSave,
@@ -188,17 +191,32 @@ export function TaskModal({
 						}
 					/>
 				</ModalBody>
-				<ModalFooter>
-					<Button
-						color="danger"
-						variant="light"
-						onPress={() => {
-							onDelete();
-							onClose();
-						}}
-					>
-						Delete
-					</Button>
+				<ModalFooter className="flex justify-between">
+					{/* If it is a recurring task, display button group for deleting all task instances vs one instance*/}
+					{localTask.recurrence_interval === "NEVER" ? (
+						<Button
+							color="danger"
+							variant="light"
+							onClick={() => {
+								onDeleteTask();
+								onClose();
+							}}
+						>
+							Delete
+						</Button>
+					) : (
+						<DeleteTaskButtonGroup
+							onDeleteTask={() => {
+								onDeleteTask();
+								onClose();
+							}}
+							onDeleteInstance={() => {
+								onDeleteInstance();
+								onClose();
+							}}
+						/>
+					)}
+
 					<Button
 						color="primary"
 						onPress={() => {
