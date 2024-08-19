@@ -7,7 +7,7 @@ import { Toaster } from "@/components/utility/toaster";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-	title: "Metadachi Tasks",
+	title: "Metadachi",
 	description:
 		"Boost your productivity with AI-powered tools and vibrant community features.",
 };

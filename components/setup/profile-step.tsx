@@ -33,7 +33,7 @@ export const ProfileStep: FC<ProfileStepProps> = ({
 		<StepContainer
 			stepCount={stepCount}
 			stepNum={currentStep}
-			stepTitle="Welcome to Metadachi Tasks!"
+			stepTitle="Welcome to Metadachi!"
 			stepDescription="Let's get you set up for success in just a few quick steps."
 			onShouldProceed={handleShouldProceed}
 			showNextButton={!!(username && usernameAvailable) && !!displayName}
