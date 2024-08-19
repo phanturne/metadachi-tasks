@@ -29,7 +29,6 @@ export const GoalStep: FC<GoalStepProps> = ({
 			showBackButton={true}
 		>
 			<CheckboxGroup
-				label="Select your goals"
 				value={goals}
 				onChange={onGoalsChange}
 				classNames={{

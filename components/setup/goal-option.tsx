@@ -13,7 +13,7 @@ export const GoalOption: React.FC<GoalOptionProps> = ({ value }) => {
 				base: cn(
 					"inline-flex max-w-md w-full bg-content1 m-0",
 					"hover:bg-content2 items-center justify-start",
-					"cursor-pointer rounded-lg gap-2 p-4 border-2 border-transparent",
+					"cursor-pointer rounded-lg gap-2 p-2 border-2 border-transparent",
 					"data-[selected=true]:border-primary",
 				),
 				label: "w-full",
