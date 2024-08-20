@@ -7,19 +7,14 @@ import {
 	DisplayNameInput,
 	UsernameInput,
 } from "@/components/input/ProfileInputs";
-import { PROFILE_CONTEXT_MAX } from "@/lib/db/limits";
 import { useSession } from "@/lib/hooks/use-session";
-import { Icon } from "@iconify/react";
-import { Button, Card, CardBody, Textarea, Tooltip } from "@nextui-org/react";
+import { Card, CardBody } from "@nextui-org/react";
 import React, { type FC } from "react";
 
 interface ProfileSettingsProps {
-	profileImageSrc: string;
-	setProfileImageSrc: (src: string) => void;
-	profileImageFile: File | null;
+	profileImagePath: string;
+	setProfileImagePath: (src: string) => void;
 	setProfileImageFile: (file: File | null) => void;
-	profileInstructions: string;
-	setProfileInstructions: (instructions: string) => void;
 	username: string;
 	usernameAvailable: boolean;
 	displayName: string;
@@ -29,12 +24,9 @@ interface ProfileSettingsProps {
 }
 
 export const ProfileSettings: FC<ProfileSettingsProps> = ({
-	profileImageSrc,
-	setProfileImageSrc,
-	profileImageFile,
+	profileImagePath,
+	setProfileImagePath,
 	setProfileImageFile,
-	profileInstructions,
-	setProfileInstructions,
 	username,
 	usernameAvailable,
 	displayName,
@@ -51,20 +43,19 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({
 				<CardBody>
 					<div className="flex items-center gap-4">
 						<AvatarImageInput
-							src={profileImageSrc}
+							src={profileImagePath}
 							name={displayName ?? username}
-							onSrcChange={setProfileImageSrc}
+							onSrcChange={setProfileImagePath}
 							onImageChange={setProfileImageFile}
 						/>
 
 						<div>
-							<p className="text-sm font-medium text-default-600">
+							<p className="font-medium text-default-600 text-sm">
 								{(displayName && displayName.trim() !== ""
 									? displayName
 									: username) + (isAnonymous ? " (Guest)" : "")}
 							</p>
-							<p className="text-xs text-default-400">{username}</p>
-							{/*<p className="mt-1 text-xs text-default-400">kate.moore@acme.com</p>*/}
+							<p className="text-default-400 text-xs">{username}</p>
 						</div>
 					</div>
 				</CardBody>
@@ -83,35 +74,6 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({
 				onDisplayNameChange={onDisplayNameChange}
 				labelPlacement="outside"
 			/>
-
-			<Textarea
-				label="What would you like the AI to know about you to provide better
-          responses?"
-				labelPlacement="outside"
-				value={profileInstructions}
-				onChange={(e) => setProfileInstructions(e.target.value)}
-				placeholder="Profile context... (optional)"
-				minRows={6}
-				maxRows={10}
-				maxLength={PROFILE_CONTEXT_MAX}
-				description={`${profileInstructions.length}/${PROFILE_CONTEXT_MAX}`}
-			/>
-
-			<div className="mt-2 flex justify-between">
-				<div className="flex items-center gap-1">
-					<Tooltip content="Import your data from JSON.">
-						<Button
-							isDisabled
-							variant="flat"
-							startContent={
-								<Icon icon="solar:import-linear" className="text-xl" />
-							}
-						>
-							Import Data
-						</Button>
-					</Tooltip>
-				</div>
-			</div>
 		</div>
 	);
 };

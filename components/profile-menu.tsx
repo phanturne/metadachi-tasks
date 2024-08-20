@@ -1,10 +1,10 @@
+import SettingsModal from "@/app/(dashboard)/settings/settings-modal";
 import { useAuthModal } from "@/components/providers/auth-context-provider";
 import ThemeSwitcher from "@/components/utility/theme-switcher";
 import { Routes } from "@/lib/constants";
 import { useProfile } from "@/lib/hooks/use-profile";
 import { useSession } from "@/lib/hooks/use-session";
 import { useSignOut } from "@/lib/hooks/use-sign-out";
-import { getImageUrl } from "@/lib/supabase/utils";
 import {
 	Avatar,
 	Dropdown,
@@ -12,6 +12,7 @@ import {
 	DropdownMenu,
 	DropdownSection,
 	DropdownTrigger,
+	useDisclosure,
 } from "@nextui-org/react";
 import { User } from "@nextui-org/user";
 import { useRouter } from "next/navigation";
@@ -29,11 +30,11 @@ export default function ProfileMenu({
 	const { session, isAnonymous } = useSession();
 	const { profile } = useProfile(session?.user.id);
 	const { handleSignOut } = useSignOut();
+	const { isOpen, onOpen, onClose } = useDisclosure();
 
 	const name = profile?.display_name?.trim() ?? profile?.username ?? "";
 	const finalName = `${name}${isAnonymous ? " (Guest)" : ""}`;
-	const profileImageUrl =
-		profile?.image_path && getImageUrl(profile.id, profile.image_path);
+	const profileImageUrl = profile?.image_path;
 
 	return (
 		<>
@@ -128,10 +129,7 @@ export default function ProfileMenu({
 						>
 							Theme
 						</DropdownItem>
-						<DropdownItem
-							key="settings"
-							onClick={() => router.push(Routes.Settings)}
-						>
+						<DropdownItem key="settings" onClick={() => onOpen()}>
 							Settings
 						</DropdownItem>
 						<DropdownItem
@@ -167,6 +165,7 @@ export default function ProfileMenu({
 					</DropdownSection>
 				</DropdownMenu>
 			</Dropdown>
+			<SettingsModal isOpen={isOpen} onClose={onClose} />
 		</>
 	);
 }

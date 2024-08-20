@@ -9,7 +9,7 @@ export function useProfile(userId?: string) {
 	);
 
 	return {
-		profile: data ?? null,
+		profile: data as Tables<"profiles">,
 		loading: !error && !data,
 		error,
 	};
