@@ -9,7 +9,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useSession } from "@/lib/hooks/use-session";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu } from "lucide-react";
+import { ChevronRight, Menu } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -137,12 +137,13 @@ export default function RootNavbar() {
 				{(!session || isAnonymous) && (
 					<Button
 						onClick={() => openAuthModal()}
-						className="border-purple-500/30 bg-purple-500/20 text-purple-900 hover:bg-purple-500/30 dark:text-purple-300"
+						className="group rounded-full border-purple-500/30 bg-purple-500/20 text-purple-900 hover:bg-purple-500/30 dark:text-purple-300"
 						style={{
 							boxShadow: "inset 0 0 4px #bf97ffA0",
 						}}
 					>
-						Get Started
+						<span>✨ Get Started</span>
+						<ChevronRight className="ml-1 h-4 w-4 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
 					</Button>
 				)}
 				<div className="pl-2">
