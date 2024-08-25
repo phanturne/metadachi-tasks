@@ -1,7 +1,8 @@
 import AuthForm from "@/components/auth/AuthForm";
 import type { AuthFormType } from "@/components/providers/auth-context-provider";
-import { Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import Image from "next/image";
+import * as React from "react";
 
 export default function AuthModal({
 	open,
@@ -13,20 +14,22 @@ export default function AuthModal({
 	type?: AuthFormType;
 }) {
 	return (
-		<Modal size="sm" isOpen={open} onOpenChange={onClose}>
-			<ModalContent className="p-4">
-				<ModalHeader className="justify-center">
-					<Image
-						src="/apple-touch-icon.png"
-						alt="Metadachi Icon"
-						width={50}
-						height={50}
-					/>
-				</ModalHeader>
-				<ModalBody>
+		<Dialog open={open} onOpenChange={onClose}>
+			<DialogContent className="sm:max-w-[425px]">
+				<DialogHeader className="flex flex-col items-center justify-center">
+					<div className="relative h-[50px] w-[50px]">
+						<Image
+							src="/apple-touch-icon.png"
+							alt="Metadachi Icon"
+							fill
+							className="object-contain"
+						/>
+					</div>
+				</DialogHeader>
+				<div className="p-4">
 					<AuthForm type={type} />
-				</ModalBody>
-			</ModalContent>
-		</Modal>
+				</div>
+			</DialogContent>
+		</Dialog>
 	);
 }

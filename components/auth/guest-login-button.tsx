@@ -1,7 +1,7 @@
 import { useAuthModal } from "@/components/providers/auth-context-provider";
+import { Button } from "@/components/ui/button"; // Assuming you have a Button component in your Shadcn setup
 import { Routes } from "@/lib/constants";
 import { supabase } from "@/lib/supabase/browser-client";
-import { Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -24,7 +24,7 @@ export function GuestLoginButton() {
 	}
 
 	return (
-		<Button variant="ghost" onClick={handleGuestLogin}>
+		<Button variant="outline" onClick={handleGuestLogin}>
 			Continue as Guest
 		</Button>
 	);
