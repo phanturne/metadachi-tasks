@@ -1,7 +1,7 @@
 // Adapted from https://ui.aceternity.com/components/background-beams
 
-import { ShootingStars } from "@/components/ui/shooting-stars";
-import { StarsBackground } from "@/components/ui/stars-background";
+import { ShootingStars } from "@/components/aceternityui/shooting-stars";
+import { StarsBackground } from "@/components/aceternityui/stars-background";
 import React from "react";
 
 const messages = [
@@ -22,7 +22,7 @@ export default function ComingSoonPage() {
 	return (
 		<div className="relative flex size-full flex-col items-center justify-center rounded-md bg-neutral-950 antialiased">
 			<div className="mx-auto max-w-2xl gap-2">
-				<h1 className="relative z-10 bg-gradient-to-b from-neutral-200 to-neutral-600 bg-clip-text pb-2 text-center font-sans text-4xl font-bold text-transparent md:text-7xl">
+				<h1 className="relative z-10 bg-gradient-to-b from-neutral-200 to-neutral-600 bg-clip-text pb-2 text-center font-bold font-sans text-4xl text-transparent md:text-7xl">
 					Coming Soon
 				</h1>
 				<p className="relative z-10 mx-auto my-2 max-w-lg text-center text-neutral-500">
