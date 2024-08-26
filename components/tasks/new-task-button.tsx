@@ -1,27 +1,32 @@
 import { useAuthModal } from "@/components/providers/auth-context-provider";
+import { Button } from "@/components/ui/button";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Textarea } from "@/components/ui/textarea";
 import { createTask } from "@/lib/db/tasks";
 import { useSession } from "@/lib/hooks/use-session";
 import { markTasksAsStale } from "@/lib/hooks/use-tasks";
 import { capitalizeWord } from "@/lib/utils";
 import type { Tables } from "@/supabase/types";
-import { parseAbsoluteToLocal } from "@internationalized/date";
-import {
-	Button,
-	DatePicker,
-	Input,
-	Modal,
-	ModalBody,
-	ModalContent,
-	ModalFooter,
-	ModalHeader,
-	Select,
-	SelectItem,
-	Slider,
-	Textarea,
-	Tooltip,
-	useDisclosure,
-} from "@nextui-org/react";
-import type React from "react";
+import { Repeat } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -29,226 +34,6 @@ const EmptyTask: Partial<Tables<"tasks">> = {
 	name: "",
 	parts_per_instance: 1,
 	end_time: undefined,
-};
-
-export const NewTaskButton = () => {
-	const { session } = useSession();
-	const { isOpen, onOpen, onOpenChange } = useDisclosure();
-	const { openAuthModal } = useAuthModal();
-
-	const [task, setTask] = useState<Partial<Tables<"tasks">>>({
-		...EmptyTask,
-	});
-
-	const handleNewTask = () => {
-		if (!session) {
-			return openAuthModal();
-		}
-
-		onOpen();
-	};
-
-	const handleCreateTask = async () => {
-		const taskData = {
-			...task,
-			user_id: session?.user.id,
-		} as Tables<"tasks">;
-
-		try {
-			await createTask(taskData);
-			markTasksAsStale(taskData.user_id);
-			setTask(EmptyTask);
-			toast.success("Task created successfully");
-		} catch (error) {
-			toast.error("Failed to create task");
-		}
-	};
-
-	return (
-		<>
-			<Button color="default" onClick={handleNewTask}>
-				New Task
-			</Button>
-			<Modal isOpen={isOpen} onOpenChange={onOpenChange} size="2xl">
-				<ModalContent>
-					{(onClose) => (
-						<>
-							<ModalHeader className="flex flex-col gap-1">
-								New Task
-							</ModalHeader>
-							<ModalBody>
-								<Input
-									label="Name"
-									isRequired
-									value={task.name}
-									onChange={(e) => setTask({ ...task, name: e.target.value })}
-								/>
-								<Slider
-									label="Total Parts"
-									minValue={1}
-									maxValue={50}
-									value={task.parts_per_instance || 1}
-									onChange={(value) => {
-										setTask({
-											...task,
-											parts_per_instance: value as number,
-										});
-									}}
-									// we extract the default children to render the input
-									renderValue={({ children, ...props }) => (
-										<output {...props}>
-											<Tooltip
-												className="text-tiny text-default-500 rounded-md"
-												content="Please enter a value from 1 to 50"
-												placement="left"
-											>
-												<input
-													className="px-1 py-0.5 w-12 text-right text-small text-default-700 font-medium bg-default-100 outline-none transition-colors rounded-small border-medium border-transparent hover:border-primary focus:border-primary"
-													type="text"
-													aria-label="Total parts"
-													value={task.parts_per_instance || 1}
-													onChange={(
-														e: React.ChangeEvent<HTMLInputElement>,
-													) => {
-														let v = Number(e.target.value);
-
-														if (Number.isInteger(v)) {
-															if (v < 1) v = 1;
-															if (v > 50) v = 50;
-															setTask({
-																...task,
-																parts_per_instance: v,
-															});
-														}
-													}}
-												/>
-											</Tooltip>
-										</output>
-									)}
-								/>
-
-								<div className="flex gap-2">
-									<DatePicker
-										label="Deadline"
-										value={
-											task.end_time
-												? parseAbsoluteToLocal(task.end_time)
-												: undefined
-										}
-										onChange={(v) => {
-											const dateWithMidnight = new Date(
-												v.year,
-												v.month - 1,
-												v.day,
-												v?.hour ?? 0,
-												v?.minute ?? 0,
-											);
-											setTask({
-												...task,
-												end_time: dateWithMidnight.toISOString(),
-											});
-										}}
-									/>
-
-									<Input
-										label="Gold"
-										type="number"
-										value={(task.gold ?? "").toString()}
-										onChange={(e) => {
-											// Parse the input value as an integer
-											const intValue = Number.parseInt(e.target.value, 10);
-
-											// Only update the task if the parsed value is a valid number
-											if (!Number.isNaN(intValue)) {
-												setTask({ ...task, gold: intValue });
-											} else {
-												setTask({ ...task, gold: 0 }); // or handle the case where input is invalid
-											}
-										}}
-										min="0"
-									/>
-								</div>
-
-								{task.end_time && (
-									<div className="flex gap-2">
-										<Select
-											label="Repeat"
-											selectedKeys={[task.recurrence_interval ?? "NEVER"]}
-											className="max-w-xs"
-											onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-												setTask({
-													...task,
-													recurrence_interval: e.target.value,
-												});
-											}}
-										>
-											{recurrencePatterns.map((pattern) => (
-												<SelectItem key={pattern}>
-													{capitalizeWord(pattern)}
-												</SelectItem>
-											))}
-										</Select>
-
-										<DatePicker
-											isDisabled={task.recurrence_interval === "NEVER"}
-											label="End Repeat"
-											value={
-												task.end_repeat
-													? parseAbsoluteToLocal(task.end_repeat)
-													: undefined
-											}
-											onChange={(v) => {
-												const dateWithMidnight = new Date(
-													v.year,
-													v.month - 1,
-													v.day,
-													v?.hour ?? 0,
-													v?.minute ?? 0,
-												);
-												setTask({
-													...task,
-													end_repeat: dateWithMidnight.toISOString(),
-												});
-											}}
-										/>
-									</div>
-								)}
-
-								<Textarea
-									label="Description"
-									value={task.description || ""}
-									onChange={(e) =>
-										setTask({ ...task, description: e.target.value })
-									}
-								/>
-							</ModalBody>
-							<ModalFooter>
-								<Button
-									color="danger"
-									variant="light"
-									onPress={() => {
-										onClose();
-									}}
-								>
-									Cancel
-								</Button>
-								<Button
-									color="primary"
-									onPress={() => {
-										handleCreateTask();
-										onClose();
-									}}
-									isDisabled={!task.name}
-								>
-									Save
-								</Button>
-							</ModalFooter>
-						</>
-					)}
-				</ModalContent>
-			</Modal>
-		</>
-	);
 };
 
 export const recurrencePatterns = [
@@ -263,3 +48,181 @@ export const recurrencePatterns = [
 	"YEARLY",
 	"INFINITE",
 ];
+
+export function NewTaskButton() {
+	const { session } = useSession();
+	const { openAuthModal } = useAuthModal();
+	const [isOpen, setIsOpen] = useState(false);
+	const [task, setTask] = useState<Partial<Tables<"tasks">>>({ ...EmptyTask });
+
+	const handleNewTask = () => {
+		if (!session) {
+			return openAuthModal();
+		}
+		setIsOpen(true);
+	};
+
+	const handleCreateTask = async () => {
+		const taskData = {
+			...task,
+			user_id: session?.user.id,
+		} as Tables<"tasks">;
+
+		try {
+			await createTask(taskData);
+			markTasksAsStale(taskData.user_id);
+			setTask(EmptyTask);
+			toast.success("Task created successfully");
+			setIsOpen(false);
+		} catch (error) {
+			toast.error("Failed to create task");
+		}
+	};
+
+	return (
+		<Dialog open={isOpen} onOpenChange={setIsOpen}>
+			<DialogTrigger asChild>
+				<Button variant="outline" onClick={handleNewTask}>
+					New Task
+				</Button>
+			</DialogTrigger>
+			<DialogContent className="sm:max-w-[600px]">
+				<DialogHeader>
+					<DialogTitle className="font-semibold text-2xl">
+						Create New Task
+					</DialogTitle>
+					<DialogDescription>
+						Add a new task to your list. Fill in the details below.
+					</DialogDescription>
+				</DialogHeader>
+				<div className="grid gap-6 py-4">
+					<div className="grid gap-2">
+						<Label htmlFor="name">Task Name</Label>
+						<Input
+							id="name"
+							placeholder="Enter task name"
+							value={task.name}
+							onChange={(e) => setTask({ ...task, name: e.target.value })}
+						/>
+					</div>
+					<div className="grid gap-2">
+						<Label htmlFor="parts">Total Parts</Label>
+						<div className="flex items-center gap-4">
+							<Slider
+								id="parts"
+								min={1}
+								max={50}
+								step={1}
+								value={[task.parts_per_instance || 1]}
+								onValueChange={(value) =>
+									setTask({ ...task, parts_per_instance: value[0] })
+								}
+								className="flex-grow"
+							/>
+							<Input
+								type="number"
+								value={task.parts_per_instance || 1}
+								onChange={(e) => {
+									let v = Number(e.target.value);
+									if (Number.isInteger(v)) {
+										if (v < 1) v = 1;
+										if (v > 50) v = 50;
+										setTask({ ...task, parts_per_instance: v });
+									}
+								}}
+								className="w-16"
+							/>
+						</div>
+					</div>
+					<div className="grid grid-cols-2 gap-4">
+						<div className="grid gap-2">
+							<Label>Deadline</Label>
+							<DateTimePicker
+								hourCycle={24}
+								value={task.end_time ? new Date(task.end_time) : undefined}
+								onChange={(date) =>
+									setTask({ ...task, end_time: date?.toISOString() })
+								}
+							/>
+						</div>
+						<div className="grid gap-2">
+							<Label htmlFor="gold">Gold Reward</Label>
+							<Input
+								id="gold"
+								type="number"
+								placeholder="Enter gold amount"
+								value={(task.gold ?? "").toString()}
+								onChange={(e) => {
+									const intValue = Number.parseInt(e.target.value, 10);
+									if (!Number.isNaN(intValue)) {
+										setTask({ ...task, gold: intValue });
+									} else {
+										setTask({ ...task, gold: 0 });
+									}
+								}}
+								min="0"
+							/>
+						</div>
+					</div>
+					{task.end_time && (
+						<div className="grid grid-cols-2 gap-4">
+							<div className="grid gap-2">
+								<Label htmlFor="recurrence">Repeat</Label>
+								<Select
+									value={task.recurrence_interval ?? "NEVER"}
+									onValueChange={(value) =>
+										setTask({ ...task, recurrence_interval: value })
+									}
+								>
+									<SelectTrigger id="recurrence">
+										<SelectValue placeholder="Select recurrence" />
+									</SelectTrigger>
+									<SelectContent>
+										{recurrencePatterns.map((pattern) => (
+											<SelectItem key={pattern} value={pattern}>
+												{capitalizeWord(pattern)}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</div>
+							<div className="grid gap-2">
+								<Label>End Repeat</Label>
+								<DateTimePicker
+									hourCycle={24}
+									value={
+										task.end_repeat ? new Date(task.end_repeat) : undefined
+									}
+									icon={<Repeat className="mr-2 h-4 w-4" />}
+									onChange={(date) =>
+										setTask({ ...task, end_repeat: date?.toISOString() })
+									}
+								/>
+							</div>
+						</div>
+					)}
+					<div className="grid gap-2">
+						<Label htmlFor="description">Description</Label>
+						<Textarea
+							id="description"
+							placeholder="Describe your task"
+							value={task.description || ""}
+							onChange={(e) =>
+								setTask({ ...task, description: e.target.value })
+							}
+							className="h-24"
+						/>
+					</div>
+				</div>
+				<DialogFooter className="gap-2 sm:gap-0">
+					<Button variant="outline" onClick={() => setIsOpen(false)}>
+						Cancel
+					</Button>
+					<Button onClick={handleCreateTask} disabled={!task.name}>
+						Create Task
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	);
+}
