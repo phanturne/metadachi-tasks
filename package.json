@@ -16,7 +16,7 @@
 	},
 	"dependencies": {
 		"@ai-sdk/google": "^0.0.30",
-		"@ai-sdk/openai": "^0.0.34",
+		"@ai-sdk/openai": "^0.0.53",
 		"@internationalized/date": "^3.5.5",
 		"@nextui-org/react": "^2.4.2",
 		"@supabase/auth-js": "^2.64.3",
