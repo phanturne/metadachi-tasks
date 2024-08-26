@@ -16,7 +16,7 @@ export default function AuthModal({
 	return (
 		<Dialog open={open} onOpenChange={onClose}>
 			<DialogContent className="sm:max-w-[425px]">
-				<DialogHeader className="flex flex-col items-center justify-center">
+				<DialogHeader className="flex flex-col items-center justify-center pt-4">
 					<div className="relative h-[50px] w-[50px]">
 						<Image
 							src="/apple-touch-icon.png"
@@ -26,9 +26,7 @@ export default function AuthModal({
 						/>
 					</div>
 				</DialogHeader>
-				<div className="p-4">
-					<AuthForm type={type} />
-				</div>
+				<AuthForm type={type} />
 			</DialogContent>
 		</Dialog>
 	);

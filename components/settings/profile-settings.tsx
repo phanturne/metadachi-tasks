@@ -2,7 +2,7 @@
 
 "use client";
 
-import { AvatarImageInput } from "@/components/input/ImageInput";
+import { AvatarImageInput } from "@/components/input/AvatarImageInput";
 import {
 	DisplayNameInput,
 	UsernameInput,
