@@ -131,8 +131,8 @@ export async function submitUserMessage(content: string) {
 					return (
 						<>
 							<p className="pb-2">
-								Here are {newTasks.length} task suggestions. Click the checkbox
-								to add.
+								Here are {newTasks.length} task suggestion(s). Click the
+								checkbox to add.
 							</p>
 							<div className="flex flex-col gap-2">
 								{newTasks.map((task) => (

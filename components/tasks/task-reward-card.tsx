@@ -4,12 +4,13 @@ import { NewRewardButton } from "@/components/rewards/new-reward-button";
 import { RewardsList } from "@/components/rewards/rewards-list";
 import { NewTaskButton } from "@/components/tasks/new-task-button";
 import { TasksList } from "@/components/tasks/tasks-list";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUserRewards } from "@/lib/hooks/use-rewards";
 import { useSession } from "@/lib/hooks/use-session";
 import { useTasksWithInstances } from "@/lib/hooks/use-tasks";
-import { Button, Card, CardBody, CardHeader } from "@nextui-org/react";
+import { Gift, ListTodo } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import type React from "react";
 import { useEffect, useState } from "react";
 
 const TasksRewardsCard = () => {
@@ -32,50 +33,42 @@ const TasksRewardsCard = () => {
 	};
 
 	return (
-		<Card className="flex w-full flex-col rounded-lg px-4 pb-4">
-			<CardHeader className="flex items-center justify-between">
-				<ViewToggle activeView={activeView} onViewChange={handleViewChange} />
+		<Card className="w-full overflow-hidden bg-gradient-to-br from-violet-50 to-fuchsia-50 dark:from-gray-900 dark:to-gray-800">
+			<CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
+				<Tabs
+					value={activeView}
+					onValueChange={handleViewChange}
+					className="w-full"
+				>
+					<TabsList className="grid w-full grid-cols-2 bg-white/20 dark:bg-black/20">
+						<TabsTrigger
+							value="tasks"
+							className="data-[state=active]:bg-white data-[state=active]:text-violet-700 dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-violet-400"
+						>
+							<ListTodo className="mr-2 h-4 w-4" />
+							Tasks
+						</TabsTrigger>
+						<TabsTrigger
+							value="rewards"
+							className="data-[state=active]:bg-white data-[state=active]:text-fuchsia-700 dark:data-[state=active]:bg-gray-800 dark:data-[state=active]:text-fuchsia-400"
+						>
+							<Gift className="mr-2 h-4 w-4" />
+							Rewards
+						</TabsTrigger>
+					</TabsList>
+				</Tabs>
 				<ActionButton activeView={activeView} />
 			</CardHeader>
-
-			<CardBody className="flex flex-col gap-2 overflow-y-scroll">
+			<CardContent>
 				{activeView === "tasks" ? (
 					<TasksList tasks={tasks} loading={tasksLoading} session={session} />
 				) : (
 					<RewardsList rewards={rewards} loading={rewardsLoading} />
 				)}
-			</CardBody>
+			</CardContent>
 		</Card>
 	);
 };
-
-interface ViewToggleProps {
-	activeView: string;
-	onViewChange: (view: string) => void;
-}
-
-const ViewToggle: React.FC<ViewToggleProps> = ({
-	activeView,
-	onViewChange,
-}) => (
-	<div className="flex items-center gap-2">
-		<Button
-			variant={activeView === "tasks" ? "bordered" : "light"}
-			onPress={() => onViewChange("tasks")}
-			className={`text-xl ${activeView === "tasks" ? "font-bold" : ""}`}
-		>
-			Tasks
-		</Button>
-		<p className="px-1">/</p>
-		<Button
-			variant={activeView === "rewards" ? "bordered" : "light"}
-			onPress={() => onViewChange("rewards")}
-			className={`text-xl ${activeView === "rewards" ? "font-bold" : ""}`}
-		>
-			Rewards
-		</Button>
-	</div>
-);
 
 interface ActionButtonProps {
 	activeView: string;
