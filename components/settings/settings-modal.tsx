@@ -1,20 +1,20 @@
-// Source: https://github.com/mckaywrigley/chatbot-ui/blob/main/components/utility/profile-settings.tsx
-
 "use client";
+
 import { useAuthModal } from "@/components/providers/auth-context-provider";
 import { ProfileSettings } from "@/components/settings/profile-settings";
+import { Button } from "@/components/ui/button";
+import {
+	Dialog,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import { updateProfile } from "@/lib/db/profile";
 import { uploadProfileImage } from "@/lib/db/storage/profile-images";
 import { markProfileAsStale, useProfile } from "@/lib/hooks/use-profile";
 import { useSession } from "@/lib/hooks/use-session";
 import type { TablesUpdate } from "@/supabase/types";
-import {
-	Button,
-	Modal,
-	ModalBody,
-	ModalContent,
-	ModalHeader,
-} from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -67,6 +67,7 @@ export default function SettingsModal({
 			await updateProfile(profile.id, updateProfilePayload);
 			markProfileAsStale(profile.id);
 			toast.success("Profile updated successfully!");
+			onClose();
 		} catch (error) {
 			console.error("Error updating profile:", error);
 			toast.error("Failed to update profile. Please try again.");
@@ -81,10 +82,12 @@ export default function SettingsModal({
 	};
 
 	return (
-		<Modal size="2xl" isOpen={isOpen} onClose={onClose}>
-			<ModalContent>
-				<ModalHeader>Settings</ModalHeader>
-				<ModalBody>
+		<Dialog open={isOpen} onOpenChange={onClose}>
+			<DialogContent className="sm:max-w-[425px]">
+				<DialogHeader>
+					<DialogTitle>Settings</DialogTitle>
+				</DialogHeader>
+				<div className="grid gap-4 py-4">
 					<ProfileSettings
 						profileImagePath={profileImagePath}
 						setProfileImagePath={setProfileImagePath}
@@ -96,17 +99,14 @@ export default function SettingsModal({
 						displayName={displayName}
 						onDisplayNameChange={setDisplayName}
 					/>
-
-					<div className="flex justify-end gap-2 pb-4">
-						<Button variant="light" onClick={handleReset}>
-							Reset
-						</Button>
-						<Button color="primary" onClick={handleSave}>
-							Save
-						</Button>
-					</div>
-				</ModalBody>
-			</ModalContent>
-		</Modal>
+				</div>
+				<DialogFooter>
+					<Button variant="outline" onClick={handleReset}>
+						Reset
+					</Button>
+					<Button onClick={handleSave}>Save changes</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
 	);
 }
