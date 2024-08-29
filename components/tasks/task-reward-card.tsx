@@ -33,7 +33,7 @@ const TasksRewardsCard = () => {
 	};
 
 	return (
-		<Card className="w-full overflow-hidden bg-gradient-to-br from-violet-50 to-fuchsia-50 dark:from-gray-900 dark:to-gray-800">
+		<Card className="w-full overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900">
 			<CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
 				<Tabs
 					value={activeView}

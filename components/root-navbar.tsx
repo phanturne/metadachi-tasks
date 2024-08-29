@@ -50,7 +50,7 @@ export default function RootNavbar() {
 	return (
 		<nav
 			className={cn(
-				"flex h-[64px] w-full items-center justify-between border-b px-4",
+				"flex h-[64px] w-full items-center justify-between px-4",
 				isMenuOpen ? "bg-gray-200/50 dark:bg-gray-800/50" : "bg-transparent",
 			)}
 		>

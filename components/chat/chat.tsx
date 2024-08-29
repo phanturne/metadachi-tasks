@@ -1,47 +1,91 @@
-// Sources: https://sdk.vercel.ai/examples/next-app/interface/stream-component-updates
-//          https://github.com/mckaywrigley/chatbot-ui/blob/main/components/chat/chat-ui.tsx
-
 "use client";
 
+import { ChatCommands } from "@/components/chat/chat-commands";
 import { ChatInput } from "@/components/chat/chat-input";
 import { ChatMessages } from "@/components/chat/messages";
 import { NewChatContent } from "@/components/chat/new-chat-content";
-import {
-	Card,
-	CardBody,
-	CardFooter,
-	CardHeader,
-	ScrollShadow,
-} from "@nextui-org/react";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useActions, useUIState } from "ai/rsc";
-import React from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function Chat() {
 	const [messages, setMessages] = useUIState();
 	const { submitUserMessage } = useActions();
+	const [isPromptPickerOpen, setIsPromptPickerOpen] = useState(false);
+	const [input, setInput] = useState("");
+	const [command, setCommand] = useState("");
+	const chatInputRef = useRef<HTMLTextAreaElement>(null);
+	const chatCommandsRef = useRef<HTMLDivElement>(null); // Add ref for ChatCommands
 
 	const isNewChat = messages.length === 0;
 
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				chatInputRef.current &&
+				chatCommandsRef.current &&
+				!chatInputRef.current.contains(event.target as Node) &&
+				!chatCommandsRef.current.contains(event.target as Node) &&
+				isPromptPickerOpen
+			) {
+				setIsPromptPickerOpen(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, [isPromptPickerOpen]);
+
+	const handleInputFocus = () => {
+		if (!isPromptPickerOpen && input.startsWith("/")) {
+			setIsPromptPickerOpen(true);
+		}
+	};
+
+	const handlePromptSelect = (promptContent: string) => {
+		setInput(promptContent);
+		setCommand("");
+		setIsPromptPickerOpen(false);
+	};
+
 	return (
-		<Card className="px-4 rounded-lg w-full flex flex-col">
-			<CardHeader className="flex justify-between">
-				<h1 className="text-xl bold">AI Chat</h1>
-			</CardHeader>
-			<CardBody>
-				<ScrollShadow className="flex h-full flex-col overflow-y-scroll">
-					{isNewChat ? (
+		<Card className="flex h-full w-full flex-col bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900">
+			<CardContent className="flex-grow overflow-hidden p-0">
+				{isNewChat ? (
+					<div className="flex h-full items-center justify-center">
 						<NewChatContent />
-					) : (
+					</div>
+				) : (
+					<ScrollArea className="h-full p-4">
 						<ChatMessages messages={messages} />
-					)}
-				</ScrollShadow>
-			</CardBody>
-			<CardFooter>
-				<div className="relative flex w-full flex-col gap-4">
+					</ScrollArea>
+				)}
+			</CardContent>
+			<CardFooter className="p-4">
+				<div className="relative w-full">
 					<ChatInput
+						ref={chatInputRef}
 						setMessages={setMessages}
 						submitUserMessage={submitUserMessage}
+						input={input}
+						setInput={setInput}
+						command={command}
+						setCommand={setCommand}
+						isPromptPickerOpen={isPromptPickerOpen}
+						setIsPromptPickerOpen={setIsPromptPickerOpen}
+						onFocus={handleInputFocus}
 					/>
+					<div ref={chatCommandsRef}>
+						<ChatCommands
+							command={command}
+							isPromptPickerOpen={isPromptPickerOpen}
+							setIsPromptPickerOpen={setIsPromptPickerOpen}
+							onPromptSelect={handlePromptSelect}
+						/>
+					</div>
 				</div>
 			</CardFooter>
 		</Card>
