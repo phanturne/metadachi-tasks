@@ -43,7 +43,7 @@ export function PromptPicker({
 	if (!isPromptPickerOpen) return null;
 
 	return (
-		<ScrollArea className="h-[300px]">
+		<ScrollArea className="h-[400px]">
 			<div className="p-2">
 				{filteredPrompts.length === 0 ? (
 					<div className="flex h-14 items-center justify-center text-muted-foreground text-sm italic">
@@ -56,7 +56,7 @@ export function PromptPicker({
 							ref={(el) => {
 								itemsRef.current[index] = el;
 							}}
-							className="flex cursor-pointer items-center space-x-2 rounded-md p-2 hover:bg-accent focus:bg-accent focus:outline-none"
+							className="flex cursor-pointer items-center gap-2 space-x-2 truncate rounded-md p-2 hover:bg-accent focus:bg-accent focus:outline-none"
 							onClick={() => handleItemSelect(prompt)}
 							onKeyDown={() => getKeyDownHandler(index)}
 							tabIndex={0}
@@ -64,7 +64,7 @@ export function PromptPicker({
 						>
 							<span className="text-2xl">{prompt.emoji}</span>
 							<div>
-								<p className="font-medium">{prompt.name}</p>
+								<p className="text-md">{prompt.name}</p>
 								<p className="text-muted-foreground text-sm">
 									{prompt.content}
 								</p>

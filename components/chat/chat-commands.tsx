@@ -21,7 +21,7 @@ export function ChatCommands({
 	}
 
 	return (
-		<Card className="absolute right-0 bottom-full left-0 mb-2 max-h-[300px] overflow-hidden rounded-lg border shadow-lg">
+		<Card className="absolute right-0 bottom-full left-0 mb-2 max-h-[400px] overflow-hidden rounded-lg border shadow-lg">
 			<PromptPicker
 				command={command}
 				isPromptPickerOpen={isPromptPickerOpen}
