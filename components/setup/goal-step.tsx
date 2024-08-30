@@ -1,7 +1,6 @@
 import { GoalOption } from "@/components/setup/goal-option";
 import { StepContainer } from "@/components/ui/step-container";
-import { CheckboxGroup } from "@nextui-org/react";
-import type { FC } from "react";
+import React, { type FC } from "react";
 
 interface GoalStepProps {
 	stepCount: number;
@@ -25,23 +24,32 @@ export const GoalStep: FC<GoalStepProps> = ({
 			stepTitle="What's your main focus?"
 			stepDescription="Select your top productivity goals."
 			onShouldProceed={handleShouldProceed}
-			showNextButton={!!goals}
+			showNextButton={!!goals.length}
 			showBackButton={true}
 		>
-			<CheckboxGroup
-				value={goals}
-				onChange={onGoalsChange}
-				classNames={{
-					base: "w-full",
-				}}
-			>
-				<GoalOption value="Improve time management" />
-				<GoalOption value="Build better habits" />
-				<GoalOption value="Increase focus and concentration" />
-				<GoalOption value="Reduce procrastination" />
-				<GoalOption value="Achieve work-life balance" />
-				<GoalOption value="Other" />
-			</CheckboxGroup>
+			<div className="flex flex-col space-y-2">
+				{[
+					"Improve time management",
+					"Build better habits",
+					"Increase focus and concentration",
+					"Reduce procrastination",
+					"Achieve work-life balance",
+					"Other",
+				].map((goal) => (
+					<GoalOption
+						key={goal}
+						value={goal}
+						checked={goals.includes(goal)}
+						onCheckedChange={(checked) => {
+							if (checked) {
+								onGoalsChange([...goals, goal]);
+							} else {
+								onGoalsChange(goals.filter((g) => g !== goal));
+							}
+						}}
+					/>
+				))}
+			</div>
 		</StepContainer>
 	);
 };

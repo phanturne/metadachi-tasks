@@ -9,10 +9,14 @@ import {
 } from "@/components/providers/auth-context-provider";
 import { Routes } from "@/lib/constants";
 import { supabase } from "@/lib/supabase/browser-client";
-import { Button, Checkbox, Divider, Link } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
 import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
 type LoginFormValues = {
 	email: string;
@@ -40,68 +44,58 @@ export function LoginForm({
 			password: password,
 		});
 
-		// Show error message and return early if the login failed
 		if (error) {
 			setError(error.message);
 			return;
 		}
 
-		// if (isAnonymous) {
-		//   await supabase.auth.updateUser({ email: email })
-		//
-		//   // verify the user's email by clicking on the email change link
-		//   // or entering the 6-digit OTP sent to the email address
-		//
-		//   // Once the user has been verified, update the password
-		//   await supabase.auth.updateUser({ password: password })
-		// }
-
-		// Handle successful login
 		toast.success("Successfully logged in");
 		closeAuthModal();
-		window.location.reload(); // TODO: Possibly hacky solution for reloading when already on home page. Consider invalidating caches
+		window.location.reload();
 		router.push(Routes.Home);
 	}
 
 	return (
 		<>
-			<p className="pb-2 text-center text-2xl font-medium">Welcome back!</p>
+			<p className="pb-2 text-center font-medium text-2xl">Welcome back!</p>
 			<form className="flex flex-col gap-3" onSubmit={handleLogin}>
 				<EmailInput hasError={isInvalid} />
 				<PasswordInput label="" isInvalid={isInvalid} errorMessage={error} />
 				<div className="flex items-center justify-between px-1 py-2">
-					<Checkbox name="remember" size="sm">
-						Remember me
-					</Checkbox>
+					<div className="flex items-center space-x-2">
+						<Checkbox id="remember" />
+						<label
+							htmlFor="remember"
+							className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+						>
+							Remember me
+						</label>
+					</div>
 					<Link
-						className="text-default-500 cursor-pointer"
-						size="sm"
+						href="#"
 						onClick={() => setAuthFormType(AuthFormType.ForgotPassword)}
+						className="text-sm hover:underline"
 					>
 						Forgot password?
 					</Link>
 				</div>
-				<Button color="primary" type="submit">
-					Log In
-				</Button>
+				<Button type="submit">Log In</Button>
 			</form>
-			<div className="flex items-center gap-4 py-2">
-				<Divider className="flex-1" />
-				<p className="shrink-0 text-tiny text-default-500">OR</p>
-				<Divider className="flex-1" />
+			<div className="relative flex items-center justify-center py-4">
+				<Separator className="absolute w-full" />
+				<span className="relative z-10 bg-background px-2 text-muted-foreground text-xs">
+					OR
+				</span>
 			</div>
 			<OAuthButtons />
 			<GuestLoginButton />
-			<p className="pt-2 text-center text-small">
-				New to Metadachi?&nbsp;
-				<Link
-					size="sm"
-					className="cursor-pointer"
-					onClick={() => setAuthFormType(AuthFormType.SignUp)}
-				>
-					Sign Up
-				</Link>
-			</p>
+			<Button
+				variant="link"
+				className="w-full p-0 text-center text-sm"
+				onClick={() => setAuthFormType(AuthFormType.SignUp)}
+			>
+				New to Metadachi? Sign Up
+			</Button>
 		</>
 	);
 }

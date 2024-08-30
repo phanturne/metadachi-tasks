@@ -1,14 +1,15 @@
 // Source: https://github.com/phanturne/metadachi/blob/main/app/components/ui/StepContainer.tsx
 //         https://github.com/mckaywrigley/chatbot-ui/blob/main/components/setup/step-container.tsx
 
+import { Button } from "@/components/ui/button";
 import {
-	Button,
 	Card,
-	CardBody,
+	CardContent,
 	CardFooter,
 	CardHeader,
-} from "@nextui-org/react";
+} from "@/components/ui/card";
 import type { FC } from "react";
+import type React from "react";
 
 interface StepContainerProps {
 	stepCount: number;
@@ -32,26 +33,25 @@ export const StepContainer: FC<StepContainerProps> = ({
 	showNextButton = true,
 }) => {
 	return (
-		<Card className="max-h-full w-[500px] p-4">
+		<Card className="max-h-full w-[500px] bg-gradient-to-br from-slate-100 to-slate-200 p-4 dark:from-slate-800 dark:to-slate-900">
 			<CardHeader className="flex flex-col items-start gap-2">
 				<div className="flex w-full justify-between">
-					<h1 className="text-2xl font-semibold">{stepTitle}</h1>
+					<h1 className="font-semibold text-2xl">{stepTitle}</h1>
 					<p>{`${stepNum} / ${stepCount}`}</p>
 				</div>
 				<p>{stepDescription}</p>
 			</CardHeader>
-			<CardBody className="overflow-y-scroll">{children}</CardBody>
+			<CardContent className="overflow-y-auto">{children}</CardContent>
 			<CardFooter className="flex justify-between">
 				<div>
 					{showBackButton && (
-						<Button onClick={() => onShouldProceed(false)}>Back</Button>
+						<Button variant="outline" onClick={() => onShouldProceed(false)}>
+							Back
+						</Button>
 					)}
 				</div>
-
 				{showNextButton && (
-					<Button color="primary" onClick={() => onShouldProceed(true)}>
-						Next
-					</Button>
+					<Button onClick={() => onShouldProceed(true)}>Next</Button>
 				)}
 			</CardFooter>
 		</Card>

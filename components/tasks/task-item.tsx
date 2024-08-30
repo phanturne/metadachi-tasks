@@ -1,4 +1,8 @@
+"use client";
+
 import { TaskModal } from "@/components/tasks/task-item-modal";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import type { TaskWithInstances } from "@/lib/db/tasks";
 import {
 	deleteTask,
@@ -9,43 +13,44 @@ import {
 import { useSession } from "@/lib/hooks/use-session";
 import { markStatsAsStale } from "@/lib/hooks/use-stats";
 import { markTasksAsStale } from "@/lib/hooks/use-tasks";
-import { formatDateTime } from "@/lib/utils";
+import { cn, formatDateTime } from "@/lib/utils";
 import type { Tables } from "@/supabase/types";
-import { Button, Card, Checkbox, useDisclosure } from "@nextui-org/react";
+import { Calendar, Minus, Plus } from "lucide-react";
 import { omit } from "next/dist/shared/lib/router/utils/omit";
-import type React from "react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export function TaskItem({
 	task,
 	instance,
-}: { task: TaskWithInstances; instance: number }) {
+}: {
+	task: TaskWithInstances;
+	instance: number;
+}) {
 	const { session } = useSession();
 	const [localInstance, setLocalInstance] = useState<Tables<"task_instances">>(
 		task?.instances[instance] ?? {},
 	);
-
-	const { isOpen, onOpen, onClose } = useDisclosure();
+	const [isOpen, setIsOpen] = useState(false);
 
 	useEffect(() => {
 		setLocalInstance(task?.instances[instance] ?? {});
 	}, [task, instance]);
 
-	const onCardClick = () => {
-		onOpen();
-	};
+	const onCardClick = () => setIsOpen(true);
 
-	const onCheckboxClick = async () => {
+	const onCheckboxClick = async (checked: boolean) => {
 		if (!localInstance) return;
 
 		const updatedInstance = {
 			...localInstance,
-			is_completed: !localInstance.is_completed,
-			completed_parts: Math.min(
-				localInstance.completed_parts ?? 0,
-				(localInstance.total_parts ?? 0) - 1,
-			),
+			is_completed: checked,
+			completed_parts: checked
+				? localInstance.total_parts
+				: Math.min(
+						localInstance.completed_parts ?? 0,
+						(localInstance.total_parts ?? 0) - 1,
+					),
 		};
 
 		setLocalInstance(updatedInstance);
@@ -117,7 +122,6 @@ export function TaskItem({
 		}
 	};
 
-	// TODO: Create Supabase function to update both task_instance and task instead of using 2 queries
 	const onSave = async (
 		task: Tables<"tasks">,
 		instance: Tables<"task_instances">,
@@ -149,67 +153,71 @@ export function TaskItem({
 
 	return (
 		<>
-			<Card
-				isPressable
-				className="flex h-16 w-full cursor-pointer flex-row items-center justify-between border border-gray-300 p-4 dark:border-gray-700" // Set a consistent height
+			<Button
+				variant="outline"
+				className="flex w-full items-center justify-between p-4 py-8 text-left"
 				onClick={onCardClick}
 			>
-				<div className="flex items-center gap-2">
+				<div className="flex items-center gap-4">
 					<Checkbox
-						isSelected={localInstance.is_completed ?? false}
-						onValueChange={onCheckboxClick}
+						checked={localInstance.is_completed ?? false}
+						onCheckedChange={onCheckboxClick}
+						className="h-5 w-5"
 					/>
-					{/* TODO: Add Icon/Image */}
-
-					<div className="flex flex-col items-start">
-						<h4 className="text-lg">{task.name}</h4>
+					<div>
+						<h4
+							className={cn(
+								"font-medium text-base",
+								localInstance.is_completed && "line-through",
+							)}
+						>
+							{task.name}
+						</h4>
 						{localInstance.end_time && (
-							<p className="truncate text-gray-500 text-xs">
+							<p className="flex items-center pt-0.5 text-muted-foreground text-xs">
+								<Calendar className="mr-1 h-3 w-3" />
 								{formatDateTime(localInstance.end_time)}
 							</p>
 						)}
 					</div>
-					{/*  TODO: Add streak for recurring tasks*/}
 				</div>
-
 				<div className="flex items-center gap-2">
 					<Button
-						isIconOnly
-						size="sm"
-						variant="flat"
-						color="success"
-						className="!size-6 rounded-full text-lg"
-						onClick={(e) => {
-							e.stopPropagation();
-							onIncrement(localInstance);
-						}}
-						isDisabled={!canIncrement}
-					>
-						+
-					</Button>
-
-					<p>{`${localInstance.is_completed ? localInstance.total_parts ?? 0 : localInstance.completed_parts ?? 0} / ${localInstance.total_parts ?? 0}`}</p>
-
-					<Button
-						isIconOnly
-						size="sm"
-						variant="flat"
-						color="danger"
-						className="!size-6 rounded-full text-lg"
+						size="icon"
+						variant="ghost"
+						className="h-8 w-8 rounded-full"
 						onClick={(e) => {
 							e.stopPropagation();
 							onDecrement(localInstance);
 						}}
-						isDisabled={!canDecrement}
+						disabled={!canDecrement}
 					>
-						-
+						<Minus className="h-4 w-4" />
+					</Button>
+					<span className="w-12 text-center text-sm">
+						{localInstance.is_completed
+							? localInstance.total_parts ?? 0
+							: localInstance.completed_parts ?? 0}{" "}
+						/ {localInstance.total_parts ?? 0}
+					</span>
+					<Button
+						size="icon"
+						variant="ghost"
+						className="h-8 w-8 rounded-full"
+						onClick={(e) => {
+							e.stopPropagation();
+							onIncrement(localInstance);
+						}}
+						disabled={!canIncrement}
+					>
+						<Plus className="h-4 w-4" />
 					</Button>
 				</div>
-			</Card>
+			</Button>
 
 			<TaskModal
 				isOpen={isOpen}
-				onClose={onClose}
+				onClose={() => setIsOpen(false)}
 				task={omit(task, ["instances"]) as Tables<"tasks">}
 				instance={localInstance}
 				onDeleteInstance={onDeleteInstance}

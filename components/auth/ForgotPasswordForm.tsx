@@ -1,12 +1,11 @@
-// Source: https://github.com/mckaywrigley/chatbot-ui/blob/d60e1f3ee9d2caf8c9aab659791b841690183b2d/%5Blocale%5D/login/page.tsx#L145
-
+import { EmailInput } from "@/components/input";
 import {
 	AuthFormType,
 	useAuthModal,
 } from "@/components/providers/auth-context-provider";
+import { Button } from "@/components/ui/button";
 import { Routes } from "@/lib/constants";
 import { supabase } from "@/lib/supabase/browser-client";
-import { Button, Input, Link } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { type FormEvent, useState } from "react";
@@ -18,7 +17,7 @@ export function ForgotPasswordForm({
 	setAuthFormType: React.Dispatch<React.SetStateAction<AuthFormType>>;
 }) {
 	const [error, setError] = useState<string>("");
-	const hasError = error !== "";
+	const isInvalid = error !== "";
 	const { closeAuthModal } = useAuthModal();
 	const router = useRouter();
 
@@ -27,19 +26,15 @@ export function ForgotPasswordForm({
 		const formData = new FormData(event.currentTarget);
 		const email = formData.get("email") as string;
 
-		// TODO: Add to docs
-		/* In order for redirect to work, make sure process.env.NEXT_PUBLIC_ROOT_URL is set correctly. This absolute URL must be saved in your Supabase's allowed Redirect URLs list found at Authentication > Redirect Configuration. */
 		const { error } = await supabase.auth.resetPasswordForEmail(email, {
 			redirectTo: `${process.env.NEXT_PUBLIC_ROOT_URL}${Routes.ResetPassword}`,
 		});
 
-		// Show error message and return early if the signup failed
 		if (error) {
 			setError(error.message);
 			return;
 		}
 
-		// Handle successful password reset
 		closeAuthModal();
 		setAuthFormType(AuthFormType.Login);
 		toast.success("Password reset email sent.");
@@ -47,41 +42,33 @@ export function ForgotPasswordForm({
 	}
 
 	return (
-		<>
-			<p className="pb-2 text-center text-2xl font-medium">
+		<div className="space-y-4">
+			<h2 className="text-center font-medium text-2xl">
 				Forgot your password?
-			</p>
-			<form className="flex flex-col gap-3" onSubmit={handleForgotPassword}>
-				<Input
-					isRequired
-					label="Email Address"
-					name="email"
-					placeholder="Enter your email"
-					type="email"
-					variant="bordered"
-					isInvalid={hasError}
-				/>
-				<Button color="primary" type="submit">
+			</h2>
+			<form className="space-y-4" onSubmit={handleForgotPassword}>
+				<EmailInput hasError={isInvalid} />
+				<Button className="w-full" type="submit">
 					Send Password Reset Email
 				</Button>
-				<p className="text-center text-small">
-					<Link
-						size="sm"
-						className="cursor-pointer"
+				<div className="text-center text-sm">
+					<Button
+						variant="link"
+						className="p-0"
 						onClick={() => setAuthFormType(AuthFormType.Login)}
 					>
 						Login
-					</Link>
+					</Button>
 					{" · "}
-					<Link
-						size="sm"
-						className="cursor-pointer"
+					<Button
+						variant="link"
+						className="p-0"
 						onClick={() => setAuthFormType(AuthFormType.SignUp)}
 					>
 						Sign Up
-					</Link>
-				</p>
+					</Button>
+				</div>
 			</form>
-		</>
+		</div>
 	);
 }

@@ -6,11 +6,11 @@
 
 import { type FC, memo } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { coldarkDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
+import { Button } from "@/components/ui/button";
 import { IconCheck, IconCopy, IconDownload } from "@/components/ui/icons";
 import { useCopyToClipboard } from "@/lib/hooks/use-copy-to-clipboard";
-import { Button } from "@nextui-org/react";
+import { atomDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 interface Props {
 	language: string;
@@ -94,55 +94,63 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
 	};
 
 	return (
-		<div className="relative w-full font-sans codeblock bg-zinc-950">
-			<div className="flex items-center justify-between w-full px-6 py-2 pr-4 bg-zinc-800 text-zinc-100">
-				<span className="text-xs lowercase">{language}</span>
-				<div className="flex items-center space-x-1">
-					<Button
-						isIconOnly
-						variant="light"
-						className="hover:bg-zinc-800 focus-visible:ring-1 focus-visible:ring-slate-700 focus-visible:ring-offset-0"
-						onClick={downloadAsFile}
-						size="sm"
+		<div className="codeblock relative w-full overflow-hidden rounded-lg p-0.5 font-sans shadow-lg">
+			<div className="rounded-[7px] bg-zinc-950">
+				<div className="flex w-full items-center justify-between rounded-t-[7px] bg-zinc-800 px-4 py-1 text-zinc-100">
+					<div className="flex items-center space-x-2">
+						<span className="font-medium text-sm">{language}</span>
+					</div>
+					<div className="flex items-center space-x-2">
+						<Button
+							variant="ghost"
+							className="text-zinc-400 hover:bg-zinc-700 hover:text-zinc-100 focus:ring-2 focus:ring-purple-500"
+							onClick={downloadAsFile}
+							size="sm"
+						>
+							<IconDownload className="h-4 w-4" />
+						</Button>
+						<Button
+							variant="ghost"
+							size="sm"
+							className="text-zinc-400 hover:bg-zinc-700 hover:text-zinc-100 focus:ring-2 focus:ring-purple-500"
+							onClick={onCopy}
+						>
+							{isCopied ? (
+								<IconCheck className="h-4 w-4" />
+							) : (
+								<IconCopy className="h-4 w-4" />
+							)}
+						</Button>
+					</div>
+				</div>
+				<div className="rounde-t-none overflow-auto rounded border">
+					<SyntaxHighlighter
+						language={language}
+						style={atomDark}
+						showLineNumbers
+						customStyle={{
+							margin: 0,
+							width: "100%",
+							background: "transparent",
+							padding: "1rem",
+						}}
+						lineNumberStyle={{
+							userSelect: "none",
+							opacity: 0.5,
+							paddingRight: "1rem",
+							borderRight: "1px solid #ffffff20",
+						}}
+						codeTagProps={{
+							style: {
+								fontSize: "0.9rem",
+								fontFamily: "var(--font-mono)",
+							},
+						}}
 					>
-						<IconDownload />
-						<span className="sr-only">Download</span>
-					</Button>
-					<Button
-						isIconOnly
-						variant="light"
-						size="sm"
-						className="text-xs hover:bg-zinc-800 focus-visible:ring-1 focus-visible:ring-slate-700 focus-visible:ring-offset-0"
-						onClick={onCopy}
-					>
-						{isCopied ? <IconCheck /> : <IconCopy />}
-						<span className="sr-only">Copy code</span>
-					</Button>
+						{value}
+					</SyntaxHighlighter>
 				</div>
 			</div>
-			<SyntaxHighlighter
-				language={language}
-				style={coldarkDark}
-				PreTag="div"
-				showLineNumbers
-				customStyle={{
-					margin: 0,
-					width: "100%",
-					background: "transparent",
-					padding: "1.5rem 1rem",
-				}}
-				lineNumberStyle={{
-					userSelect: "none",
-				}}
-				codeTagProps={{
-					style: {
-						fontSize: "0.9rem",
-						fontFamily: "var(--font-mono)",
-					},
-				}}
-			>
-				{value}
-			</SyntaxHighlighter>
 		</div>
 	);
 });

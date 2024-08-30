@@ -5,17 +5,13 @@ import {
 	useAuthModal,
 } from "@/components/providers/auth-context-provider";
 import { GoldStatsChart } from "@/components/stats-chart";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useSession } from "@/lib/hooks/use-session";
 import { useStats } from "@/lib/hooks/use-stats";
 import { Icon } from "@iconify/react";
-import {
-	Button,
-	Card,
-	CardBody,
-	CardHeader,
-	Skeleton,
-} from "@nextui-org/react";
-import React from "react";
+import type React from "react";
 
 export default function StatsCard() {
 	const { session } = useSession();
@@ -23,76 +19,74 @@ export default function StatsCard() {
 	const { stats, isLoading, isError, dates } = useStats(userId);
 	const { openAuthModal } = useAuthModal();
 
-	// TODO: Add proper skeletons
 	if (isLoading) {
 		return (
-			<Card className="px-4 rounded-lg w-full flex flex-col overflow-y-scroll">
-				<CardHeader className="flex justify-between">
-					<h1 className="text-xl bold">Stats</h1>
+			<Card className="w-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900">
+				<CardHeader>
+					<CardTitle>Stats</CardTitle>
 				</CardHeader>
-				<CardBody className="overflow-visible gap-2">
-					<Skeleton className="h-5 rounded-lg" />
-					<Skeleton className="h-5 rounded-lg" />
-					<Skeleton className="h-5 rounded-lg" />
-					<Skeleton className="h-32 rounded-lg" />
-				</CardBody>
+				<CardContent className="space-y-2">
+					<Skeleton className="h-4 w-[250px]" />
+					<Skeleton className="h-4 w-[200px]" />
+					<Skeleton className="h-4 w-[150px]" />
+					<Skeleton className="h-[200px] w-full" />
+				</CardContent>
 			</Card>
 		);
 	}
 
 	if (!session) {
 		return (
-			<Card className="px-4 rounded-lg w-full flex flex-col overflow-y-scroll">
-				<CardHeader className="flex justify-between">
-					<h1 className="text-xl bold">Stats</h1>
+			<Card className="w-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900">
+				<CardHeader>
+					<CardTitle>Stats</CardTitle>
 				</CardHeader>
-				<CardBody className="overflow-visible flex flex-col items-center justify-center">
-					<Icon icon="mdi:lock" className="text-4xl mb-4" />
-					<p>Log in to view stats</p>
-					<div className="flex gap-2 mt-4">
+				<CardContent className="flex flex-col items-center justify-center space-y-4">
+					<Icon icon="mdi:lock" className="h-12 w-12" />
+					<p className="text-center">Log in to view stats</p>
+					<div className="flex space-x-2">
 						<Button
-							variant="ghost"
+							variant="outline"
 							onClick={() => openAuthModal(AuthFormType.Login)}
 						>
 							Login
 						</Button>
 						<Button
-							variant="ghost"
+							variant="outline"
 							onClick={() => openAuthModal(AuthFormType.SignUp)}
 						>
 							Sign Up
 						</Button>
 					</div>
-				</CardBody>
+				</CardContent>
 			</Card>
 		);
 	}
 
 	if (isError) {
 		return (
-			<Card className="px-4 rounded-lg w-full flex flex-col overflow-y-scroll">
-				<CardHeader className="flex justify-between">
-					<h1 className="text-xl bold">Stats</h1>
+			<Card className="w-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900">
+				<CardHeader>
+					<CardTitle>Stats</CardTitle>
 				</CardHeader>
-				<CardBody className="overflow-visible gap-2">
-					<p>Error loading stats...</p>
-				</CardBody>
+				<CardContent>
+					<p className="text-destructive">Error loading stats...</p>
+				</CardContent>
 			</Card>
 		);
 	}
 
 	const todaysStats = stats[0];
-
 	const goldChange = todaysStats
 		? (todaysStats?.gold_earned ?? 0) - (todaysStats?.gold_spent ?? 0)
 		: undefined;
 
 	return (
-		<Card className="px-4 rounded-lg w-full flex flex-col overflow-y-scroll">
-			<CardHeader className="flex justify-between">
-				<h1 className="text-xl bold">Stats</h1>
+		<Card className="w-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900">
+			<CardHeader>
+				<CardTitle>Stats</CardTitle>
 			</CardHeader>
-			<CardBody className="overflow-visible">
+			<CardContent className="space-y-2">
 				<StatCardItem label="Level" value={todaysStats?.level ?? 1} />
 				<StatCardItem
 					label="Gold"
@@ -104,46 +98,47 @@ export default function StatsCard() {
 					value={todaysStats?.tasks_completed ?? 0}
 					icon="mdi:task-complete"
 				/>
-
 				<GoldStatsChart
 					stats={stats}
 					startDate={dates.startDate}
 					endDate={dates.endDate}
 				/>
-			</CardBody>
+			</CardContent>
 		</Card>
 	);
 }
 
-const StatCardItem = ({
-	label,
-	value,
-	change,
-	icon,
-}: {
+interface StatCardItemProps {
 	label: string;
 	value: number;
 	change?: number;
 	icon?: string;
+}
+
+const StatCardItem: React.FC<StatCardItemProps> = ({
+	label,
+	value,
+	change,
+	icon,
 }) => {
 	const changeColor =
-		change !== undefined && change >= 0 ? "text-green-500" : "text-red-500";
+		change !== undefined && change >= 0 ? "text-success" : "text-destructive";
 	const changeIcon =
 		change !== undefined && change >= 0
 			? "solar:alt-arrow-up-bold"
 			: "solar:alt-arrow-down-bold";
 
 	return (
-		<div className="flex items-center">
+		<div className="flex items-center space-x-2">
 			<span className="font-semibold">{label}:</span>
-			<span className="ml-2">{value}</span>
+			<span>{value}</span>
 			{change !== undefined && (
-				<div className={`flex items-center ${changeColor} ml-2`}>
-					<Icon icon={changeIcon} width={24} />
+				<div className={`flex items-center ${changeColor}`}>
+					<Icon icon={changeIcon} className="h-4 w-4" />
 					<span className="ml-1">{Math.abs(change)}</span>
 				</div>
 			)}
-			{icon && <Icon icon={icon} className="ml-2" width={24} />}
+			{icon && <Icon icon={icon} className="h-5 w-5" />}
 		</div>
 	);
 };

@@ -1,13 +1,13 @@
 "use client";
 
 import { useAuthModal } from "@/components/providers/auth-context-provider";
+import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { createTask } from "@/lib/db/tasks";
 import { useSession } from "@/lib/hooks/use-session";
 import { markTasksAsStale } from "@/lib/hooks/use-tasks";
 import { formatDateTime } from "@/lib/utils";
 import type { Tables } from "@/supabase/types";
-import { Card, Checkbox } from "@nextui-org/react";
-import type React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -37,28 +37,33 @@ export function TaskSuggestion({ task }: { task: Tables<"tasks"> }) {
 	};
 
 	return (
-		<Card className="flex flex-row justify-between items-center p-4 cursor-pointer w-full border border-gray-300 dark:border-gray-700">
-			<div className="flex gap-2 items-center w-full">
-				<Checkbox
-					isSelected={isChecked}
-					onValueChange={onCheckboxChange}
-					isDisabled={isChecked}
-				/>
-
-				<div className="flex w-full justify-between">
-					<div className="flex flex-col items-start">
-						<h4 className="text-lg">{task.name}</h4>
-						<p className="text-sm">
+		<Card className="w-full">
+			<CardContent className="flex items-center justify-between p-4">
+				<div className="flex w-full items-center gap-4">
+					<Checkbox
+						id={`task-${task.id}`}
+						checked={isChecked}
+						onCheckedChange={onCheckboxChange}
+						disabled={isChecked}
+					/>
+					<div className="flex flex-grow flex-col">
+						<label
+							htmlFor={`task-${task.id}`}
+							className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+						>
+							{task.name}
+						</label>
+						<p className="text-muted-foreground text-sm">
 							Difficulty: {task.difficulty} ({task.gold} Gold)
 						</p>
 					</div>
-					<p className="text-md justify-end">
-						{task.end_time && (
-							<p className="text-sm">{formatDateTime(task.end_time)}</p>
-						)}
-					</p>
+					{task.end_time && (
+						<p className="text-muted-foreground text-sm">
+							{formatDateTime(task.end_time)}
+						</p>
+					)}
 				</div>
-			</div>
+			</CardContent>
 		</Card>
 	);
 }

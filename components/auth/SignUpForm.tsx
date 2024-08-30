@@ -7,10 +7,11 @@ import {
 	AuthFormType,
 	useAuthModal,
 } from "@/components/providers/auth-context-provider";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { EMAIL_VERIFICATION } from "@/lib/config";
 import { Routes } from "@/lib/constants";
 import { supabase } from "@/lib/supabase/browser-client";
-import { Button, Divider, Link } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { type FormEvent, useState } from "react";
@@ -45,13 +46,11 @@ export function SignUpForm({
 			},
 		});
 
-		// Show error message and return early if the signup failed
 		if (error) {
 			setError(error.message);
 			return;
 		}
 
-		// Handle successful signup
 		closeAuthModal();
 		setAuthFormType(AuthFormType.Login);
 
@@ -66,42 +65,28 @@ export function SignUpForm({
 
 	return (
 		<>
-			<p className="pb-2 text-center text-2xl font-medium">Join Metadachi!</p>
+			<p className="pb-2 text-center font-medium text-2xl">Join Metadachi!</p>
 			<form className="flex flex-col gap-3" onSubmit={handleSignup}>
 				<EmailInput hasError={isInvalid} />
 				<PasswordInput label="" isInvalid={isInvalid} errorMessage={error} />
-				{/*<Checkbox isRequired className="py-4" size="sm">*/}
-				{/*  I agree with the&nbsp;*/}
-				{/*  <Link href="#" size="sm">*/}
-				{/*    Terms*/}
-				{/*  </Link>*/}
-				{/*  &nbsp; and&nbsp;*/}
-				{/*  <Link href="#" size="sm">*/}
-				{/*    Privacy Policy*/}
-				{/*  </Link>*/}
-				{/*</Checkbox>*/}
-				<Button color="primary" type="submit">
-					Sign Up
-				</Button>
+				<Button type="submit">Sign Up</Button>
 			</form>
 
-			<div className="flex items-center gap-4 py-2">
-				<Divider className="flex-1" />
-				<p className="shrink-0 text-tiny text-default-500">OR</p>
-				<Divider className="flex-1" />
+			<div className="relative flex items-center justify-center py-4">
+				<Separator className="absolute w-full" />
+				<span className="relative z-10 bg-background px-2 text-muted-foreground text-xs">
+					OR
+				</span>
 			</div>
 			<OAuthButtons />
 			<GuestLoginButton />
-			<p className="text-center text-small">
-				Already have an account?&nbsp;
-				<Link
-					size="sm"
-					className="cursor-pointer"
-					onClick={() => setAuthFormType(AuthFormType.Login)}
-				>
-					Log In
-				</Link>
-			</p>
+			<Button
+				variant="link"
+				className="w-full p-0 text-center text-sm"
+				onClick={() => setAuthFormType(AuthFormType.Login)}
+			>
+				Already have an account? Log In
+			</Button>
 		</>
 	);
 }

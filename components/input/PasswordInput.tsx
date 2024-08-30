@@ -1,5 +1,7 @@
-import { Icon } from "@iconify/react";
-import { Input } from "@nextui-org/react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import { Eye, EyeOff, Lock } from "lucide-react";
 import React from "react";
 
 export default function PasswordInput({
@@ -7,10 +9,7 @@ export default function PasswordInput({
 	onValueChange,
 	name = "password",
 	label = "Password",
-	labelPlacement = "inside",
 	placeholder = "Password",
-	variant,
-	color = "default",
 	isInvalid = false,
 	errorMessage,
 }: {
@@ -18,17 +17,7 @@ export default function PasswordInput({
 	onValueChange?: React.Dispatch<React.SetStateAction<string>>;
 	name?: string;
 	label?: string;
-	labelPlacement?: "outside" | "inside";
 	placeholder?: string;
-	variant?: "bordered" | "flat";
-	color?:
-		| "default"
-		| "primary"
-		| "secondary"
-		| "success"
-		| "warning"
-		| "danger"
-		| undefined;
 	isInvalid?: boolean;
 	errorMessage?: string;
 }) {
@@ -36,35 +25,44 @@ export default function PasswordInput({
 	const toggleVisibility = () => setIsVisible(!isVisible);
 
 	return (
-		<Input
-			value={value}
-			onValueChange={onValueChange}
-			name={name}
-			type={isVisible ? "text" : "password"}
-			label={label}
-			labelPlacement={labelPlacement}
-			placeholder={placeholder}
-			isRequired
-			variant={variant}
-			color={color}
-			isInvalid={isInvalid}
-			errorMessage={errorMessage}
-			startContent={
-				<Icon icon="solar:lock-password-bold-duotone" className="text-xl" />
-			}
-			endContent={
-				<button
-					className="flex focus:outline-none"
-					type="button"
-					onClick={toggleVisibility}
-				>
-					{isVisible ? (
-						<Icon icon="solar:eye-closed-bold-duotone" className="text-xl" />
-					) : (
-						<Icon icon="solar:eye-bold-duotone" className="text-xl" />
+		<div className="space-y-2">
+			<Label htmlFor={name} className="font-medium text-sm">
+				{label}
+			</Label>
+			<div className="relative">
+				<Input
+					id={name}
+					value={value}
+					onChange={(e) => onValueChange?.(e.target.value)}
+					name={name}
+					type={isVisible ? "text" : "password"}
+					placeholder={placeholder}
+					className={cn(
+						"pr-10 pl-10",
+						isInvalid && "border-red-600 focus:border-red-600",
 					)}
-				</button>
-			}
-		/>
+					aria-invalid={isInvalid}
+				/>
+				<div className="absolute inset-y-0 left-0 flex items-center pl-3">
+					<Lock className="text-gray-500" />
+				</div>
+				<div className="absolute inset-y-0 right-0 flex items-center pr-3">
+					<button
+						className="flex focus:outline-none"
+						type="button"
+						onClick={toggleVisibility}
+					>
+						{isVisible ? (
+							<EyeOff className="text-gray-500" />
+						) : (
+							<Eye className="text-gray-500" />
+						)}
+					</button>
+				</div>
+			</div>
+			{isInvalid && errorMessage && (
+				<p className="text-red-600 text-sm">{errorMessage}</p>
+			)}
+		</div>
 	);
 }

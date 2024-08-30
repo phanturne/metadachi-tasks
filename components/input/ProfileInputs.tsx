@@ -1,12 +1,13 @@
 // Source: https://github.com/mckaywrigley/chatbot-ui/blob/main/components/setup/profile-step.tsx
 
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
 	PROFILE_DISPLAY_NAME_MAX,
 	PROFILE_USERNAME_MAX,
 	PROFILE_USERNAME_MIN,
 } from "@/lib/db/limits";
-import { Icon } from "@iconify/react";
-import { Input, Spinner } from "@nextui-org/react";
+import { CheckCircle, Loader2, XCircle } from "lucide-react";
 import { useCallback, useState } from "react";
 
 export const DisplayNameInput = ({
@@ -19,16 +20,23 @@ export const DisplayNameInput = ({
 	labelPlacement?: "inside" | "outside";
 }) => {
 	return (
-		<Input
-			isRequired
-			label="Display Name"
-			labelPlacement={labelPlacement}
-			placeholder="Your Display Name"
-			value={displayName}
-			onValueChange={onDisplayNameChange}
-			maxLength={PROFILE_DISPLAY_NAME_MAX}
-			description={`${displayName.length}/${PROFILE_DISPLAY_NAME_MAX}`}
-		/>
+		<div className="space-y-2">
+			<Label htmlFor="displayName" className="font-medium text-sm">
+				Display Name
+			</Label>
+			<Input
+				id="displayName"
+				placeholder="Your Display Name"
+				value={displayName}
+				onChange={(e) => onDisplayNameChange(e.target.value)}
+				maxLength={PROFILE_DISPLAY_NAME_MAX}
+				className="w-full"
+				required
+			/>
+			<p className="text-muted-foreground text-sm">
+				{displayName.length}/{PROFILE_DISPLAY_NAME_MAX}
+			</p>
+		</div>
 	);
 };
 
@@ -86,7 +94,7 @@ export const UsernameInput = ({
 
 			setLoading(true);
 
-			const response = await fetch(`/api/username/available`, {
+			const response = await fetch("/api/username/available", {
 				method: "POST",
 				body: JSON.stringify({ username }),
 			});
@@ -102,39 +110,37 @@ export const UsernameInput = ({
 	);
 
 	return (
-		<Input
-			isRequired
-			label="Your Username"
-			labelPlacement={labelPlacement}
-			placeholder="Username"
-			value={username}
-			onValueChange={(val) => {
-				onUsernameChange(val);
-				checkUsernameAvailability(val);
-			}}
-			minLength={PROFILE_USERNAME_MIN}
-			maxLength={PROFILE_USERNAME_MAX}
-			description={`${username.length}/${PROFILE_USERNAME_MAX}`}
-			endContent={
-				<>
+		<div className="space-y-2">
+			<Label htmlFor="username" className="font-medium text-sm">
+				Your Username
+			</Label>
+			<div className="relative flex items-center">
+				<Input
+					id="username"
+					placeholder="Username"
+					value={username}
+					onChange={(e) => {
+						onUsernameChange(e.target.value);
+						checkUsernameAvailability(e.target.value);
+					}}
+					minLength={PROFILE_USERNAME_MIN}
+					maxLength={PROFILE_USERNAME_MAX}
+					className="w-full pr-10"
+					required
+				/>
+				<div className="pointer-events-none absolute right-3 flex h-5 w-5 items-center justify-center">
 					{loading ? (
-						<Spinner
-							size={labelPlacement === "inside" ? "md" : "sm"}
-							className="flex h-full items-center"
-						/>
+						<Loader2 className="h-6 w-6 animate-spin text-gray-500" />
 					) : usernameAvailable ? (
-						<Icon
-							icon="solar:check-circle-linear"
-							className={`flex h-full items-center text-2xl text-green-500`}
-						/>
+						<CheckCircle className="h-6 w-6 text-green-500" />
 					) : (
-						<Icon
-							icon="solar:close-circle-linear"
-							className={`flex h-full items-center text-2xl text-red-500`}
-						/>
+						<XCircle className="h-6 w-6 text-red-500" />
 					)}
-				</>
-			}
-		/>
+				</div>
+			</div>
+			<p className="text-muted-foreground text-sm">
+				{username.length}/{PROFILE_USERNAME_MAX}
+			</p>
+		</div>
 	);
 };

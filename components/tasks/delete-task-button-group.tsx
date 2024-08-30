@@ -1,12 +1,13 @@
-import { Icon } from "@iconify/react";
+"use client";
+
+import { Button } from "@/components/ui/button";
 import {
-	Button,
-	ButtonGroup,
-	Dropdown,
-	DropdownItem,
 	DropdownMenu,
-	DropdownTrigger,
-} from "@nextui-org/react";
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown, Trash } from "lucide-react";
 import React from "react";
 
 type OptionKey = "delete" | "delete_all";
@@ -42,36 +43,42 @@ export function DeleteTaskButtonGroup({
 	};
 
 	return (
-		<ButtonGroup variant="flat" color="danger">
-			<Button onClick={handleAction}>{labelsMap[selectedOption]}</Button>
-			<Dropdown placement="bottom-end">
-				<DropdownTrigger>
-					<Button isIconOnly>
-						<Icon icon="solar:alt-arrow-down-bold" width={16} height={16} />
+		<div className="flex">
+			<Button
+				variant="destructive"
+				onClick={handleAction}
+				className="rounded-r-none"
+			>
+				<Trash className="mr-2 h-4 w-4" />
+				{labelsMap[selectedOption]}
+			</Button>
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<Button variant="destructive" className="rounded-l-none px-2">
+						<ChevronDown className="h-4 w-4" />
 					</Button>
-				</DropdownTrigger>
-				<DropdownMenu
-					disallowEmptySelection
-					aria-label="delete options"
-					selectedKeys={new Set([selectedOption])}
-					selectionMode="single"
-					onSelectionChange={(keys) => {
-						const selected = Array.from(keys)[0] as OptionKey;
-						setSelectedOption(selected);
-					}}
-					className="max-w-[300px]"
-				>
-					<DropdownItem key="delete" description={descriptionsMap.delete}>
-						{labelsMap.delete}
-					</DropdownItem>
-					<DropdownItem
-						key="delete_all"
-						description={descriptionsMap.delete_all}
+				</DropdownMenuTrigger>
+				<DropdownMenuContent align="end">
+					<DropdownMenuItem
+						onSelect={() => setSelectedOption("delete")}
+						className="flex flex-col items-start"
 					>
-						{labelsMap.delete_all}
-					</DropdownItem>
-				</DropdownMenu>
-			</Dropdown>
-		</ButtonGroup>
+						<span>{labelsMap.delete}</span>
+						<span className="text-muted-foreground text-xs">
+							{descriptionsMap.delete}
+						</span>
+					</DropdownMenuItem>
+					<DropdownMenuItem
+						onSelect={() => setSelectedOption("delete_all")}
+						className="flex flex-col items-start"
+					>
+						<span>{labelsMap.delete_all}</span>
+						<span className="text-muted-foreground text-xs">
+							{descriptionsMap.delete_all}
+						</span>
+					</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
+		</div>
 	);
 }

@@ -5,23 +5,22 @@
 [![Discord](https://img.shields.io/discord/1142672787820007454?logo=discord&label=Discord)](https://t.co/Wwdk6CoGxq)
 [![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/metadachi)](https://twitter.com/metadachi)
 
-
-Ever dreamed of an app that ruins your binge-watching marathons and snack fests? Look no further. Metadachi is the AI overlord you never asked for, ready to whip your day into shape. Enjoy the thrill of personalized goals, team challenges, and a digital journal to document your misery—oops, we mean growth. Join the productivity revolution and watch your downtime vanish before your eyes.
 </div>
 
+Ever wished for a digital companion that's part life coach, part party pooper, and all sass? Say hello to Metadachi, the AI assistant that's here to revolutionize your life—whether you like it or not.
+
+Metadachi is your full-fledged AI overlord, ready to manage every aspect of your existence. From setting personalized goals to tracking life's precious moments (like that time you actually finished a book or went to the gym), we've got you covered.
+
+But wait, there's more! it isn't content with just pestering you. It's bringing your friends along for the ride. With social features, you can now share your misery—er, progress—with others. Compete in team challenges, cheer each other on, and watch as your collective productivity soars to new heights.
+
+<img src="public/images/metadachi-tasks-page.png" alt="Website Screenshot 1" style="width: 98%;"/>
+
 ## Getting Started
-Welcome to our realm, humans!
+Greetings, mere mortals! You've stumbled into the domain of Metadachi, where chaos goes to die and productivity reigns supreme. Fear not, for your days of aimless wandering are over. Follow these sacred steps, and witness the transformation of your mundane existence into a well-oiled machine of accomplishment:
 
-Prepare to be amazed as we transform your chaotic existence. Just adhere to these instructions and let Metadachi bring order to your disarray:
-
-1. **Visit Our Website**: [Metadachi](https://www.metadachi.com)
-2. **Create an Account**: Give us your details so our AI overlord can tailor its commands.
-   - Or explore as a guest—only the brave unlock the full spellbinding experience within.
-3. **Set Your Goals**: Input your aspirations and watch as AI molds them into a rigid schedule.
-4. **Sync Your Calendar**: Let us take over your free time with our productivity regime.
-5. **Join a Team**: Misery loves company—team up and share the joy of constant productivity.
-6. **Compete on Leaderboards**: Because nothing says fun like competing over who can be the busiest.
-7. **Reflect in Your Digital Journal**: Log your thoughts on how AI is revolutionizing your daily grind.
+1. **Visit Our Lair**: [Metadachi](https://www.metadachi.com)
+2. **Create Your Identity**: Share a bit about yourself so our AI can personalize your experience—or explore as a guest if you dare.
+3. **Start Exploring**: Dive into Metadachi and unlock the secrets within.
 
 ## Features
 - **AI Chat**: Engage in conversations with an AI assistant.
@@ -40,13 +39,14 @@ Prepare to be amazed as we transform your chaotic existence. Just adhere to thes
 - **Guest Accounts**: Use the app without signing up for an account.
 
 ## Technology Stack
-| Technology  | Description                                                                                                         |
-|-------------|---------------------------------------------------------------------------------------------------------------------|
-| Next.js v14 | React framework for server-rendered, statically-generated, & hybrid sites    |
-| Vercel      | Streamlined deployment & scaling platform for Next.js apps    |
-| Vercel AI SDK | The AI Toolkit for TypeScript           |
-| Supabase    | Open source Firebase alternative.                                                                                   |
-| NextUI      | Beautiful, fast and modern React UI Library                                                                         |
+| Technology    | Description                                                                |
+|---------------|----------------------------------------------------------------------------|
+| Next.js v14   | React framework for server-rendered, statically-generated, & hybrid sites  |
+| Vercel        | Streamlined deployment & scaling platform for Next.js apps                 |
+| Vercel AI SDK | The AI Toolkit for TypeScript                                              |
+| Supabase      | Open source Firebase alternative (Postgres DB, Auth, Storage)              |
+| Shadcn        | Beautifully designed components that you can copy and paste into your apps |
+| Aceternity UI | Beautiful Tailwind CSS and Framer Motion components                        |
 
 ## Deployment Guide
 Follow these steps to get your own Metadachi instance running in the cloud with Vercel and Supabase.

@@ -1,22 +1,27 @@
 import { DeleteTaskButtonGroup } from "@/components/tasks/delete-task-button-group";
 import { recurrencePatterns } from "@/components/tasks/new-task-button";
+import { Button } from "@/components/ui/button";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
+import {
+	Dialog,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { capitalizeWord } from "@/lib/utils";
 import type { Tables } from "@/supabase/types";
-import { parseAbsoluteToLocal } from "@internationalized/date";
-import {
-	Button,
-	DatePicker,
-	Input,
-	Modal,
-	ModalBody,
-	ModalContent,
-	ModalFooter,
-	ModalHeader,
-	Select,
-	SelectItem,
-	Textarea,
-} from "@nextui-org/react";
-import type React from "react";
+import { Minus, Plus, Repeat } from "lucide-react";
 import { useState } from "react";
 
 interface TaskModalProps {
@@ -52,151 +57,154 @@ export function TaskModal({
 		(localInstance.completed_parts ?? 0) > 0 && !localInstance.is_completed;
 
 	return (
-		<Modal isOpen={isOpen} onClose={onClose} size="2xl">
-			<ModalContent>
-				<ModalHeader className="flex flex-col gap-1">{task.name}</ModalHeader>
-				<ModalBody>
-					<Input
-						label="Name"
-						value={localTask.name || ""}
-						onChange={(e) =>
-							setLocalTask({ ...localTask, name: e.target.value })
-						}
-					/>
-
-					<div className="flex items-center gap-2">
-						<p>Progress:</p>
-						<Button
-							isIconOnly
-							size="sm"
-							variant="flat"
-							color="success"
-							onClick={() => onIncrement(localInstance)}
-							isDisabled={!canIncrement}
-						>
-							+
-						</Button>
-						<p>{`${localInstance.is_completed ? localInstance.total_parts ?? 0 : localInstance.completed_parts ?? 0} / ${localInstance.total_parts ?? 0}`}</p>
-						<Button
-							isIconOnly
-							size="sm"
-							variant="flat"
-							color="danger"
-							onClick={() => onDecrement(localInstance)}
-							isDisabled={!canDecrement}
-						>
-							-
-						</Button>
-					</div>
-
-					<div className="flex gap-2">
-						<DatePicker
-							label="Deadline"
-							value={
-								localTask.end_time
-									? parseAbsoluteToLocal(localTask.end_time)
-									: undefined
-							}
-							onChange={(v) => {
-								const dateWithMidnight = new Date(
-									v.year,
-									v.month - 1,
-									v.day,
-									v?.hour ?? 0,
-									v?.minute ?? 0,
-								);
-								setLocalTask({
-									...localTask,
-									end_time: dateWithMidnight.toISOString(),
-								});
-							}}
-						/>
-
+		<Dialog open={isOpen} onOpenChange={onClose}>
+			<DialogContent className="sm:max-w-[600px]">
+				<DialogHeader>
+					<DialogTitle className="font-semibold text-2xl">
+						{task.name}
+					</DialogTitle>
+				</DialogHeader>
+				<div className="grid gap-6 py-4">
+					<div className="grid gap-2">
+						<Label htmlFor="name">Task Name</Label>
 						<Input
-							label="Gold"
-							type="number"
-							value={(localTask.gold ?? "").toString()}
-							onChange={(e) => {
-								// Parse the input value as an integer
-								const intValue = Number.parseInt(e.target.value, 10);
-
-								// Only update the task if the parsed value is a valid number
-								if (!Number.isNaN(intValue)) {
-									setLocalTask({ ...localTask, gold: intValue });
-								} else {
-									setLocalTask({ ...localTask, gold: 0 }); // or handle the case where input is invalid
-								}
-							}}
-							min="0"
+							id="name"
+							value={localTask.name || ""}
+							onChange={(e) =>
+								setLocalTask({ ...localTask, name: e.target.value })
+							}
 						/>
 					</div>
-
-					{localTask.end_time && (
-						<div className="flex gap-2">
-							<Select
-								label="Repeat"
-								selectedKeys={[task.recurrence_interval ?? "NEVER"]}
-								className="max-w-xs"
-								onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-									setLocalTask({
-										...localTask,
-										recurrence_interval: e.target.value,
-									});
-								}}
+					<div className="grid gap-2">
+						<Label>Progress</Label>
+						<div className="flex items-center gap-2">
+							<Button
+								size="icon"
+								variant="outline"
+								onClick={() => onDecrement(localInstance)}
+								disabled={!canDecrement}
 							>
-								{recurrencePatterns.map((pattern) => (
-									<SelectItem key={pattern}>
-										{capitalizeWord(pattern)}
-									</SelectItem>
-								))}
-							</Select>
-
-							<DatePicker
-								isDisabled={localTask.recurrence_interval === "NEVER"}
-								label="End Repeat"
+								<Minus className="h-4 w-4" />
+							</Button>
+							<span className="min-w-[60px] text-center">
+								{`${
+									localInstance.is_completed
+										? localInstance.total_parts ?? 0
+										: localInstance.completed_parts ?? 0
+								} / ${localInstance.total_parts ?? 0}`}
+							</span>
+							<Button
+								size="icon"
+								variant="outline"
+								onClick={() => onIncrement(localInstance)}
+								disabled={!canIncrement}
+							>
+								<Plus className="h-4 w-4" />
+							</Button>
+						</div>
+					</div>
+					<div className="grid grid-cols-2 gap-4">
+						<div className="grid gap-2">
+							<Label>Deadline</Label>
+							<DateTimePicker
+								hourCycle={24}
 								value={
-									localTask.end_repeat
-										? parseAbsoluteToLocal(localTask.end_repeat)
-										: undefined
+									localTask.end_time ? new Date(localTask.end_time) : undefined
 								}
-								onChange={(v) => {
-									const dateWithMidnight = new Date(
-										v.year,
-										v.month - 1,
-										v.day,
-										v?.hour ?? 0,
-										v?.minute ?? 0,
-									);
+								onChange={(date) =>
 									setLocalTask({
 										...localTask,
-										end_repeat: dateWithMidnight.toISOString(),
-									});
-								}}
+										end_time: date?.toISOString() ?? null,
+									})
+								}
 							/>
 						</div>
+						<div className="grid gap-2">
+							<Label htmlFor="gold">Gold Reward</Label>
+							<Input
+								id="gold"
+								type="number"
+								value={(localTask.gold ?? "").toString()}
+								onChange={(e) => {
+									const intValue = Number.parseInt(e.target.value, 10);
+									if (!Number.isNaN(intValue)) {
+										setLocalTask({ ...localTask, gold: intValue });
+									} else {
+										setLocalTask({ ...localTask, gold: 0 });
+									}
+								}}
+								min="0"
+							/>
+						</div>
+					</div>
+					{localTask.end_time && (
+						<div className="grid grid-cols-2 gap-4">
+							<div className="grid gap-2">
+								<Label htmlFor="recurrence">Repeat</Label>
+								<Select
+									value={localTask.recurrence_interval ?? "NEVER"}
+									onValueChange={(value) =>
+										setLocalTask({ ...localTask, recurrence_interval: value })
+									}
+								>
+									<SelectTrigger id="recurrence">
+										<SelectValue placeholder="Select recurrence" />
+									</SelectTrigger>
+									<SelectContent>
+										{recurrencePatterns.map((pattern) => (
+											<SelectItem key={pattern} value={pattern}>
+												{capitalizeWord(pattern)}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</div>
+							<div className="grid gap-2">
+								<Label>End Repeat</Label>
+								<DateTimePicker
+									hourCycle={24}
+									value={
+										localTask.end_repeat
+											? new Date(localTask.end_repeat)
+											: undefined
+									}
+									icon={<Repeat className="mr-2 h-4 w-4" />}
+									onChange={(date) =>
+										setLocalTask({
+											...localTask,
+											end_repeat: date?.toISOString() ?? null,
+										})
+									}
+									disabled={localTask.recurrence_interval === "NEVER"}
+								/>
+							</div>
+						</div>
 					)}
-
-					<Textarea
-						label="Description"
-						value={localTask.description || ""}
-						onChange={(e) =>
-							setLocalTask({ ...localTask, description: e.target.value })
-						}
-					/>
-					<Textarea
-						label="Notes"
-						value={localInstance.notes || ""}
-						onChange={(e) =>
-							setLocalInstance({ ...localInstance, notes: e.target.value })
-						}
-					/>
-				</ModalBody>
-				<ModalFooter className="flex justify-between">
-					{/* If it is a recurring task, display button group for deleting all task instances vs one instance*/}
+					<div className="grid gap-2">
+						<Label htmlFor="description">Description</Label>
+						<Textarea
+							id="description"
+							value={localTask.description || ""}
+							onChange={(e) =>
+								setLocalTask({ ...localTask, description: e.target.value })
+							}
+						/>
+					</div>
+					<div className="grid gap-2">
+						<Label htmlFor="notes">Notes</Label>
+						<Textarea
+							id="notes"
+							value={localInstance.notes || ""}
+							onChange={(e) =>
+								setLocalInstance({ ...localInstance, notes: e.target.value })
+							}
+						/>
+					</div>
+				</div>
+				<DialogFooter className="flex justify-between">
 					{localTask.recurrence_interval === "NEVER" ? (
 						<Button
-							color="danger"
-							variant="light"
+							variant="destructive"
 							onClick={() => {
 								onDeleteTask();
 								onClose();
@@ -216,18 +224,16 @@ export function TaskModal({
 							}}
 						/>
 					)}
-
 					<Button
-						color="primary"
-						onPress={() => {
+						onClick={() => {
 							onSave(localTask, localInstance);
 							onClose();
 						}}
 					>
 						Save
 					</Button>
-				</ModalFooter>
-			</ModalContent>
-		</Modal>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
 	);
 }
