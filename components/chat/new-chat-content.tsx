@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import * as React from "react";
@@ -28,10 +27,10 @@ export const NewChatContent = () => {
 				I'm your AI assistant, ready to help with any questions or tasks you
 				have. Feel free to ask about any topic!
 			</p>
-			<div className="flex space-x-4">
-				<Button variant="outline">Start a new chat</Button>
-				<Button>Learn more</Button>
-			</div>
+			{/*<div className="flex space-x-4">*/}
+			{/*	<Button variant="outline">Start a new chat</Button>*/}
+			{/*	<Button>Learn more</Button>*/}
+			{/*</div>*/}
 		</motion.div>
 	);
 };

@@ -40,13 +40,14 @@ Prepare to be amazed as we transform your chaotic existence. Just adhere to thes
 - **Guest Accounts**: Use the app without signing up for an account.
 
 ## Technology Stack
-| Technology  | Description                                                                                                         |
-|-------------|---------------------------------------------------------------------------------------------------------------------|
-| Next.js v14 | React framework for server-rendered, statically-generated, & hybrid sites    |
-| Vercel      | Streamlined deployment & scaling platform for Next.js apps    |
-| Vercel AI SDK | The AI Toolkit for TypeScript           |
-| Supabase    | Open source Firebase alternative.                                                                                   |
-| NextUI      | Beautiful, fast and modern React UI Library                                                                         |
+| Technology    | Description                                                                |
+|---------------|----------------------------------------------------------------------------|
+| Next.js v14   | React framework for server-rendered, statically-generated, & hybrid sites  |
+| Vercel        | Streamlined deployment & scaling platform for Next.js apps                 |
+| Vercel AI SDK | The AI Toolkit for TypeScript                                              |
+| Supabase      | Open source Firebase alternative (Postgres DB, Auth, Storage)              |
+| Shadcn        | Beautifully designed components that you can copy and paste into your apps |
+| Aceternity UI | Beautiful Tailwind CSS and Framer Motion components                        |
 
 ## Deployment Guide
 Follow these steps to get your own Metadachi instance running in the cloud with Vercel and Supabase.
