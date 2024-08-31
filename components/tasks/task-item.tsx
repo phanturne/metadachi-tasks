@@ -1,7 +1,6 @@
-"use client";
-
 import { TaskModal } from "@/components/tasks/task-item-modal";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { TaskWithInstances } from "@/lib/db/tasks";
 import {
@@ -15,18 +14,14 @@ import { markStatsAsStale } from "@/lib/hooks/use-stats";
 import { markTasksAsStale } from "@/lib/hooks/use-tasks";
 import { cn, formatDateTime } from "@/lib/utils";
 import type { Tables } from "@/supabase/types";
-import { Calendar, Minus, Plus } from "lucide-react";
-import { omit } from "next/dist/shared/lib/router/utils/omit";
-import { useEffect, useState } from "react";
+import { Calendar, Minus, MoreVertical, Plus } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export function TaskItem({
 	task,
 	instance,
-}: {
-	task: TaskWithInstances;
-	instance: number;
-}) {
+}: { task: TaskWithInstances; instance: number }) {
 	const { session } = useSession();
 	const [localInstance, setLocalInstance] = useState<Tables<"task_instances">>(
 		task?.instances[instance] ?? {},
@@ -37,9 +32,7 @@ export function TaskItem({
 		setLocalInstance(task?.instances[instance] ?? {});
 	}, [task, instance]);
 
-	const onCardClick = () => setIsOpen(true);
-
-	const onCheckboxClick = async (checked: boolean) => {
+	const handleCheckboxChange = async (checked: boolean) => {
 		if (!localInstance) return;
 
 		const updatedInstance = {
@@ -58,21 +51,21 @@ export function TaskItem({
 		markStatsAsStale(session?.user?.id ?? "");
 	};
 
-	const onIncrement = (unsavedInstance: Tables<"task_instances">) => {
-		if (!unsavedInstance) return;
+	const handleIncrement = () => {
+		if (!localInstance) return;
 
-		const completedParts = unsavedInstance.completed_parts ?? 0;
-		const totalParts = unsavedInstance.total_parts ?? 0;
+		const completedParts = localInstance.completed_parts ?? 0;
+		const totalParts = localInstance.total_parts ?? 0;
 
-		if (completedParts < totalParts && !unsavedInstance.is_completed) {
+		if (completedParts < totalParts && !localInstance.is_completed) {
 			const updatedInstance = {
-				...unsavedInstance,
+				...localInstance,
 				completed_parts: completedParts + 1,
 				is_completed: completedParts + 1 === totalParts,
 			};
 
 			setLocalInstance(updatedInstance);
-			updateTaskInstance(unsavedInstance.id, updatedInstance);
+			updateTaskInstance(localInstance.id, updatedInstance);
 
 			if (updatedInstance.is_completed) {
 				markStatsAsStale(session?.user?.id ?? "");
@@ -80,24 +73,24 @@ export function TaskItem({
 		}
 	};
 
-	const onDecrement = (unsavedInstance: Tables<"task_instances">) => {
-		if (!unsavedInstance) return;
+	const handleDecrement = () => {
+		if (!localInstance) return;
 
-		const completedParts = unsavedInstance.completed_parts ?? 0;
+		const completedParts = localInstance.completed_parts ?? 0;
 
-		if (completedParts > 0 && !unsavedInstance.is_completed) {
+		if (completedParts > 0 && !localInstance.is_completed) {
 			const updatedInstance = {
-				...unsavedInstance,
+				...localInstance,
 				completed_parts: completedParts - 1,
 				is_completed: false,
 			};
 
 			setLocalInstance(updatedInstance);
-			updateTaskInstance(unsavedInstance.id, updatedInstance);
+			updateTaskInstance(localInstance.id, updatedInstance);
 		}
 	};
 
-	const onDeleteInstance = async () => {
+	const handleDeleteInstance = async () => {
 		if (!localInstance) return;
 		try {
 			await deleteTaskInstance(localInstance.id);
@@ -110,7 +103,7 @@ export function TaskItem({
 		}
 	};
 
-	const onDeleteTask = async () => {
+	const handleDeleteTask = async () => {
 		try {
 			await deleteTask(task.id);
 			setLocalInstance({} as Tables<"task_instances">);
@@ -122,14 +115,14 @@ export function TaskItem({
 		}
 	};
 
-	const onSave = async (
-		task: Tables<"tasks">,
-		instance: Tables<"task_instances">,
+	const handleSave = async (
+		updatedTask: Tables<"tasks">,
+		updatedInstance: Tables<"task_instances">,
 	) => {
 		try {
 			await Promise.all([
-				updateTask(task.id, task),
-				updateTaskInstance(instance.id, instance),
+				updateTask(updatedTask.id, updatedTask),
+				updateTaskInstance(updatedInstance.id, updatedInstance),
 			]);
 
 			markStatsAsStale(session?.user?.id ?? "");
@@ -153,81 +146,78 @@ export function TaskItem({
 
 	return (
 		<>
-			<Button
-				variant="outline"
-				className="flex w-full items-center justify-between p-4 py-8 text-left"
-				onClick={onCardClick}
-			>
-				<div className="flex items-center gap-4">
-					<Checkbox
-						checked={localInstance.is_completed ?? false}
-						onCheckedChange={onCheckboxClick}
-						onClick={(e) => {
-							e.stopPropagation();
-						}}
-						className="h-5 w-5"
-					/>
-					<div>
-						<h4
-							className={cn(
-								"font-medium text-base",
-								localInstance.is_completed && "line-through",
+			<Card className="w-full">
+				<CardContent className="flex items-center justify-between p-4">
+					<div className="flex items-center gap-4">
+						<Checkbox
+							checked={localInstance.is_completed ?? false}
+							onCheckedChange={handleCheckboxChange}
+							className="h-5 w-5"
+						/>
+						<div>
+							<h4
+								className={cn(
+									"font-medium text-base",
+									localInstance.is_completed && "line-through",
+								)}
+							>
+								{task.name}
+							</h4>
+							{localInstance.end_time && (
+								<p className="flex items-center pt-0.5 text-muted-foreground text-xs">
+									<Calendar className="mr-1 h-3 w-3" />
+									{formatDateTime(localInstance.end_time)}
+								</p>
 							)}
-						>
-							{task.name}
-						</h4>
-						{localInstance.end_time && (
-							<p className="flex items-center pt-0.5 text-muted-foreground text-xs">
-								<Calendar className="mr-1 h-3 w-3" />
-								{formatDateTime(localInstance.end_time)}
-							</p>
-						)}
+						</div>
 					</div>
-				</div>
-				<div className="flex items-center gap-2">
-					<Button
-						size="icon"
-						variant="ghost"
-						className="h-8 w-8 rounded-full"
-						onClick={(e) => {
-							e.stopPropagation();
-							onDecrement(localInstance);
-						}}
-						disabled={!canDecrement}
-					>
-						<Minus className="h-4 w-4" />
-					</Button>
-					<span className="w-12 text-center text-sm">
-						{localInstance.is_completed
-							? localInstance.total_parts ?? 0
-							: localInstance.completed_parts ?? 0}{" "}
-						/ {localInstance.total_parts ?? 0}
-					</span>
-					<Button
-						size="icon"
-						variant="ghost"
-						className="h-8 w-8 rounded-full"
-						onClick={(e) => {
-							e.stopPropagation();
-							onIncrement(localInstance);
-						}}
-						disabled={!canIncrement}
-					>
-						<Plus className="h-4 w-4" />
-					</Button>
-				</div>
-			</Button>
+					<div className="flex items-center gap-2">
+						<Button
+							size="icon"
+							variant="ghost"
+							className="h-8 w-8 rounded-full"
+							onClick={handleDecrement}
+							disabled={!canDecrement}
+						>
+							<Minus className="h-4 w-4" />
+						</Button>
+						<span className="w-12 text-center text-sm">
+							{localInstance.is_completed
+								? localInstance.total_parts ?? 0
+								: localInstance.completed_parts ?? 0}{" "}
+							/ {localInstance.total_parts ?? 0}
+						</span>
+						<Button
+							size="icon"
+							variant="ghost"
+							className="h-8 w-8 rounded-full"
+							onClick={handleIncrement}
+							disabled={!canIncrement}
+						>
+							<Plus className="h-4 w-4" />
+						</Button>
+						<Button
+							size="icon"
+							variant="ghost"
+							className="h-8 w-8 rounded-full"
+							onClick={() => setIsOpen(true)}
+						>
+							<MoreVertical className="h-4 w-4" />
+						</Button>
+					</div>
+				</CardContent>
+			</Card>
 
 			<TaskModal
 				isOpen={isOpen}
 				onClose={() => setIsOpen(false)}
-				task={omit(task, ["instances"]) as Tables<"tasks">}
+				task={task}
 				instance={localInstance}
-				onDeleteInstance={onDeleteInstance}
-				onDeleteTask={onDeleteTask}
-				onIncrement={onIncrement}
-				onDecrement={onDecrement}
-				onSave={onSave}
+				onDeleteInstance={handleDeleteInstance}
+				onDeleteTask={handleDeleteTask}
+				onIncrement={handleIncrement}
+				onDecrement={handleDecrement}
+				onSave={handleSave}
 			/>
 		</>
 	);
