@@ -12,33 +12,38 @@ const leaderboardData = [
 	{ name: "Charlie", score: 900 },
 	{ name: "David", score: 850 },
 	{ name: "Eve", score: 800 },
+	{ name: "Frank", score: 750 },
+	{ name: "Grace", score: 700 },
+	{ name: "Henry", score: 650 },
+	{ name: "Ivy", score: 600 },
+	{ name: "Jack", score: 550 },
 ];
 
-export default function Component() {
+export default function LeaderboardCard() {
 	return (
-		<Card className="mx-auto w-full max-w-md overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900">
-			<CardHeader>
+		<Card className="flex h-full w-full flex-col bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900">
+			<CardHeader className="flex-shrink-0">
 				<CardTitle className="flex items-center gap-2 font-bold text-xl">
 					<Trophy className="h-6 w-6 text-yellow-500" />
 					Leaderboard
 				</CardTitle>
 			</CardHeader>
-			<CardContent className="p-0 ">
-				<div className="relative">
+			<CardContent className="flex-grow overflow-hidden">
+				<div className="relative h-full">
 					{/* Overlay */}
-					<div className="absolute inset-0 z-10 flex items-center justify-center ">
+					<div className="absolute inset-0 z-10 flex items-center justify-center">
 						<p className="animate-pulse font-bold text-2xl text-primary">
 							Coming soon...
 						</p>
 					</div>
 
 					{/* Leaderboard data container */}
-					<ScrollArea className="h-[300px] blur-sm">
-						<div className="p-1">
+					<ScrollArea className="h-full blur-sm">
+						<div className="flex flex-col gap-2 p-1">
 							{leaderboardData.map((entry, index) => (
 								<div
 									key={entry.name}
-									className="flex items-center justify-between border-b px-5 py-4 transition-colors last:border-b-0 hover:bg-muted/50"
+									className="flex items-center justify-between border-b transition-colors last:border-b-0 hover:bg-muted/50"
 								>
 									<div className="flex items-center gap-3">
 										{index < 3 ? (

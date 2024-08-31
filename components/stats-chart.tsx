@@ -29,20 +29,34 @@ interface GoldStatsChartProps {
 
 const options = (maxDataValue: number): ChartOptions<"bar"> => ({
 	responsive: true,
+	maintainAspectRatio: false,
 	plugins: {
 		legend: {
 			position: "top" as const,
+			labels: {
+				boxWidth: 10,
+				font: {
+					size: 10,
+				},
+			},
 		},
-		// title: {
-		//   display: true,
-		//   text: "Gold Earned vs Spent (Last 7 Days)",
-		// },
 	},
 	scales: {
 		y: {
 			min: 0,
-			// Set max value dynamically if data exists, otherwise default to 100
 			max: maxDataValue > 0 ? maxDataValue : 100,
+			ticks: {
+				font: {
+					size: 10,
+				},
+			},
+		},
+		x: {
+			ticks: {
+				font: {
+					size: 8,
+				},
+			},
 		},
 	},
 });

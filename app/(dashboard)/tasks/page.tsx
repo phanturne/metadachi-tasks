@@ -11,22 +11,15 @@ export default function TasksPage() {
 	return (
 		<div className="flex w-full shrink flex-grow gap-4 overflow-hidden px-6 pb-4">
 			{/* Left Panel */}
-			<div className="flex flex-grow flex-col gap-4" style={{ flex: 3 }}>
+			<div className="flex flex-grow flex-col gap-4">
 				{/* Upper Left Panel*/}
-				<div className="flex flex-grow gap-4" style={{ flex: 1 }}>
-					<div className="flex flex-grow" style={{ flex: 1 }}>
-						<StatsCard />
-					</div>
-					<div className="flex flex-grow" style={{ flex: 1 }}>
-						<LeaderboardCard />
-					</div>
+				<div className="flex h-2/6 flex-grow gap-4">
+					<StatsCard />
+					<LeaderboardCard />
 				</div>
 
 				{/* Bottom Left Panel */}
-				<div
-					className="flex h-full flex-grow overflow-auto"
-					style={{ flex: 2 }}
-				>
+				<div className="flex h-full flex-grow overflow-auto">
 					<TasksCard />
 				</div>
 			</div>

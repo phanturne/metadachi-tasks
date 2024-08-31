@@ -82,11 +82,11 @@ export default function StatsCard() {
 		: undefined;
 
 	return (
-		<Card className="w-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900">
+		<Card className="h-full w-full bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900">
 			<CardHeader>
 				<CardTitle>Stats</CardTitle>
 			</CardHeader>
-			<CardContent className="space-y-2">
+			<CardContent className="h-[calc(100%-10rem)] space-y-2">
 				<StatCardItem label="Level" value={todaysStats?.level ?? 1} />
 				<StatCardItem
 					label="Gold"
