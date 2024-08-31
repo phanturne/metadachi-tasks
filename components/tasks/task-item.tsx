@@ -162,6 +162,9 @@ export function TaskItem({
 					<Checkbox
 						checked={localInstance.is_completed ?? false}
 						onCheckedChange={onCheckboxClick}
+						onClick={(e) => {
+							e.stopPropagation();
+						}}
 						className="h-5 w-5"
 					/>
 					<div>
