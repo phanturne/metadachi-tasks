@@ -16,7 +16,7 @@ export function Chat() {
 	const [input, setInput] = useState("");
 	const [command, setCommand] = useState("");
 	const chatInputRef = useRef<HTMLTextAreaElement>(null);
-	const chatCommandsRef = useRef<HTMLDivElement>(null); // Add ref for ChatCommands
+	const chatCommandsRef = useRef<HTMLDivElement>(null);
 
 	const isNewChat = messages.length === 0;
 
@@ -49,6 +49,11 @@ export function Chat() {
 		setInput(promptContent);
 		setCommand("");
 		setIsPromptPickerOpen(false);
+
+		// Focus the chat input
+		if (chatInputRef.current) {
+			chatInputRef.current.focus();
+		}
 	};
 
 	return (
