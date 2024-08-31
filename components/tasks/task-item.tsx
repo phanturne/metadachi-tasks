@@ -2,6 +2,12 @@ import { TaskModal } from "@/components/tasks/task-item-modal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { TaskWithInstances } from "@/lib/db/tasks";
 import {
 	deleteTask,
@@ -15,6 +21,7 @@ import { markTasksAsStale } from "@/lib/hooks/use-tasks";
 import { cn, formatDateTime } from "@/lib/utils";
 import type { Tables } from "@/supabase/types";
 import { Calendar, Minus, MoreVertical, Plus } from "lucide-react";
+import { omit } from "next/dist/shared/lib/router/utils/omit";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -147,17 +154,17 @@ export function TaskItem({
 	return (
 		<>
 			<Card className="w-full">
-				<CardContent className="flex items-center justify-between p-4">
-					<div className="flex items-center gap-4">
+				<CardContent className="flex min-h-[62px] items-center justify-between p-3 px-4">
+					<div className="flex items-center gap-3">
 						<Checkbox
 							checked={localInstance.is_completed ?? false}
 							onCheckedChange={handleCheckboxChange}
-							className="h-5 w-5"
+							className="h-4 w-4"
 						/>
-						<div>
+						<div className="flex h-full flex-col justify-between">
 							<h4
 								className={cn(
-									"font-medium text-base",
+									"font-medium text-sm",
 									localInstance.is_completed && "line-through",
 								)}
 							>
@@ -171,39 +178,61 @@ export function TaskItem({
 							)}
 						</div>
 					</div>
-					<div className="flex items-center gap-2">
-						<Button
-							size="icon"
-							variant="ghost"
-							className="h-8 w-8 rounded-full"
-							onClick={handleDecrement}
-							disabled={!canDecrement}
-						>
-							<Minus className="h-4 w-4" />
-						</Button>
-						<span className="w-12 text-center text-sm">
+					<div className="flex items-center gap-1">
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<Button
+										size="sm"
+										variant="ghost"
+										className="h-6 w-6 rounded-full p-0"
+										onClick={handleDecrement}
+										disabled={!canDecrement}
+									>
+										<Minus className="h-3 w-3" />
+									</Button>
+								</TooltipTrigger>
+								<TooltipContent>Decrease progress</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+						<span className="w-8 text-center text-xs">
 							{localInstance.is_completed
 								? localInstance.total_parts ?? 0
-								: localInstance.completed_parts ?? 0}{" "}
-							/ {localInstance.total_parts ?? 0}
+								: localInstance.completed_parts ?? 0}
+							&nbsp;/&nbsp;
+							{localInstance.total_parts ?? 0}
 						</span>
-						<Button
-							size="icon"
-							variant="ghost"
-							className="h-8 w-8 rounded-full"
-							onClick={handleIncrement}
-							disabled={!canIncrement}
-						>
-							<Plus className="h-4 w-4" />
-						</Button>
-						<Button
-							size="icon"
-							variant="ghost"
-							className="h-8 w-8 rounded-full"
-							onClick={() => setIsOpen(true)}
-						>
-							<MoreVertical className="h-4 w-4" />
-						</Button>
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<Button
+										size="sm"
+										variant="ghost"
+										className="h-6 w-6 rounded-full p-0"
+										onClick={handleIncrement}
+										disabled={!canIncrement}
+									>
+										<Plus className="h-3 w-3" />
+									</Button>
+								</TooltipTrigger>
+								<TooltipContent>Increase progress</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<Button
+										size="sm"
+										variant="ghost"
+										className="h-6 w-6 rounded-full p-0"
+										onClick={() => setIsOpen(true)}
+									>
+										<MoreVertical className="h-3 w-3" />
+									</Button>
+								</TooltipTrigger>
+								<TooltipContent>Open task details</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
 					</div>
 				</CardContent>
 			</Card>
@@ -211,7 +240,7 @@ export function TaskItem({
 			<TaskModal
 				isOpen={isOpen}
 				onClose={() => setIsOpen(false)}
-				task={task}
+				task={omit(task, ["instances"]) as Tables<"tasks">}
 				instance={localInstance}
 				onDeleteInstance={handleDeleteInstance}
 				onDeleteTask={handleDeleteTask}
