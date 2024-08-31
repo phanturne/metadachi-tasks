@@ -1,15 +1,18 @@
 "use client";
 
+import { UserMessage } from "@/components/chat/message";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import type { Message } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { generateId } from "ai";
 import { SendIcon } from "lucide-react";
 import type React from "react";
-import { forwardRef, useCallback, useEffect, useRef } from "react";
+import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 
 interface ChatInputProps {
-	setMessages: React.Dispatch<React.SetStateAction<any[]>>;
-	submitUserMessage: (message: string) => void;
+	setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+	submitUserMessage: (message: string) => Message;
 	input: string;
 	setInput: React.Dispatch<React.SetStateAction<string>>;
 	command: string;
@@ -34,6 +37,7 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
 		},
 		ref,
 	) => {
+		const [isComposing, setIsComposing] = useState<boolean>(false);
 		const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
 		const adjustTextareaHeight = useCallback(() => {
@@ -66,17 +70,32 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
 			}
 		};
 
-		const handleSubmit = (e: React.FormEvent) => {
+		const handleSubmit = async (e: React.FormEvent) => {
 			e.preventDefault();
 			if (input.trim()) {
-				submitUserMessage(input);
-				setMessages((messages) => [
-					...messages,
-					{ role: "user", content: input },
+				setMessages((currentMessages) => [
+					...currentMessages,
+					{
+						id: generateId(),
+						role: "user",
+						display: <UserMessage>{input}</UserMessage>,
+					},
 				]);
-				setInput("");
+
+				const inputValue = input;
+				setInput(""); // Clear the input field immediately
 				setCommand("");
-				setIsPromptPickerOpen(false);
+
+				const message = await submitUserMessage(inputValue);
+
+				setMessages((currentMessages) => [...currentMessages, message]);
+			}
+		};
+
+		const handleKeyDown = (event: React.KeyboardEvent) => {
+			if (event.key === "Enter" && !event.shiftKey && !isComposing) {
+				event.preventDefault();
+				handleSubmit(event);
 			}
 		};
 
@@ -93,6 +112,9 @@ export const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
 					}}
 					value={input}
 					onChange={handleInputChange}
+					onKeyDown={handleKeyDown}
+					onCompositionStart={() => setIsComposing(true)}
+					onCompositionEnd={() => setIsComposing(false)}
 					onFocus={onFocus}
 					placeholder="Type a message or use / for commands..."
 					rows={1}
