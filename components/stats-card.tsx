@@ -86,18 +86,20 @@ export default function StatsCard() {
 			<CardHeader>
 				<CardTitle>Stats</CardTitle>
 			</CardHeader>
-			<CardContent className="h-[calc(100%-10rem)] space-y-2">
+			<CardContent className="h-3/5 space-y-2">
 				<StatCardItem label="Level" value={todaysStats?.level ?? 1} />
 				<StatCardItem
 					label="Gold"
 					value={todaysStats?.total_gold ?? 0}
 					change={goldChange}
 				/>
-				<StatCardItem
-					label="Tasks Completed Today"
-					value={todaysStats?.tasks_completed ?? 0}
-					icon="mdi:task-complete"
-				/>
+				{/*<StatCardItem*/}
+				{/*	label="Tasks Completed Today"*/}
+				{/*	value={todaysStats?.tasks_completed ?? 0}*/}
+				{/*	icon="mdi:task-complete"*/}
+				{/*/>*/}
+
+				{/* TODO: Prevent card from overflowing*/}
 				<GoldStatsChart
 					stats={stats}
 					startDate={dates.startDate}
