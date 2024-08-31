@@ -3,7 +3,7 @@
 import { UserMessage } from "@/components/chat/message";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import type { Message } from "@/lib/types";
+import type { ClientMessage } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { generateId } from "ai";
 import { SendIcon } from "lucide-react";
@@ -11,8 +11,8 @@ import type React from "react";
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 
 interface ChatInputProps {
-	setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
-	submitUserMessage: (message: string) => Message;
+	setMessages: React.Dispatch<React.SetStateAction<ClientMessage[]>>;
+	submitUserMessage: (message: string) => ClientMessage;
 	input: string;
 	setInput: React.Dispatch<React.SetStateAction<string>>;
 	command: string;
