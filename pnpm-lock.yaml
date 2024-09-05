@@ -152,8 +152,8 @@ devDependencies:
     specifier: 1.8.3
     version: 1.8.3
   '@iconify/react':
-    specifier: ^5.0.1
-    version: 5.0.1(react@18.3.1)
+    specifier: ^5.0.2
+    version: 5.0.2(react@18.3.1)
   '@types/node':
     specifier: ^20.14.9
     version: 20.14.9
@@ -494,8 +494,8 @@ packages:
     resolution: {integrity: sha512-X8R8Oj771YRl/w+c1HqAC1szL8zWQRwFvgDwT129k9ACdBoud/+/rX9V0qiMl6LWUdP9voC2nDVZYPMQQsb6eA==}
     dev: false
 
-  /@iconify/react@5.0.1(react@18.3.1):
-    resolution: {integrity: sha512-octpAJRtHZLLS1o6fmz2Ek2Rfwx75kVg48MZyGTqL3QqoxRddEsuLqOt6ADDhRosmlrYnIrVL+7obo1bz2ikNw==}
+  /@iconify/react@5.0.2(react@18.3.1):
+    resolution: {integrity: sha512-wtmstbYlEbo4NDxFxBJkhkf9gJBDqMGr7FaqLrAUMneRV3Z+fVHLJjOhWbkAF8xDQNFC/wcTYdrWo1lnRhmagQ==}
     peerDependencies:
       react: '>=16'
     dependencies:
