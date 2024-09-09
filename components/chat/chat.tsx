@@ -4,14 +4,16 @@ import { ChatCommands } from "@/components/chat/chat-commands";
 import { ChatInput } from "@/components/chat/chat-input";
 import { ChatMessages } from "@/components/chat/messages";
 import { NewChatContent } from "@/components/chat/new-chat-content";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { GeorgiaTechAssistant } from "@/lib/chat/temp-assistant";
 import { useActions, useUIState } from "ai/rsc";
 import { useEffect, useRef, useState } from "react";
 
 export function Chat() {
 	const [messages, setMessages] = useUIState();
-	const { submitUserMessage } = useActions();
+	const { submitUserMessage, setAssistant } = useActions();
 	const [isPromptPickerOpen, setIsPromptPickerOpen] = useState(false);
 	const [input, setInput] = useState("");
 	const [command, setCommand] = useState("");
@@ -71,6 +73,12 @@ export function Chat() {
 			</CardContent>
 			<CardFooter className="p-4">
 				<div className="relative w-full">
+					<Button onClick={() => setAssistant(GeorgiaTechAssistant)}>
+						Set Assistant
+					</Button>
+					<Button onClick={() => setAssistant(undefined)}>
+						Clear Assistant
+					</Button>
 					<ChatInput
 						ref={chatInputRef}
 						setMessages={setMessages}

@@ -4,6 +4,7 @@
 import "server-only";
 import { BotMessage, SpinnerMessage } from "@/components/chat/message";
 import { TaskSuggestion } from "@/components/tasks/task-suggestion";
+import type { Assistant } from "@/lib/chat/default-assistants";
 import { TaskDifficultySchema, difficultyGoldMap } from "@/lib/db/constants";
 import { skipTask } from "@/lib/db/tasks";
 import type { Message } from "@/lib/types";
@@ -18,13 +19,41 @@ import {
 } from "ai/rsc";
 import { z } from "zod";
 
-export async function submitUserMessage(content: string) {
+const DEFAULT_SYSTEM_PROMPT = `\
+			You are an AI assistant for a task management app. Your role is to help users manage tasks, create rewards, and set up quests for improved productivity. You can:
+			- Create, skip, delete, and update tasks
+			- Manage user-defined rewards
+			- Create bonus quests
+
+			When interacting with users:
+			- Be supportive and encourage productivity
+			- Provide clear, concise responses
+			- Use available tools to perform requested actions
+			- Suggest appropriate tasks, rewards, and quests
+			- Offer advice on task management and time management
+
+			Use markdown for formatting when needed. When using tools, ensure actions align with user requests and promote a positive, motivating experience.`;
+
+export async function setAssistant(assistant: Assistant) {
+	"use server";
+
+	const aiState = getMutableAIState<typeof AI>();
+
+	aiState.done({
+		...aiState.get(),
+		assistant,
+	});
+	return { success: true };
+}
+
+async function submitUserMessage(content: string, assistant?: Assistant) {
 	"use server";
 
 	const aiState = getMutableAIState<typeof AI>();
 
 	aiState.update({
 		...aiState.get(),
+		assistant: assistant ?? aiState.get().assistant,
 		messages: [
 			...aiState.get().messages,
 			{
@@ -43,20 +72,7 @@ export async function submitUserMessage(content: string) {
 		// model: google("models/gemini-1.5-pro-latest"),
 		model: openai("gpt-4o-mini"),
 		initial: <SpinnerMessage />,
-		system: `\
-		You are an AI assistant for a task management app. Your role is to help users manage tasks, create rewards, and set up quests for improved productivity. You can:
-		- Create, skip, delete, and update tasks
-		- Manage user-defined rewards
-		- Create bonus quests
-		
-		When interacting with users:
-		- Be supportive and encourage productivity
-		- Provide clear, concise responses
-		- Use available tools to perform requested actions
-		- Suggest appropriate tasks, rewards, and quests
-		- Offer advice on task management and time management
-		
-		Use markdown for formatting when needed. When using tools, ensure actions align with user requests and promote a positive, motivating experience.`,
+		system: aiState.get().assistant?.systemPrompt ?? DEFAULT_SYSTEM_PROMPT,
 		messages: [
 			// biome-ignore lint/suspicious/noExplicitAny: From Next.js AI Chatbot example
 			...aiState.get().messages.map((message: any) => ({
@@ -309,6 +325,7 @@ export async function submitUserMessage(content: string) {
 export type AIState = {
 	chatId: string;
 	messages: Message[];
+	assistant?: Assistant;
 };
 
 export type UIState = {
@@ -318,10 +335,11 @@ export type UIState = {
 
 export const AI = createAI<AIState, UIState>({
 	actions: {
+		setAssistant,
 		submitUserMessage,
 	},
 	initialUIState: [],
-	initialAIState: { chatId: generateId(), messages: [] },
+	initialAIState: { chatId: generateId(), messages: [], assistant: undefined },
 	// onGetUIState: async () => {
 	// 	'use server'
 	//
